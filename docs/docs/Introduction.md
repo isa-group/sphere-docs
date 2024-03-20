@@ -23,8 +23,8 @@ Welcome to **Pricing4SaaS**, a comprehensive suite of libraries 📚 designed to
 
 Incorporating **Pricing4SaaS** into your system is straightforward. Our documentation provides a step-by-step guide 📖 to help you get up and running in no time. Whether you're a startup looking to implement your first pricing model or an established enterprise aiming to refine your strategy, **Pricing4SaaS** offers the tools and flexibility you need to succeed.
 
-## 👥 Join Our Community
+<!-- ## 👥 Join Our Community
 
 Become part of a vibrant community of developers and business leaders leveraging **Pricing4SaaS** to drive their SaaS platforms forward. Share insights, ask questions, and learn from the collective knowledge and experience of peers who are just as passionate about innovative pricing strategies as you are.
 
-Elevate your SaaS pricing strategy with **Pricing4SaaS**. Start today and transform pricing from a static element into a dynamic growth lever for your business.
+Elevate your SaaS pricing strategy with **Pricing4SaaS**. Start today and transform pricing from a static element into a dynamic growth lever for your business. -->

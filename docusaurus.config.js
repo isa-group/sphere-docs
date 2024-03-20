@@ -68,8 +68,8 @@ const config = {
       navbar: {
         title: 'Pricing4SaaS',
         logo: {
-          alt: 'My Site Logo',
-          src: 'img/logo.svg',
+          alt: 'Pricing4SaaS Logo',
+          src: 'img/logo.png',
         },
         items: [
           {
@@ -109,32 +109,32 @@ const config = {
             ],
           },
           {
-            title: 'Community',
+            title: 'GitHub Repos',
             items: [
               {
-                label: 'Stack Overflow',
-                href: 'https://stackoverflow.com/questions/tagged/docusaurus',
+                label: 'Pricing4Java',
+                href: 'https://github.com/isa-group/Pricing4Java',
               },
               {
-                label: 'Discord',
-                href: 'https://discordapp.com/invite/docusaurus',
+                label: 'Pricing4React',
+                href: 'https://github.com/isa-group/Pricing4React',
               },
-              {
-                label: 'Twitter',
-                href: 'https://twitter.com/docusaurus',
-              },
+              // {
+              //   label: 'Twitter',
+              //   href: 'https://twitter.com/docusaurus',
+              // },
             ],
           },
           {
-            title: 'More',
+            title: 'Contribute',
             items: [
-              {
-                label: 'Blog',
-                to: '/blog',
-              },
+              // {
+              //   label: 'Blog',
+              //   to: '/blog',
+              // },
               {
                 label: 'GitHub',
-                href: 'https://github.com/facebook/docusaurus',
+                href: 'https://github.com/isa-group/Pricing4SaaS-docs',
               },
             ],
           },
