@@ -227,11 +227,11 @@ The evaluation of a feature that has the key `myFeature` would be:
 
 ```jsx
 <Feature>
-    <On expression={feature("myFeature")}>
-        <p>Feature 1 is enabled</p>
+    <On expression={feature("cloudStorage")}>
+        <p>Cloud Storage is enabled</p>
     </On>
     <Default>
-        <p>Feature 1 is disabled</p>
+        <p>Cloud Storage is disabled</p>
     </Default>
     <Loading>
         <p>Loading...</p>
