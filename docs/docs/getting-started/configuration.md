@@ -40,7 +40,7 @@ public class PetclinicApplication {
 
 ### 2. Declare a pricing configuration file
 
-Pricing4Java uses a YAML file written in the [Yaml4SaaS](#yaml4saas) syntax to represent and manage the whole pricing. The file must be placed inside the classpath of the project. Create the file `pricing/pricing.yml` within such directory and copy the snippet below, which shows a basic structure of such syntax:
+Pricing4Java uses a YAML file written in the [Yaml4SaaS](../../api/Yaml4SaaS/the-yaml4saas-syntax) syntax to represent and manage the whole pricing. The file must be placed inside the classpath of the project. Create the file `pricing/pricing.yml` within such directory and copy the snippet below, which shows a basic structure of such syntax:
 
 ```yaml
 saasName: My First Pricing Driven SaaS
@@ -101,7 +101,7 @@ addOns:
 
 ### 3. Configure the pricing context
 
-Once the pricing configuration file is ready, the next step is to create a component that extends the [PricingContext](#pricingContext) abstract class. This component will be the key to manage all the pricing configuration, including user context evaluation, JWT generation, pricing operations, etc.
+Once the pricing configuration file is ready, the next step is to create a component that extends the [PricingContext](../../api/Pricing4Java/pricing-context) abstract class. This component will be the key to manage all the pricing configuration, including user context evaluation, JWT generation, pricing operations, etc.
 
 ```java
 import io.github.isagroup.PricingContext;
