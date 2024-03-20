@@ -2,7 +2,7 @@
 sidebar_position: 1
 ---
 
-# 🚀 Pricing4SaaS: Elevate Your SaaS Pricing Strategy
+# Introduction
 
 Welcome to **Pricing4SaaS**, a comprehensive suite of libraries 📚 designed to seamlessly integrate pricing plans into your Software as a Service (SaaS) systems. With **Pricing4SaaS**, pricing is no longer an afterthought but a central feature of your platform 🌟, enabling you to adapt and scale with ease.
 
