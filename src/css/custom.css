@@ -18,7 +18,7 @@
 }
 
 /* For readability concerns, you should choose a lighter palette in dark mode. */
-[data-theme='dark'] {
+[data-theme="dark"] {
   --ifm-color-primary: #25c2a0;
   --ifm-color-primary-dark: #21af90;
   --ifm-color-primary-darker: #1fa588;
@@ -27,4 +27,107 @@
   --ifm-color-primary-lighter: #32d8b4;
   --ifm-color-primary-lightest: #4fddbf;
   --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
+}
+
+@font-face {
+  font-family: "Oswald";
+  src: url("../../static/fonts/Oswald/Oswald-VariableFont_wght.ttf");
+}
+
+.hero-container{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100vw;
+  height: 100vh;
+}
+
+.hero-title-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-left: 0.2rem;
+  margin-right: 0.2rem;
+}
+
+.hero-text {
+  font-size: 2.25rem;
+  line-height: 2.5rem;
+  font-weight: 700;
+  text-align: center;
+  font-family: "Oswald";
+}
+
+/*text-7xl bg-gradient-to-r from-purple-500 to-blue-500 text-transparent bg-clip-text*/
+
+.hero-text-highlighted {
+  font-size: 4.5rem;
+  background: linear-gradient(to right, #8b5cf6, #3b82f6);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  font-family: "Oswald";
+  font-weight: 900;
+}
+
+@media screen and (max-width: 720px) {
+  .hero-text {
+    font-size: 1.5rem;
+  }
+  .hero-text-highlighted {
+    font-size: 3.45rem;
+  }
+}
+
+.hero-subtitle-container {
+  display: flex;
+  margin-top: 0.5rem;
+  margin-bottom: 3.5rem;
+  margin-left: 1rem;
+  margin-right: 1rem;
+  justify-content: center;
+  align-items: center;
+  font-family: "Oswald";
+}
+
+.hero-subtitle {
+  font-size: 1.5rem;
+  line-height: 2rem;
+  text-align: center;
+}
+
+.hero-button-container {
+  display: flex;
+  margin-top: 1.25rem;
+  margin-bottom: 1.25rem;
+  
+  justify-content: center;
+  align-items: center;
+}
+
+.hero-button {
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  border-radius: 0.75rem;
+  font-size: 1.5rem;
+  line-height: 2rem;
+  font-weight: 700;
+  color: #ffffff;
+  background: linear-gradient(to right, #8b5cf6, #3b82f6);
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 300ms;
+  transition-duration: 200ms;
+}
+
+.hero-button:hover {
+  color: #000000;
+  text-decoration: none;
+  background: linear-gradient(to right, #c4b5fd, #93c5fd);
+  box-shadow: 0 20px 25px -5px #9186bc,
+    0 10px 10px -5px #9186bc;
+  cursor: pointer;
 }
