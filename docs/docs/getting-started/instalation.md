@@ -15,8 +15,13 @@ This Java-based toolkit is designed to enhance the server-side functionality by 
 Pricing4Java GitHub repository can be found [here](https://github.com/isa-group/pricingplans-4j)
 
 :::
+:::tip
 
-The package have been build to be used with maven. To install it, just add the following dependencies in your `pom.xml`file:
+We encourage to use the latest version of Pricing4Java, available in [Maven Central](https://central.sonatype.com/artifact/io.github.isa-group/Pricing4Java)
+
+:::
+
+The package have been built to be used with maven. To install it, just add the following dependencies in your `pom.xml`file:
 
 ```xml
 <dependencies>
@@ -28,7 +33,7 @@ The package have been build to be used with maven. To install it, just add the f
     <dependency>
         <groupId>io.github.isa-group</groupId>
         <artifactId>Pricing4Java</artifactId>
-        <version>{version}</version>
+        <version>{pricing4java-version}</version>
     </dependency>
 
     ...

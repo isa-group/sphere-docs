@@ -10,7 +10,21 @@ Welcome to the **Pricing4SaaS** tutorial! In this guide, you'll learn the basics
 
 Before you begin, make sure you have the following prerequisites in place:
 
-- **Node.js**: Ensure you have Node.js installed on your system. You can download it from the official [Node.js website](https://nodejs.org/).
+- **Node.js**: Ensure you have Node.js installed in your system. You can download it from the official [Node.js website](https://nodejs.org/).
+
+:::warning
+
+The library has been built using Node 21.4.0 and npm 10.2.4. We recommend using these versions or above.
+
+:::
+
+- **Maven**: Ensure you have the Maven package manager installed in your system. You can download it from the official [Maven downloads website](https://maven.apache.org/download.cgi).
+
+:::tip
+
+We encourage to use the version 3.9.6 or above of Maven.
+
+:::
 
 ## 📦 Installation
 
@@ -98,6 +112,20 @@ addOns:
       cloudStorageMaxCapacity:
         value: 100
 ```
+
+### 2.1 (OPTIONAL) Create a unit test to validate the Yaml4SaaS file
+
+If you are interested in checking if your YAML file is correctly formatted, you can implement a test to do so. Here it is an example:
+
+```java
+@Test
+@Order(X)
+void parsePostmanYamlToClassTest() {
+    PricingManager pricingManager = YamlUtils.retrieveManagerFromYaml("pricing/{NAME_OF_YOUR_FILE}.yml");
+}
+```
+
+The test will fail if the YAML file does not correctly follow the Yaml4SaaS syntax, and will throw an exception explaining the problem.
 
 ### 3. Configure the pricing context
 
@@ -223,23 +251,29 @@ The package provides a component that contains almost the whole logic you need t
 - `Loading`: This component will render its children while the evaluation of the feature is being performed.
 - `ErrorFallback`: This component will render its children if an error occurs while the evaluation of the feature is being performed.
 
-The evaluation of a feature that has the key `myFeature` would be:
+The evaluation of a feature that has the key `cloudStorage` would be:
 
 ```jsx
-<Feature>
-    <On expression={feature("cloudStorage")}>
-        <p>Cloud Storage is enabled</p>
-    </On>
-    <Default>
-        <p>Cloud Storage is disabled</p>
-    </Default>
-    <Loading>
-        <p>Loading...</p>
-    </Loading>
-    <ErrorFallback>
-        <p>An error occurred</p>
-    </ErrorFallback>
-</Feature>
+import { Default, ErrorFallback, Feature, On, Loading } from "pricingplans-react";
+
+export default function MyComponent() {
+    return (
+        <Feature>
+            <On expression={feature("cloudStorage")}>
+                <p>CloudStorage feature is enabled</p>
+            </On>
+            <Default>
+                <p>CloudStorage feature is disabled</p>
+            </Default>
+            <Loading>
+                <p>Loading...</p>
+            </Loading>
+            <ErrorFallback>
+                <p>An error occurred</p>
+            </ErrorFallback>
+        </Feature>
+    );
+}
 ```
 
 ## Want to see a real example?
