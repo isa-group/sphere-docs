@@ -151,7 +151,7 @@ const config = {
         appId: 'J0N8S0XNCM',
   
         // Public API key: it is safe to commit it
-        apiKey: '148ea2ff064c5d73b4d9614851d4d930',
+        apiKey: '4d11978c3b3698b0da87e4088f483293',
   
         indexName: 'pricing4saas-vercel',
   
