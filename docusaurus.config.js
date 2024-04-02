@@ -13,7 +13,7 @@ const config = {
   favicon: 'img/favicon.ico',
 
   // Set the production url of your site here
-  url: 'https://your-docusaurus-site.example.com',
+  url: 'https://pricing4saas.vercel.app',
   // Set the /<baseUrl>/ pathname under which your site is served
   // For GitHub pages deployment, it is often '/<projectName>/'
   baseUrl: '/',
@@ -60,6 +60,19 @@ const config = {
     ],
   ],
 
+  plugins: [
+    [
+      '@docusaurus/plugin-sitemap',
+      {
+        lastmod: 'date',
+        changefreq: 'weekly',
+        priority: 0.5,
+        ignorePatterns: ['/tags/**'],
+        filename: 'sitemap.xml',
+      },
+    ],
+  ],
+
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
@@ -76,7 +89,7 @@ const config = {
             type: 'docSidebar',
             sidebarId: 'docsSidebar',
             position: 'left',
-            label: 'Docs',
+            label: 'Getting Started',
           },
           {
             type: 'docSidebar',
@@ -96,20 +109,20 @@ const config = {
         style: 'dark',
         links: [
           {
-            title: 'Docs',
+            title: 'Documentation',
             items: [
               {
-                label: 'Introduction',
+                label: 'Getting Started',
                 to: '/docs/docs/Introduction',
               },
               {
-                label: 'API',
+                label: 'Developer Guide',
                 to: '/docs/api/introduction',
               },
             ],
           },
           {
-            title: 'GitHub Repos',
+            title: 'GitHub Repositories',
             items: [
               {
                 label: 'Pricing4Java',
