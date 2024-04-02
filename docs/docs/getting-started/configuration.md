@@ -5,7 +5,7 @@ custom_edit_url: null
 
 # 📖 Tutorial: Get started in 10 minutes!
 
-Welcome to the **Pricing4SaaS** tutorial! In this guide, you'll learn the basics of **Pricing4SaaS** in just 5 minutes. By the end of this tutorial, you'll have a solid understanding of the core concepts and features that make **Pricing4SaaS** a powerful tool for integrating pricing plans into your SaaS systems.
+Welcome to the **Pricing4SaaS** tutorial! In this guide, you'll learn the basics of **Pricing4SaaS** in just 10 minutes. By the end of this tutorial, you'll have a solid understanding of the core concepts and features that make **Pricing4SaaS** a powerful tool for integrating pricing plans into your SaaS systems.
 
 ## 🚀 Prerequisites
 
@@ -180,7 +180,40 @@ public class PricingConfiguration extends PricingContext {
 
 ```
 
-### 4. Generate JWT token with evaluation
+### 4. Configure the pricing context
+
+After the PricingConfiguration is set, you must inject the [RenewTokenFilter](../../api/Pricing4Java/renew-token-filter) in your Web Security Configuration class. This filter will be responsible for checking the JWT token in every request, keeping your frontend's feature evaluation context up to date with your backend's.
+
+```java
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+
+
+import io.github.isagroup.filters.RenewTokenFilter;
+
+@Configuration
+@EnableWebSecurity
+public class SecurityConfiguration extends WebSecurityConfigurerAdapter{
+    // Other configurations...
+
+    @Bean
+    public RenewTokenFilter renewJwtTokenFilter() {
+      return new RenewTokenFilter();
+    }
+
+    // Other configurations...
+}
+```
+
+:::warning
+
+If you have Cross-Origin Resource Sharing (CORS) within your application, we recommend to check the [RenewTokenFilter documentation](../../api/Pricing4Java/renew-token-filter).
+
+:::
+
+### 5. Generate JWT token with evaluation
 
 Once the PricingConfiguration is set, you can inject in any component all the features included in Pricing4Java. For example, to generate the JWT that can be sent to a frontend that implements [Pricing4React](https://github.com/isa-group/pricingplans-react):
 
