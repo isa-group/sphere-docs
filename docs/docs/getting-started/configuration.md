@@ -41,11 +41,11 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication()
-@ComponentScan(basePackages = {"io.github.isagroup", "org.springframework.samples.petclinic"})
-public class PetclinicApplication {
+@ComponentScan(basePackages = {"io.github.isagroup", "org.springframework.samples.myfirstpricingdrivensaasapplication"})
+public class MyFirstPricingDrivenSaaSApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(PetclinicApplication.class, args);
+		SpringApplication.run(MyFirstPricingDrivenSaaSApplication.class, args);
 	}
 
 	// Other application level configurations...
