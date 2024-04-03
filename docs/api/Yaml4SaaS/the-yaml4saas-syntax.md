@@ -1,5 +1,6 @@
 ---
 sidebar_position: 1
+custom_edit_url: null
 ---
 
 # The Yaml4SaaS Syntax
@@ -86,7 +87,7 @@ Starting with the top-level placeholder, we can describe basic information about
 
 detailing each feature's `description`, `valueType` (BOOLEAN, NUMERIC TEXT), and `defaultValue`, whose data type has to be aligned with the `valueType` defined:
 
-- If the `type` is `CONDITION`, the `defaultValue` must be a Boolean.
+- If the `type` is `BOOLEAN`, the `defaultValue` must be a Boolean.
 - If the `type` is `NUMERIC`, the `defaultValue` must be Integer or Double
 - If the `type` is `TEXT`, the `defaultValue` must be a String.
 

@@ -1,5 +1,6 @@
 ---
 sidebar_position: 3
+custom_edit_url: null
 ---
 
 # Yaml4SaaS Validator

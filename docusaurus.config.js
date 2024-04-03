@@ -13,7 +13,7 @@ const config = {
   favicon: 'img/favicon.ico',
 
   // Set the production url of your site here
-  url: 'https://your-docusaurus-site.example.com',
+  url: 'https://pricing4saas.vercel.app',
   // Set the /<baseUrl>/ pathname under which your site is served
   // For GitHub pages deployment, it is often '/<projectName>/'
   baseUrl: '/',
@@ -76,13 +76,13 @@ const config = {
             type: 'docSidebar',
             sidebarId: 'docsSidebar',
             position: 'left',
-            label: 'Docs',
+            label: 'Getting Started',
           },
           {
             type: 'docSidebar',
             sidebarId: 'apiSidebar',
             position: 'left',
-            label: 'API',
+            label: 'Developer Guide',
           },
           // {to: '/blog', label: 'Blog', position: 'left'},
           // {
@@ -96,20 +96,20 @@ const config = {
         style: 'dark',
         links: [
           {
-            title: 'Docs',
+            title: 'Documentation',
             items: [
               {
-                label: 'Introduction',
+                label: 'Getting Started',
                 to: '/docs/docs/Introduction',
               },
               {
-                label: 'API',
+                label: 'Developer Guide',
                 to: '/docs/api/introduction',
               },
             ],
           },
           {
-            title: 'GitHub Repos',
+            title: 'GitHub Repositories',
             items: [
               {
                 label: 'Pricing4Java',
@@ -145,6 +145,35 @@ const config = {
         theme: prismThemes.github,
         darkTheme: prismThemes.dracula,
         additionalLanguages: ['java'],
+      },
+      algolia: {
+        // The application ID provided by Algolia
+        appId: 'J0N8S0XNCM',
+  
+        // Public API key: it is safe to commit it
+        apiKey: '4d11978c3b3698b0da87e4088f483293',
+  
+        indexName: 'pricing4saas-vercel',
+  
+        // Optional: see doc section below
+        contextualSearch: false,
+  
+        // Optional: Specify domains where the navigation should occur through window.location instead on history.push. Useful when our Algolia config crawls multiple documentation sites and we want to navigate with window.location.href to them.
+        // externalUrlRegex: 'external\\.com|domain\\.com',
+  
+        // Optional: Replace parts of the item URLs from Algolia. Useful when using the same search index for multiple deployments using a different baseUrl. You can use regexp or string in the `from` param. For example: localhost:3000 vs myCompany.com/docs
+        // replaceSearchResultPathname: {
+        //   from: '/docs/', // or as RegExp: /\/docs\//
+        //   to: '/',
+        // },
+  
+        // Optional: Algolia search parameters
+        // searchParameters: {},
+  
+        // Optional: path for search page that enabled by default (`false` to disable it)
+        // searchPagePath: 'search',
+  
+        //... other Algolia params
       },
     }),
 };

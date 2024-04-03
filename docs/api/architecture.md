@@ -1,6 +1,7 @@
 ---
 sidebar_position: 2
 title: Architecture
+custom_edit_url: null
 ---
 
 # Pricing4SaaS Global Architecture
