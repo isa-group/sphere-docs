@@ -187,7 +187,6 @@ After the PricingConfiguration is set, you must inject the [RenewTokenFilter](..
 ```java
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 
 
@@ -195,7 +194,7 @@ import io.github.isagroup.filters.RenewTokenFilter;
 
 @Configuration
 @EnableWebSecurity
-public class SecurityConfiguration extends WebSecurityConfigurerAdapter{
+public class SecurityConfiguration{
     // Other configurations...
 
     @Bean
@@ -288,7 +287,7 @@ The package provides a component that contains almost the whole logic you need t
 The evaluation of a feature that has the key `cloudStorage` would be:
 
 ```jsx
-import { Default, ErrorFallback, Feature, On, Loading } from "pricingplans-react";
+import { Default, ErrorFallback, Feature, On, Loading, feature } from "pricing4react";
 
 export default function MyComponent() {
     return (
