@@ -14,5 +14,3 @@ If after adding the filter to the pipeline you get an error indicating: `java.la
     <scope>provided</scope>
 </dependency>
 ```
-
-We are currently working on solving the issue and will update this documentation as soon as possible.
