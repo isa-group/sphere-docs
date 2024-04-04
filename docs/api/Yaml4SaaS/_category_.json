@@ -2,7 +2,6 @@
   "label": "Yaml4SaaS",
   "position": 3,
   "link": {
-    "type": "generated-index",
-    "description": "This page will be the intro of the Yaml4SaaS"
+    "type": "generated-index"
   }
 }

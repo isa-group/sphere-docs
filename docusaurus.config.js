@@ -84,6 +84,12 @@ const config = {
             position: 'left',
             label: 'Developer Guide',
           },
+          {
+            type: 'docSidebar',
+            sidebarId: 'commonErrorsSidebar',
+            position: 'left',
+            label: 'FAQs',
+          },
           // {to: '/blog', label: 'Blog', position: 'left'},
           // {
           //   href: 'https://github.com/facebook/docusaurus',
