@@ -112,6 +112,10 @@ const config = {
                 label: 'Developer Guide',
                 to: '/docs/api/introduction',
               },
+              {
+                label: 'FAQs',
+                to: '/docs/commonErrors/introduction',
+              },
             ],
           },
           {
