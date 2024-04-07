@@ -214,7 +214,7 @@ If you have Cross-Origin Resource Sharing (CORS) within your application, we rec
 
 ### 5. Generate JWT token with evaluation
 
-Once the PricingConfiguration is set, you can inject in any component all the features included in Pricing4Java. For example, to generate the JWT that can be sent to a frontend that implements [Pricing4React](https://github.com/isa-group/pricingplans-react):
+Once the PricingConfiguration is set, you can inject in any component all the features included in Pricing4Java. For example, to generate the JWT that can be sent to a frontend that implements [Pricing4React](https://github.com/isa-group/pricing4react):
 
 ```java
 @Service
