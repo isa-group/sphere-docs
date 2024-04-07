@@ -29,3 +29,9 @@ The evaluation of a feature that has the key `myFeature` would be:
     </ErrorFallback>
 </Feature>
 ```
+
+:::info
+
+The `feature` function (used within the `expression` prop) is in charge of retrieving the result of the feature evaluation (as a boolean), saved inside the user JWT. It just need the key of the feature to find it.
+
+:::

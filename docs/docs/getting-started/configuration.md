@@ -291,8 +291,8 @@ import { Default, ErrorFallback, Feature, On, Loading, feature } from "pricing4r
 
 export default function MyComponent() {
     return (
-        <Feature>
-            <On expression={feature("cloudStorage")}>
+        <Feature expression={feature("cloudStorage")}>
+            <On>
                 <p>CloudStorage feature is enabled</p>
             </On>
             <Default>
@@ -308,6 +308,8 @@ export default function MyComponent() {
     );
 }
 ```
+
+In this case, the `feature` function (used within the `expression` prop) is in charge of retrieving the result of the feature evaluation (as a boolean), saved inside the user JWT. It just need the key of the feature to find it. <!-- However, the `expression` prop can also receive a boolean condition or value to be evaluated. -->
 
 ## Want to see a real example?
 
