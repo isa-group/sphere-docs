@@ -4,57 +4,64 @@
 // There are various equivalent ways to declare your Docusaurus config.
 // See: https://docusaurus.io/docs/api/docusaurus-config
 
-import {themes as prismThemes} from 'prism-react-renderer';
+import { themes as prismThemes } from "prism-react-renderer";
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
-  title: 'Pricing4SaaS',
-  tagline: 'A new way to manage your SaaS pricing',
-  favicon: 'img/favicon.ico',
+  title: "Pricing4SaaS",
+  tagline: "A new way to manage your SaaS pricing",
+  favicon: "img/favicon.ico",
 
   // Set the production url of your site here
-  url: 'https://pricing4saas.vercel.app',
+  url: "https://pricing4saas.vercel.app",
   // Set the /<baseUrl>/ pathname under which your site is served
   // For GitHub pages deployment, it is often '/<projectName>/'
-  baseUrl: '/',
+  baseUrl: "/",
 
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
-  organizationName: 'isa-group', // Usually your GitHub org/user name.
-  projectName: 'Pricing4SaaS', // Usually your repo name.
+  organizationName: "isa-group", // Usually your GitHub org/user name.
+  projectName: "Pricing4SaaS", // Usually your repo name.
 
-  onBrokenLinks: 'throw',
-  onBrokenMarkdownLinks: 'warn',
+  onBrokenLinks: "throw",
+  onBrokenMarkdownLinks: "warn",
 
   // Even if you don't use internationalization, you can use this field to set
   // useful metadata like html lang. For example, if your site is Chinese, you
   // may want to replace "en" with "zh-Hans".
   i18n: {
-    defaultLocale: 'en',
-    locales: ['en'],
+    defaultLocale: "en",
+    locales: ["en"],
   },
 
   presets: [
     [
-      'classic',
+      "classic",
       /** @type {import('@docusaurus/preset-classic').Options} */
       ({
         docs: {
-          sidebarPath: './sidebars.js',
+          sidebarPath: "./sidebars.js",
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
           editUrl:
-            'https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/',
+            "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/",
+          lastVersion: "current",
+          versions: {
+            current: {
+              label: "2.0.0",
+              path: "2.0.0",
+            },
+          },
         },
         blog: {
           showReadingTime: true,
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
           editUrl:
-            'https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/',
+            "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/",
         },
         theme: {
-          customCss: './src/css/custom.css',
+          customCss: "./src/css/custom.css",
         },
       }),
     ],
@@ -64,70 +71,70 @@ const config = {
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
       // Replace with your project's social card
-      image: 'img/docusaurus-social-card.jpg',
+      image: "img/docusaurus-social-card.jpg",
       navbar: {
-        title: 'Pricing4SaaS',
+        title: "Pricing4SaaS",
         logo: {
-          alt: 'Pricing4SaaS Logo',
-          src: 'img/logo.png',
+          alt: "Pricing4SaaS Logo",
+          src: "img/logo.png",
         },
         items: [
           {
-            type: 'docSidebar',
-            sidebarId: 'docsSidebar',
-            position: 'left',
-            label: 'Getting Started',
+            type: "docSidebar",
+            sidebarId: "docsSidebar",
+            position: "left",
+            label: "Getting Started",
           },
           {
-            type: 'docSidebar',
-            sidebarId: 'apiSidebar',
-            position: 'left',
-            label: 'Developer Guide',
+            type: "docSidebar",
+            sidebarId: "apiSidebar",
+            position: "left",
+            label: "Developer Guide",
           },
           {
-            type: 'docSidebar',
-            sidebarId: 'commonErrorsSidebar',
-            position: 'left',
-            label: 'FAQs',
+            type: "docSidebar",
+            sidebarId: "commonErrorsSidebar",
+            position: "left",
+            label: "FAQs",
           },
-          // {to: '/blog', label: 'Blog', position: 'left'},
-          // {
-          //   href: 'https://github.com/facebook/docusaurus',
-          //   label: 'GitHub',
-          //   position: 'right',
-          // },
+          {
+            type: 'docsVersionDropdown',
+            position: 'right',
+            dropdownItemsAfter: [{to: '/versions'}],
+            dropdownActiveClassDisabled: true,
+          },
         ],
       },
       footer: {
-        style: 'dark',
+        style: "dark",
         links: [
           {
-            title: 'Documentation',
+            title: "Documentation",
             items: [
               {
-                label: 'Getting Started',
-                to: '/docs/docs/Introduction',
+                label: "Getting Started",
+                to: "/docs/docs/Introduction",
               },
               {
-                label: 'Developer Guide',
-                to: '/docs/api/introduction',
+                label: "Developer Guide",
+                to: "/docs/api/introduction",
               },
               {
-                label: 'FAQs',
-                to: '/docs/commonErrors/introduction',
+                label: "FAQs",
+                to: "/docs/commonErrors/introduction",
               },
             ],
           },
           {
-            title: 'GitHub Repositories',
+            title: "GitHub Repositories",
             items: [
               {
-                label: 'Pricing4Java',
-                href: 'https://github.com/isa-group/Pricing4Java',
+                label: "Pricing4Java",
+                href: "https://github.com/isa-group/Pricing4Java",
               },
               {
-                label: 'Pricing4React',
-                href: 'https://github.com/isa-group/Pricing4React',
+                label: "Pricing4React",
+                href: "https://github.com/isa-group/Pricing4React",
               },
               // {
               //   label: 'Twitter',
@@ -136,15 +143,15 @@ const config = {
             ],
           },
           {
-            title: 'Contribute',
+            title: "Contribute",
             items: [
               // {
               //   label: 'Blog',
               //   to: '/blog',
               // },
               {
-                label: 'GitHub',
-                href: 'https://github.com/isa-group/Pricing4SaaS-docs',
+                label: "GitHub",
+                href: "https://github.com/isa-group/Pricing4SaaS-docs",
               },
             ],
           },
@@ -154,35 +161,35 @@ const config = {
       prism: {
         theme: prismThemes.github,
         darkTheme: prismThemes.dracula,
-        additionalLanguages: ['java'],
+        additionalLanguages: ["java"],
       },
       algolia: {
         // The application ID provided by Algolia
-        appId: 'J0N8S0XNCM',
-  
+        appId: "J0N8S0XNCM",
+
         // Public API key: it is safe to commit it
-        apiKey: '4d11978c3b3698b0da87e4088f483293',
-  
-        indexName: 'pricing4saas-vercel',
-  
+        apiKey: "4d11978c3b3698b0da87e4088f483293",
+
+        indexName: "pricing4saas-vercel",
+
         // Optional: see doc section below
         contextualSearch: false,
-  
+
         // Optional: Specify domains where the navigation should occur through window.location instead on history.push. Useful when our Algolia config crawls multiple documentation sites and we want to navigate with window.location.href to them.
         // externalUrlRegex: 'external\\.com|domain\\.com',
-  
+
         // Optional: Replace parts of the item URLs from Algolia. Useful when using the same search index for multiple deployments using a different baseUrl. You can use regexp or string in the `from` param. For example: localhost:3000 vs myCompany.com/docs
         // replaceSearchResultPathname: {
         //   from: '/docs/', // or as RegExp: /\/docs\//
         //   to: '/',
         // },
-  
+
         // Optional: Algolia search parameters
         // searchParameters: {},
-  
+
         // Optional: path for search page that enabled by default (`false` to disable it)
         // searchPagePath: 'search',
-  
+
         //... other Algolia params
       },
     }),

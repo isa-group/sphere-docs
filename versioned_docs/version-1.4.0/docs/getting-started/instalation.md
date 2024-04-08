@@ -43,7 +43,7 @@ The package have been built to be used with maven. To install it, just add the f
 ```
 
 :::danger
-In order to use the versions of Pricing4Java supported by this documentation, you have to use version 4.0.0 or greater. If you are interested in a lower version, please refer to the previous documentation.
+In order to use the versions of Pricing4Java supported by this documentation, you can use up to the version 3.3.0. For the latest versions, please refer to the latest documentation.
 :::
 
 ## Pricing4React
@@ -57,22 +57,18 @@ import TabItem from '@theme/TabItem';
 <TabItem value="npm" label="npm">
 
 ```bash
-npm install npm i pricing4react@1.4.0
+npm install pricing4react
 ```
 
 </TabItem>
 <TabItem value="yarn" label="yarn">
 
 ```bash
-yarn add npm i pricing4react@1.4.0
+yarn add pricing4react
 ```
 
 </TabItem>
 </Tabs>
-
-:::danger
-This documentation covers up to the version 1.4.0 of Pricing4React. If your are interested in the latest versions of the library, please refer to the latest documentation.
-:::
 
 :::info
 

@@ -22,13 +22,9 @@ If we want to check if the use of the feature exceeds its limit, the `SPEL` expr
 # ...
 cloudStorage:
   # ...
-  expression: userContext['cloudStorageUse'] <= planContext['features']['cloudStorage']
+  expression: userContext['cloudStorageUse'] <= planContext['cloudStorage']
   # ...
 ```
-
-:::info
-As the `planContext` utilized within the expression repressents as a map the current plan of the user, you should be aware of using either `features` or `usageLimits` to access the atribute you want to evaluate. The `features` key will the value/defaultValue of the feature with the given key, while `usageLimits` will return the equivalent of a declared usageLimit.
-:::
 
 Similarly, the `serverExpresion` field can handle expressions with the same syntax, but its specification will only be used to evaluate the system's consistency using [@PricingPlanAware](../Pricing4Java/pricingplan-aware.md) annotation. This use can be interesting on NUMERIC features, let's see an example.
 

@@ -6,7 +6,7 @@ custom_edit_url: null
 
 # searchNewTokenAndUpdate Function
 
-The `searchNewTokenAndUpdate` function can be used within a response interceptor to search for the `Pricing-Token` header in the response and, if present, update the pricing evaluation context. The following snippet shows an example of its use within an *Axios* interceptor:
+The `searchNewTokenAndUpdate` function can be used within a response interceptor to search for the `New-Token` header in the response and, if present, update the pricing evaluation context. The following snippet shows an example of its use within an *Axios* interceptor:
 
 ```javascript
 
@@ -34,6 +34,6 @@ instance.interceptors.response.use(
 
 :::info
 
-If the pricing evaluation context is updated due to the presence of a new token within the `Pricing-Token` header, the website will reload in order to apply changes.
+If the pricing evaluation context is updated due to the presence of a new token within the `New-Token` header, the website will reload in order to apply changes.
 
 :::

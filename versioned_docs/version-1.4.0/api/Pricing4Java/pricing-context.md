@@ -25,6 +25,11 @@ public class PricingConfiguration extends PricingContext {
     }
 
     @Override
+    public Object getUserAuthorities() {
+        // This method should return the object used inside the application to determine the authority of the user inside the JWT.
+    }
+
+    @Override
     public Map<String, Object> getUserContext() {
         // This method should return the user context that will be used to evaluate the pricing plan.
         // It should be considered which users has accessed the service and what information is available.
