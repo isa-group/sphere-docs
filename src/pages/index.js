@@ -45,7 +45,7 @@ function HomepageHeader() {
       </div>
       <div className="hero-button-container">
         <Link
-          to="/docs/docs/getting-started/configuration"
+          to={`/docs/${siteConfig.customFields.currentVersion}/docs/getting-started/configuration`}
           className="hero-button "
         >
           Starting Tutorial - 10min ⏱️

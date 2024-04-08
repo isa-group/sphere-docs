@@ -6,6 +6,8 @@
 
 import { themes as prismThemes } from "prism-react-renderer";
 
+const currentVersion = "2.0.0";
+
 /** @type {import('@docusaurus/types').Config} */
 const config = {
   title: "Pricing4SaaS",
@@ -34,6 +36,10 @@ const config = {
     locales: ["en"],
   },
 
+  customFields: {
+    currentVersion: currentVersion,
+  },
+
   presets: [
     [
       "classic",
@@ -48,8 +54,8 @@ const config = {
           lastVersion: "current",
           versions: {
             current: {
-              label: "2.0.0",
-              path: "2.0.0",
+              label: currentVersion,
+              path: currentVersion,
             },
           },
         },
@@ -100,7 +106,6 @@ const config = {
           {
             type: 'docsVersionDropdown',
             position: 'right',
-            dropdownItemsAfter: [{to: '/versions'}],
             dropdownActiveClassDisabled: true,
           },
         ],
@@ -113,15 +118,15 @@ const config = {
             items: [
               {
                 label: "Getting Started",
-                to: "/docs/docs/Introduction",
+                to: `/docs/${currentVersion}/docs/Introduction`,
               },
               {
                 label: "Developer Guide",
-                to: "/docs/api/introduction",
+                to: `/docs/${currentVersion}/api/introduction`,
               },
               {
                 label: "FAQs",
-                to: "/docs/commonErrors/introduction",
+                to: `/docs/${currentVersion}/commonErrors/introduction`,
               },
             ],
           },
