@@ -19,12 +19,10 @@ To enable this option within your spring application, you can use the following 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-@SpringBootApplication()
-@ComponentScan(basePackages = {"io.github.isagroup", "org.springframework.samples.myapplication"})
+@SpringBootApplication(scanBasePackages = {"io.github.isagroup", "org.springframework.samples.myapplication"})
 public class MyApplication {
 @Bean
 public WebMvcConfigurer corsConfigurer() {

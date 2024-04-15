@@ -38,10 +38,8 @@ To get started with **Pricing4SaaS**, you'll need to install both `Pricing4Java`
 ```java
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.ComponentScan;
 
-@SpringBootApplication()
-@ComponentScan(basePackages = {"io.github.isagroup", "org.springframework.samples.myfirstpricingdrivensaasapplication"})
+@SpringBootApplication(scanBasePackages = {"io.github.isagroup", "org.springframework.samples.myapplication"})
 public class MyFirstPricingDrivenSaaSApplication {
 
 	public static void main(String[] args) {
