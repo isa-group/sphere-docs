@@ -39,6 +39,11 @@ public class PricingConfiguration extends PricingContext {
     // OPTIONALLY OVERRIDE THE FOLLOWING METHODS TO ADD CUSTOM FUNCTIONALITY
 
     @Override
+    public String getAuthJwtSecret(){
+        return this.getJwtSecret(); // Configures a different secret for the authorization JWT
+    }
+
+    @Override
     public int getJwtExpiration() {
         return 86400000; // Configures a custom expiration time of the JWT in milliseconds
     }
