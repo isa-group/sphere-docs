@@ -6,7 +6,7 @@
 
 import { themes as prismThemes } from "prism-react-renderer";
 
-const currentVersion = "2.0.0";
+const currentVersion = "2.0.1";
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
