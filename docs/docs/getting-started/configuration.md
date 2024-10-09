@@ -59,7 +59,7 @@ public class MyFirstPricingDrivenSaaSApplication {
 
 ### 2. Declare a pricing configuration file
 
-Pricing4Java uses a YAML file written in the [Yaml4SaaS](../../api/Yaml4SaaS/the-yaml4saas-syntax) syntax to represent and manage the whole pricing. The file must be placed inside the classpath of the project. Create the file `pricing/pricing.yml` within such directory and copy the snippet below, which shows a basic structure of such syntax:
+Pricing4Java uses a YAML file written in the [Pricing2Yaml](../../api/Pricing2Yaml/the-pricing2yaml-syntax) syntax to represent and manage the whole pricing. The file must be placed inside the classpath of the project. Create the file `pricing/pricing.yml` within such directory and copy the snippet below, which shows a basic structure of such syntax:
 
 ```yaml
 saasName: My First Pricing Driven SaaS
@@ -118,7 +118,7 @@ addOns:
         value: 100
 ```
 
-### 2.1 (OPTIONAL) Create a unit test to validate the Yaml4SaaS file
+### 2.1 (OPTIONAL) Create a unit test to validate the Pricing2Yaml file
 
 If you are interested in checking if your YAML file is correctly formatted, you can implement a test to do so. Here it is an example:
 
@@ -130,7 +130,7 @@ void parsePostmanYamlToClassTest() {
 }
 ```
 
-The test will fail if the YAML file does not correctly follow the Yaml4SaaS syntax, and will throw an exception explaining the problem.
+The test will fail if the YAML file does not correctly follow the Pricing2Yaml syntax, and will throw an exception explaining the problem.
 
 ### 3. Configure the pricing context
 

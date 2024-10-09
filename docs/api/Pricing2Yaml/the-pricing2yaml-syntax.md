@@ -3,9 +3,9 @@ sidebar_position: 1
 custom_edit_url: null
 ---
 
-# The Yaml4SaaS Syntax
+# The Pricing2Yaml Syntax
 
-**Yaml4SaaS** emerges as a pragmatic application of the *Pricing4SaaS model*, aligning with the overarching objective of formalizing and structuring pricing information for SaaS platforms. Building upon the foundational principles articulated in *Pricing4SaaS*, Yaml4SaaS embodies a simplified and versatile YAML-based syntax designed for serializing comprehensive details about SaaS offerings. The essence of Yaml4SaaS lies in its capacity to encapsulate pricing plans, add-ons, features and usage limits within a concise and human-readable YAML format. Here is a tempalte specification of the Yaml4SaaS syntax:
+**Pricing2Yaml** (previously known as Yaml4SaaS) emerges as a pragmatic application of the *Pricing4SaaS model*, aligning with the overarching objective of formalizing and structuring pricing information for SaaS platforms. Building upon the foundational principles articulated in *Pricing4SaaS*, Pricing2Yaml embodies a simplified and versatile YAML-based syntax designed for serializing comprehensive details about SaaS offerings. The essence of Pricing2Yaml lies in its capacity to encapsulate pricing plans, add-ons, features and usage limits within a concise and human-readable YAML format. Here is a tempalte specification of the Pricing2Yaml syntax:
 
 ```yaml
 saasName: GitHub
@@ -115,4 +115,4 @@ In the `features` and `usageLimits` subsections of each plan, only those requiri
 
 Within the **addOns** section, the focus is on delineating the specific details of additional offerings beyond the core plans. Each add-on is characterized by its unique features and usage limits, which have to be listed in the structure established in the `features` and `usageLimits` sections, but not included on plans. Similar to the approach taken in the previous section of the file, only those `features` or `usageLimits` necessitating an alteration in the `defaultValue` are explicitly outlined. As an extra field, add-ons also allow to extent a usageLimit. This is extremely powerful for modeling overage cost to some limits.
 
-In conclusion, Yaml4SaaS stands as a practical implementation of the Pricing4SaaS model, providing a YAML-based syntax to formalize SaaS pricing structures in a human-readable format that enhances clarity and simplicity.
+In conclusion, Pricing2Yaml stands as a practical implementation of the Pricing4SaaS model, providing a YAML-based syntax to formalize SaaS pricing structures in a human-readable format that enhances clarity and simplicity.

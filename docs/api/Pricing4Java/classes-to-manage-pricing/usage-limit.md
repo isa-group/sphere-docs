@@ -30,7 +30,7 @@ public abstract class UsageLimit {
 
 The method isLinkedToFeature can be used to check if the feature whose name is received as parameter is linked to the usageLimit.
 
-Besides, each usage limit type supported by Yaml4SaaS is represented by a class that extends this abstract one. The following list shows the classes that extend Feature:
+Besides, each usage limit type supported by Pricing2Yaml is represented by a class that extends this abstract one. The following list shows the classes that extend Feature:
 
 - **NonRenewable**
 - **Renewable**

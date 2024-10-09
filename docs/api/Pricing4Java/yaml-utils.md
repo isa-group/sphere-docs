@@ -5,7 +5,7 @@ custom_edit_url: null
 
 # YamlUtils
 
-This class contains two static methods that can be used to parse the YAML specification of a pricing in the Yaml4SaaS syntax to a PricingManager object and vice versa. To extract the information of the YAML file:
+This class contains two static methods that can be used to parse the YAML specification of a pricing in the Pricing2Yaml syntax to a PricingManager object and vice versa. To extract the information of the YAML file:
 
 ```java
 import io.github.isagroup.models.PricingManager;

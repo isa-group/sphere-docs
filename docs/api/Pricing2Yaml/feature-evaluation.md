@@ -5,7 +5,7 @@ custom_edit_url: null
 
 # Feature Evaluation
 
-Since the primary goal of the Pricing4Java is to automatically manage the access of an user to a feature, Yaml4SaaS allows to define an evaluation expression within each feature through the `expression` and `serverExpression` fields.
+Since the primary goal of the Pricing4Java is to automatically manage the access of an user to a feature, Pricing2Yaml allows to define an evaluation expression within each feature through the `expression` and `serverExpression` fields.
 
 The `expression` field must contain a string [SPEL](https://docs.spring.io/spring-framework/docs/3.2.x/spring-framework-reference/html/expressions.html) expression that will be used to evaluate wether the feature is available for an user or not. It can access the data of the user context using the `userContext` variable, while the plan's is available through `planContext`.For example, considering a user context that contains the following information:
 
