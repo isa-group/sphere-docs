@@ -20,14 +20,18 @@ If we want to check if the use of the feature exceeds its limit, the `SPEL` expr
 
 ```yaml
 # ...
-cloudStorage:
-  # ...
-  expression: userContext['cloudStorageUse'] <= planContext['features']['cloudStorage']
+feature1:
+  description: ""
+  valueType: NUMERIC
+  defaultValue: 10
+  type: DOMAIN
+  expression: userContext['feature1use'] < planContext['features']['feature1']
+  serverExpression: userContext['feature1use'] <= planContext['features']['feature1']
   # ...
 ```
 
 :::info
-As the `planContext` utilized within the expression repressents as a map the current plan of the user, you should be aware of using either `features` or `usageLimits` to access the atribute you want to evaluate. The `features` key will the value/defaultValue of the feature with the given key, while `usageLimits` will return the equivalent of a declared usageLimit.
+As the `planContext` utilized within the expression repressents as a map the current plan of the user, you should be aware of using either `features` or `usageLimits` to access the atribute you want to evaluate. The `features` key will have the `value` or `defaultValue` of the feature with the given key, while `usageLimits` will return the equivalent of a declared usage limit.
 :::
 
 Similarly, the `serverExpresion` field can handle expressions with the same syntax, but its specification will only be used to evaluate the system's consistency using [@PricingPlanAware](../Pricing4Java/pricingplan-aware.md) annotation. This use can be interesting on NUMERIC features, let's see an example.
@@ -38,7 +42,7 @@ If we have a button on the UI to add items to a list, it should be only availabl
 # ...
 feature1:
   # ...
-  expression: userContext['feature1use'] < planContext['feature1']
+  expression: userContext['feature1use'] < planContext['features']['feature1']
   # ...
 ```
 
@@ -48,7 +52,7 @@ However, on the server side, we should consider that the application has a valid
 # ...
 feature1:
   # ...
-  expression: userContext['feature1use'] <= planContext['feature1']
+  serverExpression: userContext['feature1use'] <= planContext['features']['feature1']
   # ...
 ```
 
@@ -58,7 +62,32 @@ To handle this type of situations, the use of the field `serverExpression` is ne
 # ...
 feature1:
   # ...
-  expression: userContext['feature1use'] < planContext['feature1']
-  serverExpression: userContext['feature1use'] <= planContext['feature1']
+  expression: userContext['feature1use'] < planContext['features']['feature1']
+  serverExpression: userContext['feature1use'] <= planContext['features']['feature1']
   # ...
 ```
+
+## About SPEL
+
+In SPEL if you access a **key** that **doesn't exist** will be `null` by default. In our expression:
+
+```txt
+userContext['feature1uses'] <= planContext['features']['feature1']
+```
+
+will be substituted with
+
+```txt
+# userContext['feature1uses'] doesn't exist, I misspell it so null
+# planContext['features']['feature1'] is equal to 10
+
+null <= 10
+```
+
+The latter expression will evaluate to `false` meaning that `feature1` will always be **DISABLED**
+
+Conclusions
+
+- **Double check** the writting of expressions in your yaml, look for misspellings and access the correspoding section
+  of `planContext` which are `features` or `usageLimits`
+- **Keep in sync** the **yaml** and the **Java map** that you pass in the `PricingConfiguration.java` file
