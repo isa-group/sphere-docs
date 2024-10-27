@@ -67,6 +67,7 @@ feature1:
   # ...
 ```
 
+:::warning
 ## About SPEL
 
 In SPEL if you access a **key** that **doesn't exist** will be `null` by default. In our expression:
@@ -86,8 +87,9 @@ null <= 10
 
 The latter expression will evaluate to `false` meaning that `feature1` will always be **DISABLED**
 
-Conclusions
+### Conclusions
 
 - **Double check** the writting of expressions in your yaml, look for misspellings and access the correspoding section
   of `planContext` which are `features` or `usageLimits`
 - **Keep in sync** the **yaml** and the **Java map** that you pass in the `PricingConfiguration.java` file
+:::
