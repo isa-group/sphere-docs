@@ -1,9 +1,9 @@
 ---
-sidebar_position: 4
+sidebar_position: 5
 custom_edit_url: null
 ---
 
-# Pricing2Yaml 1.0 Specification
+# Pricing2Yaml 1.1 Specification
 
 :::info
 We use [yaml type](https://yaml.org/type/) abbreviations to describe field supported types.
@@ -23,46 +23,32 @@ saasName: Petclinic
 ## `version`
 
 - **mandatory**
-- Supported value: `1.0`
+- Supported value: `1.1`
 
 ```yaml
-version: "1.0"
+version: "1.1"
 ```
 
-## `day`
+## `createdAt`
 
 - **mandatory**
-- Field type: `int`
+- Field type: `tiemstamp` or `str` in [ISO 8601](https://www.iso.org/iso-8601-date-and-time-format.html) format
 
-Day of the month in which the pricing is model.
+Date in which your pricing was modeled.
 
-```yaml
-day: 29
-```
-
-## `month`
-
-- **mandatory**
-- Field type: `int` from 1 to 12
-
-Month of the year the pricing is model.
-
-Number 1 stands for January and 12 for December.
+Timestamp:
 
 ```yaml
-month: 10 # October
+createdAt: 2024-11-14
 ```
 
-## `year`
-
-- **mandatory**
-- Field type: `int`
-
-Year in which the pricing is model.
+String in ISO 8601:
 
 ```yaml
-year: 2024
+createdAt: "2024-11-14"
 ```
+
+Date version
 
 ## `currency`
 
@@ -849,6 +835,23 @@ addOns:
     availableFor:
       - GOLD
       - SILVER
+```
+
+## `addOns.<name>.dependsOn`
+
+- **optional**
+- Field type: `seq` of addon names
+
+A list of addon names that your addon is dependent.
+
+```yaml
+addOns:
+  ENTERPRISE:
+  SECURITY:
+  ADVANCED_SECURITY:
+    dependsOn:
+      - ENTERPRISE
+      - SECURITY
 ```
 
 ## `addOns.<name>.monthlyPrice`
