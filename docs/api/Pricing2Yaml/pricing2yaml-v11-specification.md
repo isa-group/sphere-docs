@@ -842,16 +842,20 @@ addOns:
 - **optional**
 - Field type: `seq` of addon names
 
-A list of addon names that your addon is dependent.
+A list of addon to be subscribed in order to purchase the current addon.
+
+Imagine that your addon `SECURITY` depends on `ENTERPRISE` addon. That
+means that in order to include in your subscription the `SECURITY` addon you also have to include
+`ENTERPRISE` addon.
+
+That way you can subscribe to `ENTERPRISE` or `ENTERPRISE` and `SECURITY` but no exclusively to
+`SECURITY` addon.
 
 ```yaml
 addOns:
   ENTERPRISE:
   SECURITY:
-  ADVANCED_SECURITY:
-    dependsOn:
-      - ENTERPRISE
-      - SECURITY
+    - ENTERPRISE
 ```
 
 ## `addOns.<name>.monthlyPrice`
