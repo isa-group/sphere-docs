@@ -855,7 +855,8 @@ That way you can subscribe to `ENTERPRISE` or `ENTERPRISE` and `SECURITY` but no
 addOns:
   ENTERPRISE:
   SECURITY:
-    - ENTERPRISE
+    dependsOn:
+      - ENTERPRISE
 ```
 
 ## `addOns.<name>.monthlyPrice`
