@@ -65,6 +65,28 @@ For example `USD` stands for USA dollars and `EUR` stands for Euros.
 currency: USD
 ```
 
+## `starts`
+
+- **optional**
+- Field type: `timestamp`
+
+Indicates the point in time at which the pricing begins to operate.
+
+```yaml
+starts: 2024-11-17 10:00
+```
+
+## `ends`
+
+- **optional**
+- Field type: `timestamp`
+
+Indicates the point in time at which the pricing ends its operation.
+
+```yaml
+ends: 2025-11-17 10:00
+```
+
 ## `hasAnnualPayment`
 
 - **mandatory**
