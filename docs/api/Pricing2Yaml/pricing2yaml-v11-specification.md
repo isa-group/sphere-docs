@@ -6,33 +6,51 @@ custom_edit_url: null
 # Pricing2Yaml 1.1 Specification
 
 :::info
-We use [yaml type](https://yaml.org/type/) abbreviations to describe field supported types.
+We use [YAML type](https://yaml.org/type/) abbreviations to describe the supported types of fields.
+
+The YAML snippets demonstrating the Pricing2Yaml specification are intentionally incomplete.
+Certain fields have been omitted for clarity and explanation purposes.
+
 :::
 
 ## `saasName`
 
-- **mandatory**
+- **required**
 - Field type: `str`
 
 Name of the pricing.
 
 ```yaml
-saasName: Petclinic
+saasName: "Petclinic"
 ```
+
+**Libraries support**
+
+|            | Pricing4Java | Pricing4TS |
+| ---------- | ------------ | ---------- |
+| `saasName` | Yes          | Yes        |
 
 ## `version`
 
-- **mandatory**
+- **required**
 - Supported value: `1.1`
+
+Version of the Pricing2Yaml specification
 
 ```yaml
 version: "1.1"
 ```
 
+**Libraries support**
+
+|           | Pricing4Java | Pricing4TS |
+| --------- | ------------ | ---------- |
+| `version` | Yes          | Yes        |
+
 ## `createdAt`
 
-- **mandatory**
-- Field type: `tiemstamp` or `str` in [ISO 8601](https://www.iso.org/iso-8601-date-and-time-format.html) format
+- **required**
+- Field type: `timestamp` or `str` in [ISO 8601](https://www.iso.org/iso-8601-date-and-time-format.html) format
 
 Date in which your pricing was modeled.
 
@@ -48,11 +66,15 @@ String in ISO 8601:
 createdAt: "2024-11-14"
 ```
 
-Date version
+**Libraries support**
+
+|             | Pricing4Java | Pricing4TS |
+| ----------- | ------------ | ---------- |
+| `createdAt` | Yes          | Yes        |
 
 ## `currency`
 
-- **mandatory**
+- **required**
 - Field type: `str`
 
 Currency in which the pricing plans and addOns are selled. Use
@@ -62,8 +84,14 @@ better pricing standarization.
 For example `USD` stands for USA dollars and `EUR` stands for Euros.
 
 ```yaml
-currency: USD
+currency: "USD"
 ```
+
+**Libraries support**
+
+|            | Pricing4Java | Pricing4TS |
+| ---------- | ------------ | ---------- |
+| `currency` | Yes          | Yes        |
 
 ## `starts`
 
@@ -73,8 +101,14 @@ currency: USD
 Indicates the point in time at which the pricing begins to operate.
 
 ```yaml
-starts: 2024-11-17 10:00
+starts: 2024-11-17 10:00:00
 ```
+
+**Libraries support**
+
+|          | Pricing4Java | Pricing4TS |
+| -------- | ------------ | ---------- |
+| `starts` | Yes          | No         |
 
 ## `ends`
 
@@ -84,12 +118,18 @@ starts: 2024-11-17 10:00
 Indicates the point in time at which the pricing ends its operation.
 
 ```yaml
-ends: 2025-11-17 10:00
+ends: 2025-11-17 10:00:00
 ```
+
+**Libraries support**
+
+|        | Pricing4Java | Pricing4TS |
+| ------ | ------------ | ---------- |
+| `ends` | Yes          | No         |
 
 ## `hasAnnualPayment`
 
-- **mandatory**
+- **required**
 - Field type: `bool`
 
 Setting `hasAnnualPayment` to `true` means that your pricing supports yearly billing.
@@ -98,9 +138,15 @@ Setting `hasAnnualPayment` to `true` means that your pricing supports yearly bil
 hasAnnualPayment: true
 ```
 
+**Libraries support**
+
+|                    | Pricing4Java | Pricing4TS |
+| ------------------ | ------------ | ---------- |
+| `hasAnnualPayment` | Yes          | Yes        |
+
 ## `features`
 
-- **mandatory**
+- **required**
 - Field type: `map`
 
 A map containing your pricing features. Each key of the map is the feature name and
@@ -111,9 +157,14 @@ features:
   awesome_feature:
   cool_feature:
   nice_feature:
-    # feature attributes
-    description: ""
+    # ...
 ```
+
+**Libraries support**
+
+|            | Pricing4Java | Pricing4TS |
+| ---------- | ------------ | ---------- |
+| `features` | Yes          | Yes        |
 
 ## `features.<name>.description`
 
@@ -127,15 +178,19 @@ are usually in a collapsable element or in an icon hiding it, see
 ```yaml
 features:
   publicRepositories:
-    description:
-      Host open source projects in public GitHub repositories, accessible via
-      web or command line. Public repositories are accessible to anyone at
-      GitHub.com.
+    description: Host open source projects in public GitHub repositories, accessible via web or command line.
+    Public repositories are accessible to anyone at GitHub.com."
 ```
+
+**Libraries support**
+
+|                               | Pricing4Java | Pricing4TS |
+| ----------------------------- | ------------ | ---------- |
+| `features.<name>.description` | Yes          | Yes        |
 
 ## `features.<name>.type`
 
-- **mandatory**
+- **required**
 - Field type: `str`
 - Supported values: **one of** `AUTOMATION`, `DOMAIN`, `GUARANTEE`,
   `INFORMATION`, `INTEGRATION`, `MANAGEMENT`, `PAYMENT` or `SUPPORT`
@@ -160,7 +215,7 @@ allowing to perform new operations or using exclusive services.
 ```yaml
 features:
   publicRepositories:
-    description: >-
+    description:
       Host open source projects in public GitHub repositories, accessible via
       web or command line. Public repositories are accessible to anyone at
       GitHub.com.
@@ -195,8 +250,7 @@ or to use functionalities from external third-party software within the system.
 ```yaml
 features:
   adminAnalyticsAPI:
-    description: >-
-      Admin analytics API: Retrieve analytics data for a specific date in a
+    description: Retrieve analytics data for a specific date in a
       compressed JSON file format.
     type: INTEGRATION
     integrationType: API
@@ -235,9 +289,15 @@ features:
       - OTHER
 ```
 
+**Libraries support**
+
+|                        | Pricing4Java | Pricing4TS |
+| ---------------------- | ------------ | ---------- |
+| `features.<name>.type` | Yes          | Yes        |
+
 ## `features.<name>.valueType`
 
-- **mandatory**
+- **required**
 - Field type: `str`
 - Supported values: **one of** `BOOLEAN`, `NUMERIC` or `TEXT`
 
@@ -259,9 +319,15 @@ features:
     defaultValue: Pricing2Yaml is awesome!
 ```
 
+**Libraries support**
+
+|                             | Pricing4Java | Pricing4TS |
+| --------------------------- | ------------ | ---------- |
+| `features.<name>.valueType` | Yes          | Yes        |
+
 ## `features.<name>.defaultValue`
 
-- **mandatory**
+- **required**
 - Field type is `bool` if `valueType` is set to `BOOLEAN`
 - Field type is `int` if `valueType` set to `NUMERIC`
 - Field type is `str` or `seq` of **payment methods** if `valueType` is set to `TEXT`
@@ -303,17 +369,35 @@ plans:
 Notice that `SILVER` features are `null`, meaning that, `supportPriority`
 will have the value `LOW` as you have previously define it in the `features` block.
 
+**Libraries support**
+
+|                                | Pricing4Java | Pricing4TS |
+| ------------------------------ | ------------ | ---------- |
+| `features.<name>.defaultValue` | Yes          | Yes        |
+
 ## `features.<name>.expression`
 
 See [Feature Evaluation](./feature-evaluation.md) for details.
+
+**Libraries support**
+
+|                              | Pricing4Java | Pricing4TS |
+| ---------------------------- | ------------ | ---------- |
+| `features.<name>.expression` | Yes          | No         |
 
 ## `features.<name>.serverExpression`
 
 See [Feature Evaluation](./feature-evaluation.md) for details.
 
+**Libraries support**
+
+|                                    | Pricing4Java | Pricing4TS |
+| ---------------------------------- | ------------ | ---------- |
+| `features.<name>.serverExpression` | Yes          | No         |
+
 ## `features.<name>.automationType`
 
-- If feature `type` is `AUTOMATION` this field is **mandatory**
+- If feature `type` is `AUTOMATION` this field is **required**
 - Field type: `str`
 - Supported values: **one of** `BOT`, `FILTERING`, `TRACKING` or `TASK_AUTOMATION`
 
@@ -359,15 +443,19 @@ automatically moving the issues to "Done" when thery are closed in the Github ka
 features:
   dependabotVersionUpdates:
     description: "Keep projects up-to-date by automatically opening pull requests that update out-of-date dependencies."
-    valueType: BOOLEAN
-    defaultValue: true
     type: AUTOMATION
     automationType: TASK_AUTOMATION
 ```
 
+**Libraries support**
+
+|                                  | Pricing4Java | Pricing4TS |
+| -------------------------------- | ------------ | ---------- |
+| `features.<name>.automationType` | Yes          | Yes        |
+
 ## `features.<name>.docUrl`
 
-- If feature `type` is `GUARANTEE` this is **mandatory**
+- If feature `type` is `GUARANTEE` this is **required**
 - Field type: `str`
 
 URL redirecting to the guarantee or compliance documentation.
@@ -380,9 +468,15 @@ features:
     docUrl: "https://www.wrike.com/features/admin-security/"
 ```
 
+**Libraries support**
+
+|                          | Pricing4Java | Pricing4TS |
+| ------------------------ | ------------ | ---------- |
+| `features.<name>.docUrl` | Yes          | No         |
+
 ## `features.<name>.integrationType`
 
-- If feature `type` is `INTEGRATION` this is **mandatory**
+- If feature `type` is `INTEGRATION` this is **required**
 - Field type: `str`
 - Supported values: **one of** `API`, `EXTENSION`, `IDENTITY_PROVIDER`, `WEB_SAAS`, `MARKETPLACE` or `EXTERNAL_DEVICE`
 
@@ -420,7 +514,7 @@ features:
 ```
 
 **WEB_SAAS**: every integration feature that involves an external SaaS. For example,
-sync your calendar with Outlook. Usage of `features.<name>.pricingUrls` is mandatory.
+sync your calendar with Outlook. Usage of `features.<name>.pricingUrls` is required.
 
 ```yaml
 features:
@@ -457,9 +551,15 @@ features:
     integrationType: EXTERNAL_DEVICE
 ```
 
+**Libraries support**
+
+|                                   | Pricing4Java | Pricing4TS |
+| --------------------------------- | ------------ | ---------- |
+| `features.<name>.integrationType` | Yes          | Yes        |
+
 ## `features.<name>.pricingUrls`
 
-- If feature `type` is `INTEGRATION` and `integrationType` is `WEB_SAAS` this field is **mandatory**
+- If feature `type` is `INTEGRATION` and `integrationType` is `WEB_SAAS` this field is **required**
 - Field type: `seq` of `str`
 
 You can specify a list of URLs linking to the associated pricing page of
@@ -474,6 +574,12 @@ features:
       - https://workspace.google.com/pricing
 ```
 
+**Libraries support**
+
+|                               | Pricing4Java | Pricing4TS |
+| ----------------------------- | ------------ | ---------- |
+| `features.<name>.pricingUrls` | Yes          | No         |
+
 ## `usageLimits`
 
 - **optional**
@@ -484,10 +590,17 @@ will be the name of the corresponding usage limit.
 
 ```yaml
 usageLimits:
+  maxPets:
   collaborators:
   githubActionsQuota:
-    # usage limit attributes
+    # ...
 ```
+
+**Libraries support**
+
+|               | Pricing4Java | Pricing4TS |
+| ------------- | ------------ | ---------- |
+| `usageLimits` | Yes          | Yes        |
 
 ## `usageLimits.<name>.description`
 
@@ -502,9 +615,15 @@ usageLimits:
     description: "The number of days you can access message and file information."
 ```
 
+**Libraries support**
+
+|                                  | Pricing4Java | Pricing4TS |
+| -------------------------------- | ------------ | ---------- |
+| `usageLimits.<name>.description` | Yes          | Yes        |
+
 ## `usageLimits.<name>.type`
 
-- **mandatory**
+- **required**
 - Field type: `str`
 - Supported values: **one of** `NON_RENEWABLE`
   `RENEWABLE` , `RESPONSE_DRIVEN` or `TIME_DRIVEN`
@@ -544,15 +663,21 @@ combined with a non-renewable limit.
 
 ```yaml
 compileTimeoutLimit:
-  description: >-
+  description:
     This is how much time you get to compile your project on the Overleaf servers.
     You may need additional time for longer or more complex projects.
   type: TIME_DRIVEN
 ```
 
+**Libraries support**
+
+|                           | Pricing4Java | Pricing4TS |
+| ------------------------- | ------------ | ---------- |
+| `usageLimits.<name>.type` | Yes          | Yes        |
+
 ## `usageLimits.<name>.valueType`
 
-- **mandatory**
+- **required**
 - Field type: `str`
 - Supported values: **one of** `BOOLEAN`, `NUMERIC` or `TEXT`
 
@@ -574,9 +699,15 @@ features:
     defaultValue: Pricing2Yaml is awesome!
 ```
 
+**Libraries support**
+
+|                                | Pricing4Java | Pricing4TS |
+| ------------------------------ | ------------ | ---------- |
+| `usageLimits.<name>.valueType` | Yes          | Yes        |
+
 ## `usageLimits.<name>.defaultValue`
 
-- **mandatory**
+- **required**
 - Field type is `bool` if `valueType` is set to `BOOLEAN`
 - Field type is `int` if `valueType` set to `NUMERIC`
 - Field type is `str` if `valueType` is set to `TEXT`
@@ -613,9 +744,15 @@ plans:
         value: 10
 ```
 
+**Libraries support**
+
+|                                   | Pricing4Java | Pricing4TS |
+| --------------------------------- | ------------ | ---------- |
+| `usageLimits.<name>.defaultValue` | Yes          | Yes        |
+
 ## `usageLimits.<name>.unit`
 
-- **mandatory**
+- **required**
 - Field type: `str`
 
 Measure of the usage limit.
@@ -623,16 +760,20 @@ Measure of the usage limit.
 Here is an example using unit from Github pricing:
 
 ```yaml
-features:
-  githubActions:
 usageLimits:
   githubActionsQuota:
     unit: minute/month
 ```
 
+**Libraries support**
+
+|                           | Pricing4Java | Pricing4TS |
+| ------------------------- | ------------ | ---------- |
+| `usageLimits.<name>.unit` | Yes          | Yes        |
+
 ## `usageLimits.<name>.linkedFeatures`
 
-- **mandatory**
+- **optional**
 - Field type: `seq` of feature names (`str`)
 
 Bounds your usageLimit to a one or multiple features by adding your
@@ -655,6 +796,12 @@ usageLimits:
       - feature4
 ```
 
+**Libraries support**
+
+|                                     | Pricing4Java | Pricing4TS |
+| ----------------------------------- | ------------ | ---------- |
+| `usageLimits.<name>.linkedFeatures` | Yes          | Yes        |
+
 ## `plans`
 
 - **optional**
@@ -664,12 +811,23 @@ A map containing the plans of your pricing. Each entry of this map
 will be the name of the corresponding plan.
 
 ```yaml
-saasName: Petclinic
 plans:
   BASIC:
   GOLD:
   PLATINUM:
+    # ...
 ```
+
+:::info
+You have to specify at least `plans` or `addOns`. A combination
+of both also works.
+:::
+
+**Libraries support**
+
+|         | Pricing4Java | Pricing4TS |
+| ------- | ------------ | ---------- |
+| `plans` | Yes          | Yes        |
 
 ## `plans.<name>.description`
 
@@ -684,33 +842,63 @@ plans:
     description: "All the basics for businesses that are just getting started."
 ```
 
+**Libraries support**
+
+|                            | Pricing4Java | Pricing4TS |
+| -------------------------- | ------------ | ---------- |
+| `plans.<name>.description` | Yes          | Yes        |
+
 ## `planes.<name>.monthlyPrice`
 
-- **mandatory**
+- **required**
 - Field type: `float`
 
 Price of your plan when billing is set to monthly.
 
+```yaml
+plans:
+  PRO:
+    monthlyPrice: 9.99
+```
+
 :::info
 You have to specify at least `monthlyPrice` or `annualPrice`. A combination
 of both also works.
 :::
 
+**Libraries support**
+
+|                              | Pricing4Java | Pricing4TS |
+| ---------------------------- | ------------ | ---------- |
+| `planes.<name>.monthlyPrice` | Yes          | Yes        |
+
 ## `plans.<name>.annualPrice`
 
-- **mandatory**
+- **required**
 - Field type: `float`
 
 Price of your plan when billing is set to annual.
 
+```yaml
+plans:
+  PRO:
+    annualPrice: 14.99
+```
+
 :::info
 You have to specify at least `monthlyPrice` or `annualPrice`. A combination
 of both also works.
 :::
 
+**Libraries support**
+
+|                            | Pricing4Java | Pricing4TS |
+| -------------------------- | ------------ | ---------- |
+| `plans.<name>.annualPrice` | Yes          | Yes        |
+
 ## `plans.<name>.unit`
 
-- **mandatory**
+- **required**
 - Field type: `str`
 
 Measure of the plan subscription.
@@ -720,6 +908,12 @@ plans:
   TEAM:
     unit: user/month
 ```
+
+**Libraries support**
+
+|                     | Pricing4Java | Pricing4TS |
+| ------------------- | ------------ | ---------- |
+| `plans.<name>.unit` | Yes          | Yes        |
 
 ## `plans.<name>.features`
 
@@ -738,8 +932,14 @@ plans:
     features:
       cool_feature:
       nice_feature:
-        # other features to override
+        # ...
 ```
+
+**Libraries support**
+
+|                         | Pricing4Java | Pricing4TS |
+| ----------------------- | ------------ | ---------- |
+| `plans.<name>.features` | Yes          | Yes        |
 
 ## `plans.<name>.features.<name>.value`
 
@@ -754,17 +954,17 @@ features:
   supportPriority:
     defaultValue: LOW
 plans:
-  SILVER:
-    features: null
   GOLD:
     features:
       supportPriority:
-        value: 6
-  PLATINUM:
-    features:
-      supportPriority:
-        value: 10
+        value: MEDIUM
 ```
+
+**Libraries support**
+
+|                                      | Pricing4Java | Pricing4TS |
+| ------------------------------------ | ------------ | ---------- |
+| `plans.<name>.features.<name>.value` | Yes          | Yes        |
 
 ## `plans.<name>.usageLimits`
 
@@ -785,6 +985,12 @@ plans:
         # ...
 ```
 
+**Libraries support**
+
+|                            | Pricing4Java | Pricing4TS |
+| -------------------------- | ------------ | ---------- |
+| `plans.<name>.usageLimits` | Yes          | Yes        |
+
 ## `plans.<name>.usageLimits.<name>.value`
 
 - **optional**
@@ -793,24 +999,24 @@ plans:
 Every plan that you model will have by default all usage limits `defaultValue`. You
 can customize it by putting a value in it.
 
-In the following example `collaborators` usage limit are overridden by `STANDARD` and `PROFESSIONAL`.
+In the following example `collaborators` usage limit is overridden by `STANDARD`.
 
 ```yaml
 usageLimits:
   collaborators:
     defaultValue: 1
 addOns:
-  BASIC:
-    usageLimits: null
   STANDARD:
     usageLimits:
       collaborators:
         value: 6
-  PROFESSIONAL:
-    usageLimits:
-      collaborators:
-        value: 10
 ```
+
+**Libraries support**
+
+|                                         | Pricing4Java | Pricing4TS |
+| --------------------------------------- | ------------ | ---------- |
+| `plans.<name>.usageLimits.<name>.value` | Yes          | Yes        |
 
 ## `addOns`
 
@@ -832,6 +1038,12 @@ You have to specify at least `plans` or `addOns`. A combination
 of both also works.
 :::
 
+**Libraries support**
+
+|          | Pricing4Java | Pricing4TS |
+| -------- | ------------ | ---------- |
+| `addOns` | Yes          | Yes        |
+
 ## `addOns.<name>.description`
 
 - **optional**
@@ -839,9 +1051,21 @@ of both also works.
 
 An overview describing the addon purpose.
 
+```yaml
+addOns:
+  StorageBooster:
+    description: Boost your file storage. Do not run out of space!.
+```
+
+**Libraries support**
+
+|                             | Pricing4Java | Pricing4TS |
+| --------------------------- | ------------ | ---------- |
+| `addOns.<name>.description` | No           | Yes        |
+
 ## `addOns.<name>.availableFor`
 
-- **mandatory**
+- **required**
 - Field type: `seq` of plan names
 
 Your addon is available for the plans that you specify in this list.
@@ -858,6 +1082,12 @@ addOns:
       - GOLD
       - SILVER
 ```
+
+**Libraries support**
+
+|                              | Pricing4Java | Pricing4TS |
+| ---------------------------- | ------------ | ---------- |
+| `addOns.<name>.availableFor` | Yes          | Yes        |
 
 ## `addOns.<name>.dependsOn`
 
@@ -881,9 +1111,15 @@ addOns:
       - ENTERPRISE
 ```
 
+**Libraries support**
+
+|                           | Pricing4Java | Pricing4TS |
+| ------------------------- | ------------ | ---------- |
+| `addOns.<name>.dependsOn` | Yes          | Yes        |
+
 ## `addOns.<name>.monthlyPrice`
 
-- **mandatory**
+- **required**
 - Field type: `float`
 
 Price of your addon when billing is set to monthly.
@@ -892,7 +1128,6 @@ Price of your addon when billing is set to monthly.
 addOns:
   postmanFlowsBasic:
     monthlyPrice: 15.00
-    annualPrice: 12.00
 ```
 
 :::info
@@ -900,9 +1135,15 @@ You have to specify at least `monthlyPrice` or `annualPrice`. A combination
 of both also works.
 :::
 
+**Libraries support**
+
+|                              | Pricing4Java | Pricing4TS |
+| ---------------------------- | ------------ | ---------- |
+| `addOns.<name>.monthlyPrice` | Yes          | Yes        |
+
 ## `addOns.<name>.annualPrice`
 
-- **mandatory**
+- **required**
 - Field type: `float`
 
 Price of your addon when billing is set to annual.
@@ -910,7 +1151,6 @@ Price of your addon when billing is set to annual.
 ```yaml
 addOns:
   postmanFlowsBasic:
-    monthlyPrice: 15.00
     annualPrice: 12.00
 ```
 
@@ -919,9 +1159,15 @@ You have to specify at least `monthlyPrice` or `annualPrice`. A combination
 of both also works.
 :::
 
+**Libraries support**
+
+|                             | Pricing4Java | Pricing4TS |
+| --------------------------- | ------------ | ---------- |
+| `addOns.<name>.annualPrice` | Yes          | Yes        |
+
 ## `addOns.<name>.unit`
 
-- **mandatory**
+- **required**
 - Field type: `str`
 
 Measure of the addon subscription.
@@ -931,6 +1177,12 @@ addOns:
   gitLFSDataPack:
     unit: user/month
 ```
+
+**Libraries support**
+
+|                      | Pricing4Java | Pricing4TS |
+| -------------------- | ------------ | ---------- |
+| `addOns.<name>.unit` | Yes          | Yes        |
 
 ## `addOns.<name>.features`
 
@@ -952,6 +1204,12 @@ addOns:
         # ...
 ```
 
+**Libraries support**
+
+|                          | Pricing4Java | Pricing4TS |
+| ------------------------ | ------------ | ---------- |
+| `addOns.<name>.features` | Yes          | Yes        |
+
 ## `addOns.<name>.features.<name>.value`
 
 - **optional**
@@ -965,17 +1223,17 @@ features:
   supportPriority:
     defaultValue: LOW
 addOns:
-  A:
-    features: null
   B:
     features:
       supportPriority:
-        value: 6
-  C:
-    features:
-      supportPriority:
-        value: 10
+        value: MEDIUM
 ```
+
+**Libraries support**
+
+|                                       | Pricing4Java | Pricing4TS |
+| ------------------------------------- | ------------ | ---------- |
+| `addOns.<name>.features.<name>.value` | Yes          | Yes        |
 
 ## `addOns.<name>.usageLimits`
 
@@ -996,6 +1254,12 @@ addOns:
         # ...
 ```
 
+**Libraries support**
+
+|                             | Pricing4Java | Pricing4TS |
+| --------------------------- | ------------ | ---------- |
+| `addOns.<name>.usageLimits` | Yes          | Yes        |
+
 ## `addOns.<name>.usageLimits.<name>.value`
 
 - **optional**
@@ -1004,24 +1268,24 @@ addOns:
 Every addon that you model will have by default all usage limits `defaultValue`. You
 can customize it by putting a value in it.
 
-In the following example `collaborators` usage limit are overridden by `B` and `C`:
+In the following example `collaborators` usage limit is overridden by `B`:
 
 ```yaml
 usageLimits:
   collaborators:
     defaultValue: 1
 addOns:
-  A:
-    usageLimits: null
   B:
     usageLimits:
       collaborators:
         value: 6
-  C:
-    usageLimits:
-      collaborators:
-        value: 10
 ```
+
+**Libraries support**
+
+|                                          | Pricing4Java | Pricing4TS |
+| ---------------------------------------- | ------------ | ---------- |
+| `addOns.<name>.usageLimits.<name>.value` | Yes          | Yes        |
 
 ## `addOns.<name>.usageLimitsExtensions`
 
@@ -1036,13 +1300,15 @@ usageLimits:
     defaultValue: 5
 addOns:
   my_addOn:
-    usageLimits:
-      my_usage_limit:
-        value: 10
     usageLimitsExtensions:
       my_usage_limit:
-        value: 30
 ```
+
+**Libraries support**
+
+|                                       | Pricing4Java | Pricing4TS |
+| ------------------------------------- | ------------ | ---------- |
+| `addOns.<name>.usageLimitsExtensions` | Yes          | Yes        |
 
 ## `addOns.<name>.usageLimitsExtensions.<name>.value`
 
@@ -1059,10 +1325,13 @@ usageLimits:
     defaultValue: 1
 addOns:
   B:
-    usageLimits:
-      collaborators:
-        value: 6
     usageLimitsExtensions:
       collaborators:
         value: 10
 ```
+
+**Libraries support**
+
+|                                                    | Pricing4Java | Pricing4TS |
+| -------------------------------------------------- | ------------ | ---------- |
+| `addOns.<name>.usageLimitsExtensions.<name>.value` | Yes          | Yes        |
