@@ -1,0 +1,25 @@
+import { VersionTable } from "@site/src/components/common";
+
+- **optional**
+- Field type: `bool`, `int` or `str` depending on the `valueType` of the feature
+
+Every addon that you model will have by default all features `defaultValue`. You
+can customize it by putting a value in it.
+
+```yaml
+features:
+  supportPriority:
+    defaultValue: LOW
+addOns:
+  B:
+    features:
+      supportPriority:
+        value: MEDIUM
+```
+
+**Libraries support**
+
+<VersionTable
+  name="addOns.<name>.features.<name>.value"
+  libraries={[false, true]}
+/>

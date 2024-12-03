@@ -1,0 +1,26 @@
+import { VersionTable } from "@site/src/components/common";
+
+- **optional**
+- Field type: `bool`, `int` or `str` depending on the `valueType` of the usage limit
+
+Specify the quantity in which you want to extend your usage limit
+
+In the following example `collaborators` usage limit is extended by 10 units:
+
+```yaml
+usageLimits:
+  collaborators:
+    defaultValue: 1
+addOns:
+  B:
+    usageLimitsExtensions:
+      collaborators:
+        value: 10
+```
+
+**Libraries support**
+
+<VersionTable
+  name="addOns.<name>.usageLimitsExtensions.<name>.value"
+  libraries={[true, true]}
+/>

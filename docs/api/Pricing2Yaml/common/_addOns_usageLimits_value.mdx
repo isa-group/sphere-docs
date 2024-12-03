@@ -1,0 +1,33 @@
+import { VersionTable } from "@site/src/components/common";
+
+- **optional**
+- Field type: `bool`, `int` or `str` depending on the `valueType` of the usage limit
+
+Every addon that you model will have by default all usage limits `defaultValue`. You
+can customize it by putting a value in it.
+
+In the following example `collaborators` usage limit are overridden by `B` and `C`:
+
+```yaml
+usageLimits:
+  collaborators:
+    defaultValue: 1
+addOns:
+  A:
+    usageLimits: null
+  B:
+    usageLimits:
+      collaborators:
+        value: 6
+  C:
+    usageLimits:
+      collaborators:
+        value: 10
+```
+
+**Libraries support**
+
+<VersionTable
+  name="addOns.<name>.usageLimits.<name>.value"
+  libraries={[true, true]}
+/>

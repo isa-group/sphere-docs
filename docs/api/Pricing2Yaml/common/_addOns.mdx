@@ -1,0 +1,23 @@
+import { VersionTable } from "@site/src/components/common";
+
+- **optional**
+- Field type: `map`
+
+A map containing the addons of your pricing. Each entry of this map
+will be the name of the corresponding addon.
+
+```yaml
+addOns:
+  awesome_addOn:
+  cool_addOn:
+    # ...
+```
+
+:::info
+You have to specify at least `plans` or `addOns`. A combination
+of both also works.
+:::
+
+**Libraries support**
+
+<VersionTable name="addOns" libraries={[true, true]} />

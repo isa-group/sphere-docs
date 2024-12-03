@@ -1,0 +1,30 @@
+import { VersionTable } from "@site/src/components/common";
+
+- **optional**
+- Field type: `seq` of `str`
+
+You add one or more features into a group. These groups help features
+to be organized when rendering your pricing.
+
+```yaml
+tags:
+  - Code Management
+  - Code Workflow
+  - Collaboration
+features:
+  publicRepositories:
+    tag: Code Management
+  privateRepositories:
+    tag: Code Management
+  githubActions:
+    tag: Code Workflow
+  issues:
+    tag: Collaboration
+```
+
+**Libraries support**
+
+<VersionTable
+  name="tags"
+  libraries={["Pending to release new package version", true]}
+/>

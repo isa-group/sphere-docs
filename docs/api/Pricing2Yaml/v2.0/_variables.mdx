@@ -1,0 +1,30 @@
+import { VersionTable } from "@site/src/components/common";
+
+:::warning
+This feature is not fully stable and it is subject to change in the future.
+:::
+
+- **optional**
+- Field type: `map`
+
+Define a set of variables to be used when computing the price of your plan.
+For example if you define a variable `x` in the map with a number, this
+variables will be interpolated in the plan equation, i.e, `x` will be
+substituted with `3` so price would be `15.00`.
+
+```yaml
+plans:
+  PRO:
+    price: 9.99
+  ENTERPRISE:
+    price: "5*#x"
+variables:
+  x: 3
+```
+
+**Libraries support**
+
+<VersionTable
+  name="variables"
+  libraries={["Not tested enough to make a release", false]}
+/>

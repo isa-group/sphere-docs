@@ -1,0 +1,55 @@
+import { VersionTable } from "@site/src/components/common";
+
+- If feature `type` is `AUTOMATION` this field is **required**
+- Field type: `str`
+- Supported values: **one of** `BOT`, `FILTERING`, `TRACKING` or `TASK_AUTOMATION`
+
+Type of the automation feature.
+
+**BOT**: every automation feature that depends on machine learning algorithms or LLMs.
+
+```yaml
+features:
+  postbot:
+    description: "https://learning.postman.com/docs/getting-started/basics/about-postbot/"
+    type: AUTOMATION
+    automationType: BOT
+```
+
+**FILTERING**: every automation feature that filters information. For example, spam filtering
+of mail clients.
+
+```yaml
+features:
+  emailSpamFilter:
+    description: "Help protect your business against spam and malware with cloud-based email filtering"
+    type: AUTOMATION
+    automationType: FILTERING
+```
+
+**TRACKING**: every automation feature that monitors a metric and notify the user
+when reaching his threshold. For example, features that triggers some kind of event
+in the system like reaching the limit of API calls.
+
+```yaml
+features:
+  dependabotAlerts:
+    description: "Get notified when there are new vulnerabilities affecting dependencies in your repositories."
+    type: AUTOMATION
+    automationType: TRACKING
+```
+
+**TASK_AUTOMATION**: every automation feature that permit users to automate tasks. For example,
+automatically moving the issues to "Done" when thery are closed in the Github kanban board.
+
+```yaml
+features:
+  dependabotVersionUpdates:
+    description: "Keep projects up-to-date by automatically opening pull requests that update out-of-date dependencies."
+    type: AUTOMATION
+    automationType: TASK_AUTOMATION
+```
+
+**Libraries support**
+
+<VersionTable name="features.<name>.automationType" libraries={[true, true]} />

@@ -1,0 +1,80 @@
+import { VersionTable } from "@site/src/components/common";
+
+- If feature `type` is `INTEGRATION` this is **required**
+- Field type: `str`
+- Supported values: **one of** `API`, `EXTENSION`, `IDENTITY_PROVIDER`, `WEB_SAAS`, `MARKETPLACE` or `EXTERNAL_DEVICE`
+
+Type of the integration feature.
+
+**API**: every feature that includes an internal API that developers can consume.
+
+```yaml
+adminAnalyticsAPI:
+  description: "Admin analytics API: Retrieve analytics data for a specific date in a compressed JSON file format."
+  type: INTEGRATION
+  integrationType: API
+```
+
+**EXTENSION**: every integration feature that extends your SaaS using an external system. For example a browser extension
+or code editor extension like VSCode.
+
+```yaml
+features:
+  copilotIDEIntegration:
+    description: "Get IDE integration from Copilot in your IDE and mobile devices."
+    type: INTEGRATION
+    integrationType: EXTENSION
+```
+
+**IDENTITY_PROVIDER**: every integration feature, that involves a process to authenticate users
+internally or externally. For example Single Sign On (SSO) or LDAP.
+
+```yaml
+features:
+  ldap:
+    description: Access GitHub Enterprise Server using your existing accounts and centrally manage repository access.
+    type: INTEGRATION
+    integrationType: IDENTITY_PROVIDER
+```
+
+**WEB_SAAS**: every integration feature that involves an external SaaS. For example,
+sync your calendar with Outlook. Usage of `features.<name>.pricingUrls` is required.
+
+```yaml
+features:
+  githubIntegration:
+    description: "Link your Overleaf projects directly to a GitHub repository that
+    acts as a remote repository for your overleaf project. This allows you to
+    share with collaborators outside of Overleaf, and integrate Overleaf into more complex workflows."
+    type: INTEGRATION
+    integrationType: WEB_SAAS
+    pricingsUrls:
+      - https://github.com/pricing
+```
+
+**MARKETPLACE**: every integration feature that offers many posibilities to integrate with other systems.
+For example a marketplace that offers widgets.
+
+```yaml
+features:
+  githubApps:
+    description: Install apps that integrate directly with GitHub's API to improve
+    development workflows or build your own for private use or publication in the GitHub Marketplace."
+    type: INTEGRATION
+    integrationType: MARKETPLACE
+```
+
+**EXTERNAL_DEVICE**: every integration feature that involves interactiing with an outer device, like
+a mobile, a computer desktop. For example a 2FA feature.
+
+```yaml
+features:
+  apps:
+    description: "Track time using a mobile app, desktop app, and browser extension."
+    type: INTEGRATION
+    integrationType: EXTERNAL_DEVICE
+```
+
+**Libraries support**
+
+<VersionTable name="features.<name>.integrationType" libraries={[true, true]} />

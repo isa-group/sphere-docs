@@ -1,0 +1,25 @@
+import { VersionTable } from "@site/src/components/common";
+
+- **optional**
+- Field type: `bool`, `int` or `str` depending on the `valueType` of the feature
+
+Every plan that you model will have by default all features `defaultValue`. You
+can customize it by putting a value in it.
+
+```yaml
+features:
+  supportPriority:
+    defaultValue: LOW
+plans:
+  GOLD:
+    features:
+      supportPriority:
+        value: MEDIUM
+```
+
+**Libraries support**
+
+<VersionTable
+  name="plans.<name>.features.<name>.value"
+  libraries={[true, true]}
+/>

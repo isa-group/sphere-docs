@@ -1,0 +1,27 @@
+import { VersionTable } from "@site/src/components/common";
+
+- **optional**
+- Field type: `bool`, `int` or `str` depending on the `valueType` of the usage limit
+
+Every plan that you model will have by default all usage limits `defaultValue`. You
+can customize it by putting a value in it.
+
+In the following example `collaborators` usage limit is overridden by `STANDARD`.
+
+```yaml
+usageLimits:
+  collaborators:
+    defaultValue: 1
+addOns:
+  STANDARD:
+    usageLimits:
+      collaborators:
+        value: 6
+```
+
+**Libraries support**
+
+<VersionTable
+  name="plans.<name>.usageLimits.<name>.value"
+  libraries={[true, true]}
+/>
