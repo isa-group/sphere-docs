@@ -1,0 +1,42 @@
+import { VersionTable } from "@site/src/components/common";
+
+- **optional**, if a map of billing is not provided `billing` will be set
+  by default with:
+
+```yaml
+billing:
+  monthly: 1
+```
+
+- Field type: `map` of `float` inside range `(0..1]`
+
+The prices of plans and add-ons may vary based on the billing option chosen by the user when subscribing.
+Longer subscription periods offer greater discounts. `billing` field holds a map
+of monthly price reductions to be applied to `price` field of plans and add-ons.
+You are free to put inside the map the billing name that you wish.
+
+Price reductions must be positive values greater than 0 and less than or equal to 1.
+
+Consider the following example:
+
+```yaml
+billing:
+  monthly: 1
+  semester: 0.95
+  annual: 0.90
+plans:
+  STANDARD:
+    price: 10.00
+addOns:
+  ULTRA:
+    price: 15.00
+```
+
+Here `STANDARD` plan costs `10.00` monthly, `9.5` monhtly if billing
+by semester and `9.00` monthly if billing annually.
+`ULTRA` add-on costs `15.00` monthly if billing monthly, `14.25` monthly if billing by semester and
+`13.5` monthly if billing annually.
+
+**Libraries support**
+
+<VersionTable name="billing" libraries={[true, true]} />

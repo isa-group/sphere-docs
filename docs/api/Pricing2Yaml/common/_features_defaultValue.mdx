@@ -1,0 +1,47 @@
+import { VersionTable } from "@site/src/components/common";
+
+- **required**
+- Field type is `bool` if `valueType` is set to `BOOLEAN`
+- Field type is `int` if `valueType` set to `NUMERIC`
+- Field type is `str` or `seq` of **payment methods** if `valueType` is set to `TEXT`
+
+This field holds the default value of your feature. All default values are shared in your plan and addons. You can
+override your features values in `plans.<plan_name>.features` or in `addOns.<addOn_name>.features`
+section of your pricing.
+
+Supported **payment methods** are: `CARD`, `GATEWAY`, `INVOICE`, `ACH`, `WIRE_TRANSFER` or `OTHER`.
+
+To help you understand how overriding features works, imagine you have the following pricing
+matrix:
+
+|                 | SILVER | GOLD   | PLATINUM |
+| --------------- | ------ | ------ | -------- |
+| supportPriority | LOW    | MEDIUM | HIGH     |
+
+If you want your `supportPriority` to be different in your `GOLD` and `PLATINUM` plans you
+will do the following using Pricing2Yaml syntax:
+
+```yaml
+features:
+  supportPriority:
+    valueType: TEXT
+    defaultValue: LOW
+plans:
+  SILVER:
+    features: null
+  GOLD:
+    features:
+      supportPriority:
+        value: MEDIUM
+  PLATINUM:
+    features:
+      supportPriority:
+        value: HIGH
+```
+
+Notice that `SILVER` features are `null`, meaning that, `supportPriority`
+will have the value `LOW` as you have previously define it in the `features` block.
+
+**Libraries support**
+
+<VersionTable name="features.<name>.defaultValue" libraries={[true, true]} />

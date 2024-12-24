@@ -1,0 +1,51 @@
+import { VersionTable } from "@site/src/components/common";
+
+- **required**
+- Field type: `str`
+- Supported values: **one of** `NON_RENEWABLE`
+  `RENEWABLE` , `RESPONSE_DRIVEN` or `TIME_DRIVEN`
+
+Field that indicates the type of usage limit based on our clasification of usage limits.
+
+**NON_RENEWABLE**: define a static limit towards which the user approaches, and that will
+remain until the end of the subscription.
+
+```yaml
+usageLimits:
+  uploadSizeLimit:
+    type: NON_RENEWABLE
+```
+
+**RENEWABLE**: their limit is reset after a period of time, could be a day, week, month...
+
+```yaml
+usageLimits:
+  githubCodepacesCoreHours:
+    type: RENEWABLE
+```
+
+**RESPONSE_DRIVEN**: represent a limit where user consumes more or less of his quota depending
+on the computational cost of the SaaS associated with the request.
+
+```yaml
+usageLimits:
+  flowCredits:
+    description: "Number of flows executions steps included per month"
+    unit: credit/month
+    type: RESPONSE_DRIVEN
+```
+
+**TIME_DRIVEN**: with this type the quota is consumed by usage time, and is normally
+combined with a non-renewable limit.
+
+```yaml
+compileTimeoutLimit:
+  description:
+    This is how much time you get to compile your project on the Overleaf servers.
+    You may need additional time for longer or more complex projects.
+  type: TIME_DRIVEN
+```
+
+**Libraries support**
+
+<VersionTable name="usageLimits.<name>.type" libraries={[true, true]} />

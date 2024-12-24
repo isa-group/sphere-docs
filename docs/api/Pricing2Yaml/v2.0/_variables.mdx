@@ -1,0 +1,32 @@
+import { VersionTable } from "@site/src/components/common";
+
+- **optional**
+- Field type: `map`
+
+Plan or add-on price can be computed by specifying a expression using variables.
+Think of variables as just a convenient way of storing parts of your equation to
+reduce the length of plan or add-on expresssion. You can uses variables
+in price expressions by prefixing them with a `#`.
+
+Consider the following `yaml` that uses variables in the expression:
+
+```yaml
+plans:
+  PRO:
+    price: 9.99
+  ENTERPRISE:
+    price: "5 * #x" # 5 * 3
+variables:
+  x: 3
+```
+
+Here `ENTERPRISE` plan uses variable `x` inside of the expression by prefixing it with `#`.
+Then variables `x` will be interpolated in the equation so equation will be
+`5 * 3` which results in `15.00`.
+
+**Libraries support**
+
+<VersionTable
+  name="variables"
+  libraries={["add-ons are not supported", true]}
+/>

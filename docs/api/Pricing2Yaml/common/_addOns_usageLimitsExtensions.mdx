@@ -1,0 +1,23 @@
+import { VersionTable } from "@site/src/components/common";
+
+- **optional**
+- Field type: `map`
+
+A map containing the keys of your usage limits that you want to extend with this addon.
+
+```yaml
+usageLimits:
+  my_usage_limit:
+    defaultValue: 5
+addOns:
+  my_addOn:
+    usageLimitsExtensions:
+      my_usage_limit:
+```
+
+**Libraries support**
+
+<VersionTable
+  name="addOns.<name>.usageLimitsExtensions"
+  libraries={[true, true]}
+/>

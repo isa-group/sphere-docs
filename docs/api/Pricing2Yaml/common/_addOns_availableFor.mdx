@@ -1,0 +1,23 @@
+import { VersionTable } from "@site/src/components/common";
+
+- **required**
+- Field type: `seq` of plan names
+
+Your addon is available for the plans that you specify in this list.
+
+```yaml
+plans:
+  SILVER:
+  GOLD:
+  PLATINUM:
+    # ...
+addOns:
+  RUBY:
+    availableFor:
+      - GOLD
+      - SILVER
+```
+
+**Libraries support**
+
+<VersionTable name="addOns.<name>.availableFor" libraries={[true, true]} />

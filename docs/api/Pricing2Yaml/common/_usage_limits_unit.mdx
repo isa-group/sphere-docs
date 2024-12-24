@@ -1,0 +1,18 @@
+import { VersionTable } from "@site/src/components/common";
+
+- **required**
+- Field type: `str`
+
+Measure of the usage limit.
+
+Here is an example using unit from Github pricing:
+
+```yaml
+usageLimits:
+  githubActionsQuota:
+    unit: minute/month
+```
+
+**Libraries support**
+
+<VersionTable name="usageLimits.<name>.unit" libraries={[true, true]} />

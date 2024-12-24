@@ -1,0 +1,17 @@
+import { VersionTable } from "@site/src/components/common";
+
+- **optional**
+- Field type: one of `AUTO`, `DISABLED`, `ENABLED`
+
+Choose the behaviour when displaying the usage limit of the pricing. Use this
+feature in the Pricing2Yaml editor.
+
+```yaml
+usageLimits:
+  usageLimit1:
+    render: DISABLED
+```
+
+**Libraries support**
+
+<VersionTable name="usageLimits.<name>.render" libraries={[false, true]} />

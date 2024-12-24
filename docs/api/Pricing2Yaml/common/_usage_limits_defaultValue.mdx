@@ -1,0 +1,42 @@
+import { VersionTable } from "@site/src/components/common";
+
+- **required**
+- Field type is `bool` if `valueType` is set to `BOOLEAN`
+- Field type is `int` if `valueType` set to `NUMERIC`
+- Field type is `str` if `valueType` is set to `TEXT`
+
+This field holds the default value of your usage limit. All default values are shared in your plan and addons. You can
+override your usage limits values in `plans.<plan_name>.usageLimits` or in `addOns.<addOn_name>.usageLimits`
+section of your pricing.
+
+To help you understand how overriding usage limits works, imagine you have the following pricing
+matrix:
+
+|               | SILVER | GOLD | PLATINUM |
+| ------------- | ------ | ---- | -------- |
+| collaborators | 1      | 6    | 10       |
+
+If you want your `collaborators` usage limit to be different in your `GOLD` and `PLATINUM` plans you
+will do the following using Pricing2Yaml syntax:
+
+```yaml
+usageLimits:
+  collaborators:
+    valueType: NUMERIC
+    defaultValue: 1
+plans:
+  SILVER:
+    usageLimits: null
+  GOLD:
+    usageLimits:
+      collaborators:
+        value: 6
+  PLATINUM:
+    usageLimits:
+      collaborators:
+        value: 10
+```
+
+**Libraries support**
+
+<VersionTable name="usageLimits.<name>.defaultValue" libraries={[true, true]} />

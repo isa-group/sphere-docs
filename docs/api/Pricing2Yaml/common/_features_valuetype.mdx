@@ -1,0 +1,27 @@
+import { VersionTable } from "@site/src/components/common";
+
+- **required**
+- Field type: `str`
+- Supported values: **one of** `BOOLEAN`, `NUMERIC` or `TEXT`
+
+Field `valueType` sets the `defaultValue` type signature of the feature you are
+modeling. For example, if your feature `valueType` is `BOOLEAN` you must put
+`true` or `false` in the `defaultValue` field, if `valueType` is `NUMERIC` you must put
+a number and in the case of `TEXT` then `defaultValue` has to be a string or a list of string.
+
+```yaml
+features:
+  boolean-feature:
+    valueType: BOOLEAN
+    defaultValue: false
+  numeric-feature:
+    valueType: NUMERIC
+    defaultValue: 0
+  text-feature:
+    valueType: TEXT
+    defaultValue: Pricing2Yaml is awesome!
+```
+
+**Libraries support**
+
+<VersionTable name="features.<name>.valueType" libraries={[true, true]} />

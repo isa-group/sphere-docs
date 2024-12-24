@@ -1,0 +1,20 @@
+import { VersionTable } from "@site/src/components/common";
+
+- If feature `type` is `INTEGRATION` and `integrationType` is `WEB_SAAS` this field is **required**
+- Field type: `seq` of `str`
+
+You can specify a list of URLs linking to the associated pricing page of
+third party integrations that you offer in your pricing.
+
+```yaml
+features:
+  googleWorkspaceIntegration:
+    type: INTEGRATION
+    integrationType: WEB_SAAS
+    pricingURLs:
+      - https://workspace.google.com/pricing
+```
+
+**Libraries support**
+
+<VersionTable name="features.<name>.pricingUrls" libraries={[true, false]} />

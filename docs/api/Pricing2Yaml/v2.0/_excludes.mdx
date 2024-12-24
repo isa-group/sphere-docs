@@ -1,0 +1,27 @@
+import { VersionTable } from "@site/src/components/common";
+
+- **optional**
+- Fied type: `seq` of add-ons names
+
+In the current add-on that you are defining specify one or more add-ons that cannot be purchased
+together.
+
+In this example we have two addOns available for plan `BASIC` that are `addOnA` and `addOnB`.
+Since `addOnA` excludes `addOnB` purchasing plan `BASIC`, `addOnA` and `addOnB` is not posible.
+It is valid to purchase `BASIC` and `addOnA` and `BASIC` and `addOnB`.
+
+```yaml
+plans:
+  BASIC:
+addOns:
+  addOnA:
+    availableFor:
+      - BASIC
+    excludes:
+      - addOnB
+  addOnB:
+    availableFor:
+      - BASIC
+```
+
+<VersionTable name="addOns.<name>.excludes" libraries={[true, true]} />

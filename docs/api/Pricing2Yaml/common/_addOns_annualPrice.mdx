@@ -1,0 +1,21 @@
+import { VersionTable } from "@site/src/components/common";
+
+- **required**
+- Field type: `float`
+
+Price of your addon when billing is set to annual.
+
+```yaml
+addOns:
+  postmanFlowsBasic:
+    annualPrice: 12.00
+```
+
+:::info
+You have to specify at least `monthlyPrice` or `annualPrice`. A combination
+of both also works.
+:::
+
+**Libraries support**
+
+<VersionTable name="addOns.<name>.annualPrice" libraries={[true, true]} />

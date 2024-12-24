@@ -1,0 +1,104 @@
+import { VersionTable } from "@site/src/components/common";
+
+- **required**
+- Field type: `str`
+- Supported values: **one of** `AUTOMATION`, `DOMAIN`, `GUARANTEE`,
+  `INFORMATION`, `INTEGRATION`, `MANAGEMENT`, `PAYMENT` or `SUPPORT`
+
+**Automation**: they permit to configure the system in order to perform some actions
+autonomously or track thresholds and notify the user if anyone is exceeded.
+It also includes any task performed by a bot or AI, such as predictions, generative AI, etc...
+
+```yaml
+features:
+  codeOwners:
+    description:
+      Automatically request reviews or require approval by selected contributors
+      when changes are made to sections of code that they own.
+    type: AUTOMATION
+    automationType: TRACKING
+```
+
+**Domain**: provide functionality related to the domain of the system,
+allowing to perform new operations or using exclusive services.
+
+```yaml
+features:
+  publicRepositories:
+    description:
+      Host open source projects in public GitHub repositories, accessible via
+      web or command line. Public repositories are accessible to anyone at
+      GitHub.com.
+    type: DOMAIN
+```
+
+**Guarantee**: technical commitments of the company that operates the system towards the users.
+
+```yaml
+features:
+  dataCypher:
+    description: Data encryption at rest and in transit.
+    type: GUARANTEE
+```
+
+**Information**: allow to see, use, visualize or extract additional data from your features.
+
+```yaml
+features:
+  auditLogs:
+    description:
+      Audit logs: Audit logs provide a record of changes and usage in the
+      Enterprise Grid plan. You can view audit logs directly in Slack, export
+      them in CSV format, and use the audit logs API to create custom monitoring
+      tools.
+    type: INFORMATION
+```
+
+**Integration**: permit users to interact with the system through its API,
+or to use functionalities from external third-party software within the system.
+
+```yaml
+features:
+  adminAnalyticsAPI:
+    description: Retrieve analytics data for a specific date in a
+      compressed JSON file format.
+    type: INTEGRATION
+    integrationType: API
+```
+
+**Management**: are focused on team leaders and system administrators. They ease
+the supervision, organization and guidance of projects, and allow the configuration of
+accounts and organization-based restrictions and rules.
+
+```yaml
+features:
+  customUserGroups:
+    description:
+      Custom user groups: Facilitate receiving notifications and communicating
+      with entire teams, departments, and groups.
+    type: MANAGEMENT
+```
+
+**Support**: expose the granularity of customer support offered within the plans.
+
+```yaml
+features:
+  enterpriseSupport:
+    description: Custom support for our business partners
+    type: SUPPORT
+```
+
+**Payment**: specify payment conditions and possibilities.
+
+```yaml
+features:
+  paymentMethod:
+    type: PAYMENT
+    defaultValue:
+      - INVOICE
+      - OTHER
+```
+
+**Libraries support**
+
+<VersionTable name="features.<name>.type" libraries={[true, true]} />

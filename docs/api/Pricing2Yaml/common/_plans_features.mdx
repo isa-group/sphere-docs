@@ -1,0 +1,23 @@
+import { VersionTable } from "@site/src/components/common";
+
+- **optional** when leaving the field blank or `null`, loads every `defaultValue` of your features
+- Field type: `map`
+
+A map containing the keys of your features you want to override.
+
+```yaml
+features:
+  awesome_feature:
+  cool_feature:
+  nice_feature:
+plans:
+  my_plan:
+    features:
+      cool_feature:
+      nice_feature:
+        # ...
+```
+
+**Libraries support**
+
+<VersionTable name="plans.<name>.features" libraries={[true, true]} />

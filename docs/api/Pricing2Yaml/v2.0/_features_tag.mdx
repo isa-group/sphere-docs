@@ -1,0 +1,22 @@
+import { VersionTable } from "@site/src/components/common";
+
+- **optional**
+- Field type: `str`
+
+Name of the group where that feature belongs. First defined a
+`tags` block in order to put a field here.
+
+```yaml
+tags:
+  - Code Management
+features:
+  publicRepositories:
+    tag: Code Management
+```
+
+**Libraries support**
+
+<VersionTable
+  name="features.<name>.tag"
+  libraries={["Feature not released yet", true]}
+/>

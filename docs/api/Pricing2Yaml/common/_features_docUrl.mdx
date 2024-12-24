@@ -1,0 +1,18 @@
+import { VersionTable } from "@site/src/components/common";
+
+- If feature `type` is `GUARANTEE` this is **required**
+- Field type: `str`
+
+URL redirecting to the guarantee or compliance documentation.
+
+```yaml
+features:
+  enterpriseGradeSecurity:
+    description: "https://www.wrike.com/features/admin-security/"
+    type: GUARANTEE
+    docUrl: "https://www.wrike.com/features/admin-security/"
+```
+
+**Libraries support**
+
+<VersionTable name="features.<name>.docUrl" libraries={[true, false]} />

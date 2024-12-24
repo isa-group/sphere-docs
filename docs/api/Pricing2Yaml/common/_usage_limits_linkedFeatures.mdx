@@ -1,0 +1,31 @@
+import { VersionTable } from "@site/src/components/common";
+
+- **optional**
+- Field type: `seq` of feature names which are `str`
+
+Bounds your usage limit to a one or multiple features by adding your
+feature name to the list.
+
+```yaml
+features:
+  feature1:
+  feature2:
+  feature3:
+  feature4:
+usageLimits:
+  usageLimit1:
+    linkedFeatures:
+      - feature1
+      - feature2
+      - feature3
+  usageLimit2:
+    linkedFeatures:
+      - feature4
+```
+
+**Libraries support**
+
+<VersionTable
+  name="usageLimits.<name>.linkedFeatures"
+  libraries={[true, true]}
+/>

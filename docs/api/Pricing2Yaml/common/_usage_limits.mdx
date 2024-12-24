@@ -1,0 +1,17 @@
+import { VersionTable } from "@site/src/components/common";
+
+- **optional**
+- Field type: `map`
+
+A map containing the usage limits of your pricing. Each entry of this map
+will be the name of the corresponding usage limit.
+
+```yaml
+usageLimits:
+  maxPets:
+  collaborators:
+  githubActionsQuota:
+    # ...
+```
+
+<VersionTable name="usageLimits" libraries={[true, true]}></VersionTable>

@@ -1,0 +1,23 @@
+import { VersionTable } from "@site/src/components/common";
+
+- **optional**
+- Field type: `map`
+
+A map containing the plans of your pricing. Each entry of this map
+will be the name of the corresponding plan.
+
+```yaml
+saasName: Petclinic
+plans:
+  BASIC:
+  GOLD:
+  PLATINUM:
+  # ...
+```
+
+:::info
+You have to specify at least `plans` or `addOns`. A combination
+of both also works.
+:::
+
+<VersionTable name="plans" libraries={[true, true]} />

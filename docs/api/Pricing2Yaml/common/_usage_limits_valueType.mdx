@@ -1,0 +1,27 @@
+import { VersionTable } from "@site/src/components/common";
+
+- **required**
+- Field type: `str`
+- Supported values: **one of** `BOOLEAN`, `NUMERIC` or `TEXT`
+
+Field `valueType` sets the `defaultValue` type signature of the usage limit you are
+modeling. For example, if your usage limit `valueType` is `BOOLEAN` you must put
+`true` or `false` in the `defaultValue` field, if `valueType` is `NUMERIC` you must put
+a number and in the case of `TEXT` then `defaultValue` has to be a string.
+
+```yaml
+usageLimits:
+  privateAccessToCodeRepositories:
+    valueType: BOOLEAN
+    defaultValue: false
+  storageQuota:
+    valueType: NUMERIC
+    defaultValue: 30
+  support:
+    valueType: TEXT
+    defaultValue: LOW
+```
+
+**Libraries support**
+
+<VersionTable name="usageLimits.<name>.valueType" libraries={[true, true]} />

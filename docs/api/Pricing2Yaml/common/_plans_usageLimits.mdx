@@ -1,0 +1,22 @@
+import { VersionTable } from "@site/src/components/common";
+
+- **optional** when leaving the field blank or `null` it loads every `defaultValue` of your usage limits
+- Field type: `map`
+
+A map containing the keys of your usage limits you want to override.
+
+```yaml
+usageLimits:
+  usageLimit1:
+  usageLimit2:
+plans:
+  my_plan:
+    usageLimits:
+      usageLimit1:
+      usageLimit2:
+        # ...
+```
+
+**Libraries support**
+
+<VersionTable name="plans.<name>.usageLimits" libraries={[true, true]} />
