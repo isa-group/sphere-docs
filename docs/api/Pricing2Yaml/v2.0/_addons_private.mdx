@@ -1,0 +1,41 @@
+import { VersionTable } from "@site/src/components/common";
+import CodeBlock from "@theme/CodeBlock";
+
+- **optional**
+- Field type: `bool`, if not provided `private` is `false` by default
+
+Flag that indicates wheter your add-on should be displayed to the public.
+
+Companies can contact the SaaS sales team to negotiate custom features or usage limits.
+Enable the `private` field to store the add-on configuration without making it visible to your users:
+
+```yaml
+features:
+  feature1:
+    defaultValue: false
+usageLimits:
+  usageLimit1:
+    defautlValue: 10
+    linkedFeatures:
+      - feature1
+addOns:
+  ENTERPRISE-ADDON:
+    private: false
+    price: 9.99
+    features:
+      feature1:
+        value: true
+  JOHN-DOE-CUSTOM-ADDON:
+    private: true
+    price: 14.99
+    features:
+      feature1:
+        value: true
+    usageLimits:
+      usageLimit1:
+        value: 30
+```
+
+**Libraries support**
+
+<VersionTable name="addOns.<name>.private" libraries={[true, true]} />

@@ -1,0 +1,35 @@
+import { VersionTable } from "@site/src/components/common";
+import CodeBlock from "@theme/CodeBlock";
+
+- **optional**
+- Field type: `bool`, if not provided `private` is `false` by default
+
+Flag that indicates wheter your plan should be displayed to the public.
+
+Companies can contact the SaaS sales team to negotiate custom features or usage limits.
+Enable the `private` field to store the plan configuration without making it visible to your users:
+
+```yaml
+features:
+  feature1:
+    defaultValue: true
+usageLimits:
+  usageLimit1:
+    defautlValue: 30
+    linkedFeatures:
+      - feature1
+plans:
+  ENTERPRISE:
+    private: false
+    price: 29.99
+  JOHN-DOE-CUSTOM-ENTERPRISE-PLAN:
+    private: true
+    price: 39.99
+    usageLimits:
+      usageLimit1:
+        value: 100
+```
+
+**Libraries support**
+
+<VersionTable name="plans.<name>.private" libraries={[true, true]} />
