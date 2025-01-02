@@ -1,9 +1,11 @@
 import { VersionTable } from "@site/src/components/common";
 
-- **required**
+- **optional**, if the `availableFor` field is not present within an add-on,
+  it will be available for all plans by default
 - Field type: `seq` of plan names
 
-Your addon is available for the plans that you specify in this list.
+This add-on fields indicates that your add-on is available to purchase only if
+the user is subscribed to any of the plans indicated in this list.
 
 ```yaml
 plans:
@@ -12,6 +14,10 @@ plans:
   PLATINUM:
     # ...
 addOns:
+  EMERALD:
+    # if availableFor is missing or null EMERALD is available for
+    # SILVER, GOLD and PLATINUM by default
+    # availableFor: null
   RUBY:
     availableFor:
       - GOLD
