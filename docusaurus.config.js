@@ -40,6 +40,11 @@ const config = {
     currentVersion: currentVersion,
   },
 
+  themes: ["@docusaurus/theme-mermaid"],
+  markdown: {
+    mermaid: true,
+  },
+
   presets: [
     [
       "classic",
@@ -99,13 +104,19 @@ const config = {
           },
           {
             type: "docSidebar",
+            sidebarId: "contribSidebar",
+            position: "left",
+            label: "Contributing",
+          },
+          {
+            type: "docSidebar",
             sidebarId: "commonErrorsSidebar",
             position: "left",
             label: "FAQs",
           },
           {
-            type: 'docsVersionDropdown',
-            position: 'right',
+            type: "docsVersionDropdown",
+            position: "right",
             dropdownActiveClassDisabled: true,
           },
         ],
@@ -125,6 +136,10 @@ const config = {
                 to: `/docs/${currentVersion}/api/introduction`,
               },
               {
+                label: "Contributing",
+                to: `/docs/${currentVersion}/contrib/introduction`,
+              },
+              {
                 label: "FAQs",
                 to: `/docs/${currentVersion}/commonErrors/introduction`,
               },
@@ -141,21 +156,21 @@ const config = {
                 label: "Pricing4React",
                 href: "https://github.com/isa-group/Pricing4React",
               },
-              // {
-              //   label: 'Twitter',
-              //   href: 'https://twitter.com/docusaurus',
-              // },
+              {
+                label: "Pricing4TS",
+                href: "https://github.com/Alex-GF/Pricing4TS",
+              },
+              {
+                label: "SaaS analysis",
+                href: "https://github.com/isa-group/SaaS-analysis",
+              },
             ],
           },
           {
             title: "Contribute",
             items: [
-              // {
-              //   label: 'Blog',
-              //   to: '/blog',
-              // },
               {
-                label: "GitHub",
+                label: "Docs",
                 href: "https://github.com/isa-group/Pricing4SaaS-docs",
               },
             ],
@@ -166,7 +181,7 @@ const config = {
       prism: {
         theme: prismThemes.github,
         darkTheme: prismThemes.dracula,
-        additionalLanguages: ["java"],
+        additionalLanguages: ["java", "diff", "bash"],
       },
       algolia: {
         // The application ID provided by Algolia
