@@ -1,0 +1,79 @@
+name: Pricing2Yaml extension
+description: Make a contribution to Pricing2Yaml yaml specification
+title: "[Extension]: "
+labels: ["extension"]
+body:
+  - type: input
+    id: ext-name
+    attributes:
+      label: Extension name
+      placeholder: Put a meaningful name
+    validations:
+      required: true
+  - type: textarea
+    id: affected-models
+    attributes:
+      label: What core objects your extension affect?
+      placeholder: Put here affected domain objects like features, usage limits, plans or add-ons
+    validations:
+      required: true
+  - type: textarea
+    id: func-description
+    attributes:
+      label: What does your extension do?
+      description: Describe the function of your extension. Be precise and leave nothing ambiguous.
+      placeholder: Put here a detailed description
+    validations:
+      required: true
+  - type: textarea
+    id: motivation
+    attributes:
+      label: What is your motivation to contribute with your extension?
+      description: |
+        Write a about the reasons that makes your extension valuable.
+
+        If you have been inspired by any web page, article, paper, SaaS or any other source mention it here. That way we can further contribute to the specification.
+      placeholder: Put here your reasons and inspiration sources
+    validations:
+      required: true
+  - type: input
+    id: field-type
+    attributes:
+      label: What is the YAML type of your extension?
+      description: Put the [yaml type/s](https://yaml.org/type/) of your extension.
+      placeholder: Put here types like int, float, bool, map, seq, str, etc...
+    validations:
+      required: true
+  - type: dropdown
+    id: field-requirement
+    attributes:
+      label: Is your field required or optional?
+      description: If your fields needs to be present in the yaml spec put `required` otherwise `optional`.
+      options:
+        - optional
+        - required
+      default: 0
+    validations:
+      required: true
+  - type: textarea
+    id: default-values
+    attributes:
+      label: If your field is optional, Any default values are assumed?
+      description: Answer this if your extension field requirement is `optional`, Any default values are assumed?
+      placeholder: Put here the default value
+  - type: textarea
+    id: example
+    attributes:
+      label: How do you use your extension?
+      description: Provide a yaml snippet too see the usage of your example. You can skip fields to keep the example short.
+      placeholder: Copy and paste your yaml here
+      render: YAML
+    validations:
+      required: true
+  - type: checkboxes
+    id: read-latest-docs
+    attributes:
+      label: Check latest Pricing2Yaml spec
+      options:
+        - label: I have read the latest version of the [specification](https://pricing4saas-docs.vercel.app/docs/2.0.1/category/pricing2yaml)
+          required: true
