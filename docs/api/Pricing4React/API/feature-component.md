@@ -3,7 +3,7 @@ sidebar_position: 1
 custom_edit_url: null
 ---
 
-# Main Component
+# The `Feature` Component
 
 The package provides a component that contains almost the whole logic you need to manage your toggles: `Feature`. This component allows to show or hide its children depending on the evaluation of a pricing feature. It has the prop `expression`, which reads from the JWT the evaluation of the feature. You can use the `feature` function to locate features by their key.
 
