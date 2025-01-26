@@ -5,7 +5,7 @@ custom_edit_url: null
 
 # Communication Strategy
 
-**Pricing4SaaS** relies on JSON Web Tokens (JWT) to send from the backend ([Pricing4Java](./Pricing4Java/pricing-context)) the evaluation of different pricing features for the user that makes the request. In order to be used by [Pricing4React](./Pricing4React/main-toggling-class), the JWT must be stored as a `String` in the local storage of the browser, with the name `pricingToken`. 
+**Pricing4SaaS** relies on JSON Web Tokens (JWT) to send from the backend ([Pricing4Java](./Pricing4Java/pricing-context)) the evaluation of different pricing features for the user that makes the request. In order to be used by [Pricing4React](./Pricing4React/API/feature-component), the JWT must be stored as a `String` in the local storage of the browser, with the name `pricingToken`. 
 
 The body of such token must have the following structure:
 
