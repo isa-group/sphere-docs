@@ -6,7 +6,7 @@ custom_edit_url: null
 
 # The useGenericFeature Hook
 
-This hook is an alternative to the [Feature](./feature-component) component. It also allows to show or hide UI components depending on the evaluation of a feature. But, you may be wondering, why would you use this hook instead of [Feature](./feature-component)?
+This hook is an alternative to the [Feature](./main-toggling-class) component. It also allows to show or hide UI components depending on the evaluation of a feature. But, you may be wondering, why would you use this hook instead of [Feature](./main-toggling-class)?
 
 Well, the main difference is that the `useGenericFeature` hook does not introduce any compontent within your React's virtual-dom tree, which can be convenient in some complex rendering cases.
 
