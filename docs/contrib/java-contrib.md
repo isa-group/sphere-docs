@@ -175,37 +175,35 @@ classDiagram
 
   class Updater{
     <<interface>>
-    +void update(configFile)
+    +void update(configFile:  Map~String,Object~)
   }
 
   note for VersionUpdater "this.versionUpdater.update(configFile)"
   class VersionUpdater{
-    Version source;
-    Updater versionUpdater;
-    +void update(configFile)
+    <<abstract>>
+    -Version source;
+    -Updater versionUpdater;
+    +void update(configFile: Map~String,Object~)
+    +Version getSource()
   }
 
-  class V10ToV11Updater{
-    +void update(configFile)
-  }
-  class V11ToV20Updater{
-    +void update(configFile)
-  }
-  class V20ToV21Updater{
-    +void update(configFile)
+  note for VXYToVYZUpdater "super.update(configFile)"
+
+  class VXYToVYZUpdater{
+    +void update(configFile:  Map~String,Object~)
   }
 
-  note for V21ToV22Updater "super.update(configFile)"
-  class V21ToV22Updater{
-    +void update(configFile)
+  class YamlUpdater {
+    -Map~Version,Updater~ updaters$
+    +void update(configFile:  Map~String,Object~)$
   }
 
-  Updater <|-- VersionUpdater : implements
-  VersionUpdater --> Updater
-  VersionUpdater <|-- V10ToV11Updater : extends
-  VersionUpdater <|-- V11ToV20Updater : extends
-  VersionUpdater <|-- V20ToV21Updater : extends
-  VersionUpdater <|-- V21ToV22Updater : extends
+  note for YamlUpdater "calls the latest updater in the Map of Updaters"
+
+  Updater <|.. VersionUpdater : implements
+  VersionUpdater ..> Updater : depends
+  VersionUpdater <|-- VXYToVYZUpdater : extends
+  Updater <.. YamlUpdater : depends
 ```
 
 :::
