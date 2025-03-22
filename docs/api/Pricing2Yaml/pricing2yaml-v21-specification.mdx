@@ -12,6 +12,7 @@ import FeaturesType from "./common/_features_type.mdx";
 import FeaturesValueType from "./common/_features_valuetype.mdx";
 import FeaturesDefaultValue from "./common/_features_defaultValue.mdx";
 import FeaturesExpression from "./common/_features_expression.mdx";
+import FeaturesServerExpression from "./common/_features_serverExpression.mdx";
 import FeaturesAutomationType from "./common/_features_automationType.mdx";
 import FeaturesDocUrl from "./common/_features_docUrl.mdx";
 import FeaturesIngrationType from "./common/_features_integrationType.mdx";
@@ -56,6 +57,7 @@ import UsageLimitsRender from "./v2.0/_usageLimits_render.mdx";
 import PlansPrivate from "./v2.0/_plans_private.mdx";
 import AddOnsPrivate from "./v2.0/_addons_private.mdx";
 import Version from "./v2.1/_version.mdx";
+import SyntaxVersion from "./v2.1/_syntax_version.mdx";
 
 # Version 2.1
 
@@ -69,18 +71,7 @@ Certain fields have been omitted for clarity and explanation purposes.
 
 ## `syntaxVersion`
 
-- **required**
-- Supported value: `2.1`
-
-Version of the Pricing2Yaml specification
-
-```yaml
-syntaxVersion: "2.1"
-```
-
-**Libraries support**
-
-<VersionTable name="version" libraries={[true, true]} />
+<SyntaxVersion />
 
 ## `saasName`
 
@@ -140,7 +131,7 @@ syntaxVersion: "2.1"
 
 ## `features.<name>.serverExpression`
 
-<FeaturesExpression />
+<FeaturesServerExpression />
 
 ## `features.<name>.automationType`
 
