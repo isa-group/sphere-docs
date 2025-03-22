@@ -15,6 +15,7 @@ import FeaturesType from "./common/_features_type.mdx";
 import FeaturesValueType from "./common/_features_valuetype.mdx";
 import FeaturesDefaultValue from "./common/_features_defaultValue.mdx";
 import FeaturesExpression from "./common/_features_expression.mdx";
+import FeaturesServerExpression from "./common/_features_serverExpression.mdx";
 import FeaturesAutomationType from "./common/_features_automationType.mdx";
 import FeaturesDocUrl from "./common/_features_docUrl.mdx";
 import FeaturesIngrationType from "./common/_features_integrationType.mdx";
@@ -74,6 +75,12 @@ Certain fields have been omitted for clarity and explanation purposes.
 <SaaSName />
 
 ## `version`
+
+:::warning Migration from 2.0 to 2.1
+From `2.1` in advance `version` no longuer indicates the version
+of the specification, use `syntaxVersion` instead. `version` field
+still remains to indicate the current version of the pricing.
+:::
 
 - **required**
 - Supported value: `2.0`
@@ -138,7 +145,7 @@ version: "2.0"
 
 ## `features.<name>.serverExpression`
 
-<FeaturesExpression />
+<FeaturesServerExpression />
 
 ## `features.<name>.automationType`
 
