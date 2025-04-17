@@ -5,10 +5,11 @@ custom_edit_url: null
 
 # The Pricing2Yaml Syntax
 
-**Pricing2Yaml** (previously known as Yaml4SaaS) emerges as a pragmatic application of the *Pricing4SaaS model*, aligning with the overarching objective of formalizing and structuring pricing information for SaaS platforms. Building upon the foundational principles articulated in *Pricing4SaaS*, Pricing2Yaml embodies a simplified and versatile YAML-based syntax designed for serializing comprehensive details about SaaS offerings. The essence of Pricing2Yaml lies in its capacity to encapsulate pricing plans, add-ons, features and usage limits within a concise and human-readable YAML format. Here is a tempalte specification of the Pricing2Yaml syntax:
+**Pricing2Yaml** (previously known as Yaml4SaaS) emerges as a pragmatic application of the _Pricing4SaaS model_, aligning with the overarching objective of formalizing and structuring pricing information for SaaS platforms. Building upon the foundational principles articulated in _Pricing4SaaS_, Pricing2Yaml embodies a simplified and versatile YAML-based syntax designed for serializing comprehensive details about SaaS offerings. The essence of Pricing2Yaml lies in its capacity to encapsulate pricing plans, add-ons, features and usage limits within a concise and human-readable YAML format. Here is a tempalte specification of the Pricing2Yaml syntax:
 
 ```yaml
 saasName: GitHub
+version: "1.0"
 day: 15
 month: 11
 year: 2023
@@ -23,7 +24,6 @@ features:
     expression: #SPEL Expression
     serverExpression: #OPTIONAL: SPEL Expression to be evaluated on the server side
   standardSupport:
-    description: ...
     valueType: BOOLEAN
     defaultValue: false
     type: SUPPORT
@@ -32,7 +32,6 @@ features:
   #...
 usageLimits:
   githubPackagesLimit:
-    description: ...
     valueType: NUMERIC
     unit: GB
     defaultValue: 0.5
@@ -41,15 +40,13 @@ usageLimits:
   #...
 plans:
   FREE:
-    description: ...
     monthlyPrice: 0
     annualPrice: 0
-    unit: "user/month"
+    unit: user/month
   TEAM:
-    description: ...
     monthlyPrice: 4
     annualPrice: 3.67
-    unit: "user/month"
+    unit: user/month
     features:
       standardSupport:
         value: true
