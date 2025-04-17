@@ -35,56 +35,54 @@ The versions of Pricing4Java and Pricing4React covered by this documentation hav
 
 ## 📦 Installation
 
-To get started with **Pricing4SaaS**, you'll need to install both `Pricing4Java` on a maven-based spring project, and `Pricing4React` on a React application. To perform this process, see *[the instalation guide](./instalation.md)*.
+To get started with **Pricing4SaaS**, you'll need to install both `Pricing4Java` on a maven-based spring project, and `Pricing4React` on a React application. To perform this process, see the [instalation guide](./instalation.md).
 
 ## 🔧 Setting up the spring project with Princing4Java
 
 ### 1. Configure your application class to scan Pricing4Java
 
-```java
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-
+```java title="src/main/java/org/example/MyFirstPricingDrivenSaaSApplication.java"
+// highlight-next-line
 @SpringBootApplication(scanBasePackages = {"io.github.isagroup", "org.springframework.samples.myapplication"})
 public class MyFirstPricingDrivenSaaSApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(MyFirstPricingDrivenSaaSApplication.class, args);
-	}
-
-	// Other application level configurations...
+  public static void main(String[] args) {
+    SpringApplication.run(MyFirstPricingDrivenSaaSApplication.class, args);
+  }
 
 }
 ```
 
 ### 2. Declare a pricing configuration file
 
-Pricing4Java uses a YAML file written in the [Pricing2Yaml](../../api/Pricing2Yaml/the-pricing2yaml-syntax) syntax to represent and manage the whole pricing. The file must be placed inside the classpath of the project. Create the file `pricing/pricing.yml` within such directory and copy the snippet below, which shows a basic structure of such syntax:
+Pricing4Java uses a YAML file written in the [Pricing2Yaml](../../api/Pricing2Yaml/the-pricing2yaml-syntax) syntax to represent and manage the whole pricing. Place the pricing configuration file anywhere inside the folder `src/main/resources`. Create the file `pricing.yml` within such directory and copy the snippet below, which shows a basic structure of such syntax:
 
-```yaml
+```yaml title="src/main/resources/pricing.yml"
 saasName: My First Pricing Driven SaaS
+version: "1.0"
 day: 10
 month: 03
 year: 2024
 currency: USD
+hasAnnualPayment: false
 features:
   cloudStorage:
-    description: "This is a fancy description of the cloudStorage feature"
+    description: Store your personal files with our cloud storage service
     valueType: BOOLEAN
     defaultValue: true
     type: DOMAIN
-    expression: "userContext['cloudStorageUse'] < planContext['cloudStorage']"
-    serverExpression: "userContext['cloudStorageUse'] <= planContext['cloudStorage']"
+    expression: userContext['cloudStorageUse'] < planContext['cloudStorage']
+    serverExpression: userContext['cloudStorageUse'] <= planContext['cloudStorage']
   adminDashboard:
-    description: "The admin dashboard is a powerful tool to manage the SaaS"
+    description: Manage your users easily with our dashbord for administrators
     valueType: BOOLEAN
     defaultValue: false
     type: MANAGEMENT
-    expression: "userContext['cloudStorageUse'] < planContext['cloudStorage']"
-    serverExpression: "userContext['cloudStorageUse'] <= planContext['cloudStorage']"
+    expression: userContext['cloudStorageUse'] < planContext['cloudStorage']
+    serverExpression: userContext['cloudStorageUse'] <= planContext['cloudStorage']
 usageLimits:
   cloudStorageMaxCapacity:
-    description: "This is the usage limit imposed to the cloudStorage feature"
+    description: This is the usage limit imposed to the cloudStorage feature
     valueType: NUMERIC
     unit: GB
     defaultValue: 1
@@ -93,13 +91,13 @@ usageLimits:
       - cloudStorage
 plans:
   FREE:
-    description: "The free plan is allowed to all users"
+    description: The free plan is allowed to all users
     monthlyPrice: 0
-    unit: "user/month"
+    unit: user/month
   PREMIUM:
-    description: "Unlock all our features with the premium plan"
+    description: Unlock all our features with the premium plan
     monthlyPrice: 15
-    unit: "user/month"
+    unit: user/month
     features:
       adminDashboard:
         value: true
@@ -124,32 +122,30 @@ If you are interested in checking if your YAML file is correctly formatted, you 
 
 ```java
 @Test
-@Order(X)
 void parsePostmanYamlToClassTest() {
-    PricingManager pricingManager = YamlUtils.retrieveManagerFromYaml("pricing/{NAME_OF_YOUR_FILE}.yml");
+    PricingManager pricingManager = YamlUtils.retrieveManagerFromYaml("{NAME_OF_YOUR_FILE}.yml");
 }
 ```
 
-The test will fail if the YAML file does not correctly follow the Pricing2Yaml syntax, and will throw an exception explaining the problem.
+The test will fail if the YAML file does not correctly follow the [Pricing2Yaml syntax](../../api/Pricing2Yaml/the-pricing2yaml-syntax.md), and will throw an exception explaining the problem.
 
 ### 3. Configure the pricing context
 
 Once the pricing configuration file is ready, the next step is to create a component that extends the [PricingContext](../../api/Pricing4Java/pricing-context) abstract class. This component will be the key to manage all the pricing configuration, including user context evaluation, JWT generation, pricing operations, etc.
 
-```java
-import io.github.isagroup.PricingContext;
-
+```java title=title="src/main/java/org/example/config/PricingConfiguration.java"
 @Component
 public class PricingConfiguration extends PricingContext {
 
     @Override
-    public String getJwtSecret(){
+    public String getJwtSecret() {
         return "mySecret";
     }
 
     @Override
-    public String getConfigFilePath(){
-        return "pricing/pricing.yml";
+    public String getConfigFilePath() {
+        // Path relative to src/main/resources folder
+        return "pricing.yml";
     }
 
     @Override
@@ -175,19 +171,15 @@ public class PricingConfiguration extends PricingContext {
 
 ### 4. Configure the security context
 
-After the PricingConfiguration is set, you must inject the [RenewTokenFilter](../../api/Pricing4Java/renew-token-filter) in your Web Security Configuration class. This filter will be responsible for checking the JWT token in every request, keeping your frontend's feature evaluation context up to date with your backend's.
+After the `PricingConfiguration` is set, you must add a `@Bean` [RenewTokenFilter](../../api/Pricing4Java/renew-token-filter) in
+some configuration class with annotation `@Configuration`. This filter will be responsible for checking the JWT token in every request, keeping your frontend's feature evaluation context up to date with your backend's.
 
-```java
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-
+```java title="src/main/java/org/example/config/WebConfig.java"
 
 import io.github.isagroup.filters.RenewTokenFilter;
 
 @Configuration
-@EnableWebSecurity
-public class SecurityConfiguration{
+public class WebConfig {
     // Other configurations...
 
     @Bean
@@ -209,13 +201,13 @@ If you have Cross-Origin Resource Sharing (CORS) within your application, we rec
 
 ### 1. Implement a filter to manage the JWT
 
-In order to run Pricing4React, you have to store the JWT generated by Pricing4Java in the local storage of the browser with the key `token`. This operation can be performed after a valid response have been received from the backend when login/registering an user.
+In order to run Pricing4React, you have to store the JWT generated by Pricing4Java in the local storage of the browser with the key `pricingToken`. This operation can be performed after a valid response have been received from the backend when login/registering an user.
 
 ### 2. Use Pricing4React components
 
 The package provides a component that contains almost the whole logic you need to manage your toggles: `Feature`. This component allows to show or hide its children depending on the evaluation of a pricing feature. It has the prop `expression`, which reads from the JWT the evaluation of the feature. You can use the `feature` function to locate features by their key.
 
- Depending on the context, it can have up to four children:
+Depending on the context, it can have up to four children:
 
 - `On`: This component will be shown if the feature is evaluated to `true`.
 - `Default`: This component will render its children if the evaluation of the feature performed in `On` component is `false`.
@@ -225,25 +217,32 @@ The package provides a component that contains almost the whole logic you need t
 The evaluation of a feature that has the key `cloudStorage` would be:
 
 ```jsx
-import { Default, ErrorFallback, Feature, On, Loading, feature } from "pricing4react";
+import {
+  Default,
+  ErrorFallback,
+  Feature,
+  On,
+  Loading,
+  feature,
+} from "pricing4react";
 
 export default function MyComponent() {
-    return (
-        <Feature expression={feature("cloudStorage")}>
-            <On>
-                <p>CloudStorage feature is enabled</p>
-            </On>
-            <Default>
-                <p>CloudStorage feature is disabled</p>
-            </Default>
-            <Loading>
-                <p>Loading...</p>
-            </Loading>
-            <ErrorFallback>
-                <p>An error occurred</p>
-            </ErrorFallback>
-        </Feature>
-    );
+  return (
+    <Feature expression={feature("cloudStorage")}>
+      <On>
+        <p>CloudStorage feature is enabled</p>
+      </On>
+      <Default>
+        <p>CloudStorage feature is disabled</p>
+      </Default>
+      <Loading>
+        <p>Loading...</p>
+      </Loading>
+      <ErrorFallback>
+        <p>An error occurred</p>
+      </ErrorFallback>
+    </Feature>
+  );
 }
 ```
 
