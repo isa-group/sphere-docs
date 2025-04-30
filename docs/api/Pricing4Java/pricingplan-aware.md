@@ -3,7 +3,17 @@ sidebar_position: 7
 custom_edit_url: null
 ---
 
-# PricingPlanAware
+# Annotation PricingPlanAware
+
+**Package** `io.github.isagroup.annotation`
+
+```txt
+@Target(ElementType.METHOD)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface PricingPlanAware
+```
+
+Annotation automates the feature validation on the server side.
 
 The library also provides an method level annotation called `@PricingPlanAware` that receives a string called `featureId` as paramater. This feature must exist inside the pricing configuration.
 By combining the use of this annotation with the spring's `@Transactional`, it is possible to automate feature checking on the service layer of the application.
@@ -25,3 +35,14 @@ public T myFeatureService(T parameter) {
 
 // ...
 ```
+
+## Element Details
+
+### featureName
+
+`String featureName`
+
+Name of the feature to perform a evaluation against. Feature names are the one you define
+in pricing configuration file
+
+**Default** `""`

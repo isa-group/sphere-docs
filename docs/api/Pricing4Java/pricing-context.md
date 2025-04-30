@@ -5,9 +5,13 @@ custom_edit_url: null
 
 # Class PricingContext
 
-`io.github.isagroup.PricingContext`
+**Package** `io.github.isagroup`
 
-This abstract class is the key to manage the YAML configuration inside a Spring application. It provides a set of configurable methods that need to be implemented inside a new `@Component` that extends this class to use other classes of the package. An
+`public abstract class PricingContext extends Object`
+
+This abstract class is the key to manage the YAML configuration inside a Spring application.
+It provides a set of configurable methods that need to be implemented inside a
+new `@Component` that extends this class to use other classes of the package. An
 implementation of `PricingContext` class may look like the following (Snippet extracted from Petclinic
 [demo](https://github.com/isa-group/petclinic-react/blob/master/src/main/java/org/springframework/samples/petclinic/configuration/PricingConfiguration.java)):
 
