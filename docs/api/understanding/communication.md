@@ -1,11 +1,11 @@
 ---
-sidebar_position: 5
+sidebar_position: 4
 custom_edit_url: null
 ---
 
 # Communication Strategy
 
-**Pricing4SaaS** relies on JSON Web Tokens (JWT) to send from the backend ([Pricing4Java](./Pricing4Java/pricing-context)) the evaluation of different pricing features for the user that makes the request. In order to be used by [Pricing4React](./Pricing4React/API/feature-component), the JWT must be stored as a `String` in the local storage of the browser, with the name `pricingToken`. 
+**Pricing4SaaS** relies on JSON Web Tokens (JWT) to send from the backend ([Pricing4Java](../Pricing4Java/pricing-context)) the evaluation of different pricing features for the user that makes the request. In order to be used by [Pricing4React](../Pricing4React/API/feature-component), the JWT must be stored as a `String` in the local storage of the browser, with the name `pricingToken`. 
 
 The body of such token must have the following structure:
 
@@ -40,4 +40,4 @@ As you can see, with the 4 standard options of JWT, we have added a fifth: the `
 
 The `eval` field can also be a string that contains an expression that must be evaluated on the client side (for example, if it requires the previous evaluation of another feature). In this case, the expression must be a valid JavaScript expression, and the package will use the `eval` function to evaluate it. The expression can contain access the other two new paramenter on the JWT token's body: `userContext` and `planContext`. These two objects are used to store information about the user and the plan, respectively. They are optional, and if they are not present, they will be considered as empty objects.
 
-As we said, you don't have to worry about the recreation of the JWT, since [Pricing4Java](./Pricing4Java/pricing-context) will do it for you on backend. However, if you want to create your own JWT, as long as it follows the structure above, the package will be able to perform the toggling.
+As we said, you don't have to worry about the recreation of the JWT, since [Pricing4Java](../Pricing4Java/pricing-context) will do it for you on backend. However, if you want to create your own JWT, as long as it follows the structure above, the package will be able to perform the toggling.
