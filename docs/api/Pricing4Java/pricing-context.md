@@ -12,8 +12,7 @@ custom_edit_url: null
 This abstract class is the key to manage the YAML configuration inside a Spring application.
 It provides a set of configurable methods that need to be implemented inside a
 new `@Component` that extends this class to use other classes of the package. An
-implementation of `PricingContext` class may look like the following (Snippet extracted from Petclinic
-[demo](https://github.com/isa-group/petclinic-react/blob/master/src/main/java/org/springframework/samples/petclinic/configuration/PricingConfiguration.java)):
+implementation of `PricingContext` class may look like the following:
 
 ```java
 @Component
@@ -22,9 +21,6 @@ public class PricingConfiguration extends PricingContext {
     @Autowired
     private UserService userService;
 
-    @Value("${petclinic.app.jwtSecret}")
-    private String jwtSecret;
-
     @Override
     public String getConfigFilePath() {
         return "pricing/petclinic.yml";
@@ -32,7 +28,7 @@ public class PricingConfiguration extends PricingContext {
 
     @Override
     public String getJwtSecret() {
-        return jwtSecret;
+        return "MXXiGvyIyqmPY9gCZO+Fj1GgIHnPTTd2lt8wiImum/o=";
     }
 
     @Override
@@ -63,6 +59,11 @@ public class PricingConfiguration extends PricingContext {
         } catch (AuthException e) {
             return "BASIC";
         }
+    }
+
+    @Override
+    public List<String> getUserAddOns() {
+        return new ArrayList<>();
     }
 }
 ```
@@ -132,17 +133,31 @@ src/
 
 `public abstract String getJwtSecret()`
 
-Returns the secret used to encode the pricing `JWT`.
+Returns the secret used to sign the pricing `JWT`. The secret key needs to be encoded in `base64`.
+Internally JWT library will choose the best algorithm to sign the JWT ( `HS256`, `HS384` or `HS512`),
+if the secret key length does not conform to the minimun stated by these algorithms will throw a
+`WeakKeyException`.
 
-**Returns:** JWT secret String
+**Returns:** pricing secret encoded in `base64`
+
+**See also:**
+
+- [Signature Algorithms Keys](https://github.com/jwtk/jjwt#signature-algorithms-keys)
 
 ### getAuthJwtSecret
 
 `public String getAuthJwtSecret()`
 
-Returns the secret used to encode the authorization `JWT`
+Returns the secret used to sign the authorization `JWT`. The secret key needs to be encoded in `base64`.
+Internally JWT library will choose the best algorithm to sign the JWT ( `HS256`, `HS384` or `HS512`),
+if the secret key length does not conform to the minimun stated by these algorithms will throw a
+`WeakKeyException`.
 
-**Returns:** a secret used to sign authorization
+**Returns:** authorization secret encoded in `base64`
+
+**See also:**
+
+- [Signature Algorithms Keys](https://github.com/jwtk/jjwt#signature-algorithms-keys)
 
 ### getJwtExpiration
 

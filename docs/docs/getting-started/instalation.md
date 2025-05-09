@@ -7,6 +7,44 @@ custom_edit_url: null
 
 The **Pricing4SaaS** suite consists of two libraries that can be used independently or in combination to meet your specific needs. This guide provides an overview of the installation process for each library, ensuring you can quickly integrate **Pricing4SaaS** into your SaaS platform.
 
+## Required depedencies
+
+Before using `Pricing4Java` 5.6.0 or newer you need to include the following depedencies in your `pom.xml` file:
+
+```xml
+<dependency>
+    <groupId>io.jsonwebtoken</groupId>
+    <artifactId>jjwt-impl</artifactId>
+    <version>0.12.6</version>
+    <scope>runtime</scope>
+</dependency>
+<dependency>
+    <groupId>io.jsonwebtoken</groupId>
+    <artifactId>jjwt-jackson</artifactId> <!-- or jjwt-gson if Gson is preferred -->
+    <version>0.12.6</version>
+    <scope>runtime</scope>
+</dependency>
+```
+
+:::warning
+If you are using a Pricing4Java version less than or equal to 5.5.1 put the following dependencies
+in your `pom.xml` file:
+
+```xml
+<dependency>
+    <groupId>io.jsonwebtoken</groupId>
+    <artifactId>jjwt</artifactId>
+    <version>0.9.1</version>
+</dependency>
+<dependency>
+    <groupId>javax.xml.bind</groupId>
+    <artifactId>jaxb-api</artifactId>
+    <version>2.3.1</version>
+</dependency>
+```
+
+:::
+
 ## Pricing4Java
 
 This Java-based toolkit is designed to enhance the server-side functionality by enabling the seamless integration of pricing plans into the application logic.
