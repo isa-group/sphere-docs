@@ -1,0 +1,38 @@
+import { VersionTable } from "@site/src/components/common";
+
+- **required**, if usageLimits.\<name\>.type is `NON_RENEWABLE`. This field will be set by default with:
+```yaml
+usageLimits:
+  sampleLimit:
+    ...
+    type: NON_RENEWABLE
+    trackable: false
+```
+
+Flag indicating whether the usage of a feature linked to a "NON_RENEWABLE" usage limit must be tracked within the user’s subscription. If true, the system records usage to ensure the limit is not exceeded during feature evaluations.
+
+**EXAMPLE:** If you own an online conference service –like zoom– you may have this two NON_RENEWABLE limits:
+
+- `maxMeetingDuration` (e.g. 1 hour)
+- `maxRecordingsCloudStorage` (e.g. 10 GB)
+
+The former do not need to be tracked within the user subscription, since it's a limit that affects meetings.
+However, the latter must be tracked, since it affects users theirselves and their storage. 
+
+Therefore, you can model this situation as follows:
+
+```yaml
+usageLimits:
+  maxMeetingDuration:
+    ...
+    type: NON_RENEWABLE
+    trackable: false
+  maxRecordingsCloudStorage:
+    ...
+    type: NON_RENEWABLE
+    trackable: true
+```
+
+**Libraries support**
+
+<VersionTable name="usageLimits.<name>.trackable" libraries={[false, true]} />

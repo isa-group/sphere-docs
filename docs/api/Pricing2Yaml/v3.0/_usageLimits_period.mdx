@@ -1,0 +1,30 @@
+import { VersionTable } from "@site/src/components/common";
+
+- **required**, if usageLimits.\<name\>.type is `RENEWABLE`. This field will be set by default with:
+```yaml
+usageLimits:
+  sampleLimit:
+    ...
+    type: RENEWABLE
+    period:
+      value: 1
+      unit: MONTH
+```
+
+- Field type: map containing the period of the usage limit. It contains two fields:
+
+  - `value`: integer representing the period value.
+  - `unit`: string representing the period unit. Possible values are: `SEC`, `MIN`, `HOUR`, `DAY`, `MONTH`, `YEAR`.
+
+Each value of the `unit` field corresponds to the following time periods (in seconds):
+
+- `SEC` = 1 second
+- `MIN` = 60 seconds
+- `HOUR` = 60 * 60 = 3600 seconds
+- `DAY` = 60 * 60 * 24 = 86400 seconds
+- `MONTH` = 60 * 60 * 24 * 30 = 2592000 seconds
+- `YEAR` = 60 * 60 * 24 * 365 = 31536000 seconds
+
+**Libraries support**
+
+<VersionTable name="usageLimits.<name>.period" libraries={[false, true]} />

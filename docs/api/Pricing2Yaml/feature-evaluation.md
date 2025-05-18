@@ -7,7 +7,7 @@ custom_edit_url: null
 
 Since the primary goal of the Pricing4Java is to automatically manage the access of an user to a feature, Pricing2Yaml allows to define an evaluation expression within each feature through the `expression` and `serverExpression` fields.
 
-The `expression` field must contain a string [SPEL](https://docs.spring.io/spring-framework/docs/3.2.x/spring-framework-reference/html/expressions.html) expression that will be used to evaluate wether the feature is available for an user or not. It can access the data of the user context using the `userContext` variable, while the plan's is available through `planContext`.For example, considering a user context that contains the following information:
+The `expression` field must contain a string [SPEL](https://docs.spring.io/spring-framework/docs/3.2.x/spring-framework-reference/html/expressions.html) expression that will be used to evaluate wether the feature is available for an user or not. It can access the data of the user context using the `subscriptionContext` variable, while the plan's is available through `pricingContext`.For example, considering a user context that contains the following information:
 
 ```json
 {
@@ -25,13 +25,13 @@ feature1:
   valueType: NUMERIC
   defaultValue: 10
   type: DOMAIN
-  expression: userContext['feature1use'] < planContext['features']['feature1']
-  serverExpression: userContext['feature1use'] <= planContext['features']['feature1']
+  expression: subscriptionContext['feature1use'] < pricingContext['features']['feature1']
+  serverExpression: subscriptionContext['feature1use'] <= pricingContext['features']['feature1']
   # ...
 ```
 
 :::info
-As the `planContext` utilized within the expression repressents as a map the current plan of the user, you should be aware of using either `features` or `usageLimits` to access the atribute you want to evaluate. The `features` key will have the `value` or `defaultValue` of the feature with the given key, while `usageLimits` will return the equivalent of a declared usage limit.
+As the `pricingContext` utilized within the expression repressents as a map the current plan of the user, you should be aware of using either `features` or `usageLimits` to access the atribute you want to evaluate. The `features` key will have the `value` or `defaultValue` of the feature with the given key, while `usageLimits` will return the equivalent of a declared usage limit.
 :::
 
 Similarly, the `serverExpresion` field can handle expressions with the same syntax, but its specification will only be used to evaluate the system's consistency using [@PricingPlanAware](../Pricing4Java/pricingplan-aware.md) annotation. This use can be interesting on NUMERIC features, let's see an example.
@@ -42,7 +42,7 @@ If we have a button on the UI to add items to a list, it should be only availabl
 # ...
 feature1:
   # ...
-  expression: userContext['feature1use'] < planContext['features']['feature1']
+  expression: subscriptionContext['feature1use'] < pricingContext['features']['feature1']
   # ...
 ```
 
@@ -52,7 +52,7 @@ However, on the server side, we should consider that the application has a valid
 # ...
 feature1:
   # ...
-  serverExpression: userContext['feature1use'] <= planContext['features']['feature1']
+  serverExpression: subscriptionContext['feature1use'] <= pricingContext['features']['feature1']
   # ...
 ```
 
@@ -62,8 +62,8 @@ To handle this type of situations, the use of the field `serverExpression` is ne
 # ...
 feature1:
   # ...
-  expression: userContext['feature1use'] < planContext['features']['feature1']
-  serverExpression: userContext['feature1use'] <= planContext['features']['feature1']
+  expression: subscriptionContext['feature1use'] < pricingContext['features']['feature1']
+  serverExpression: subscriptionContext['feature1use'] <= pricingContext['features']['feature1']
   # ...
 ```
 
@@ -73,14 +73,14 @@ feature1:
 In SPEL if you access a **key** that **doesn't exist** will be `null` by default. In our expression:
 
 ```txt
-userContext['feature1uses'] <= planContext['features']['feature1']
+subscriptionContext['feature1uses'] <= pricingContext['features']['feature1']
 ```
 
 will be substituted with
 
 ```txt
-# userContext['feature1uses'] doesn't exist, I misspell it so null
-# planContext['features']['feature1'] is equal to 10
+# subscriptionContext['feature1uses'] doesn't exist, I misspell it so null
+# pricingContext['features']['feature1'] is equal to 10
 
 null <= 10
 ```
@@ -90,6 +90,6 @@ The latter expression will evaluate to `false` meaning that `feature1` will alwa
 ### Conclusions
 
 - **Double check** the writting of expressions in your yaml, look for misspellings and access the correspoding section
-  of `planContext` which are `features` or `usageLimits`
+  of `pricingContext` which are `features` or `usageLimits`
 - **Keep in sync** the **yaml** and the **Java map** that you pass in the `PricingConfiguration.java` file
 :::
