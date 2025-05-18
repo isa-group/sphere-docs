@@ -1,0 +1,50 @@
+import { VersionTable } from "@site/src/components/common";
+
+- **optional**, if a map is not provided, and add-on is scalable, `subscriptionConstraints` will be set
+  by default with:
+
+```yaml
+addOns:
+  sampleAddon:
+    ...
+    subscriptionConstraints:
+      minQuantity: 1
+      maxQuantity: .inf
+      quantityStep: 1
+```
+
+- Field type: map containing constraints to contract scalable add-ons, i.e. those that only extend usage limits.
+
+A list of addon to be subscribed in order to purchase the current addon.
+
+A map of conditions to be satisfied in order to purchase the current addon.
+
+:::warning
+The `subscriptionConstraints` field is only available for scalable add-ons, meaning that not scalable add-ons ignore this field.
+:::
+
+**EXAMPLE:** Imagine that your addon `extraSeats` imposes the following constraints:
+
+- `minQuantity` = 1
+- `maxQuantity` = 10
+- `quantityStep` = 2
+
+That means that you can subscribe to `extraSeats` only if you choose a quantity between 1 and 10, and the quantity must be a multiple of 2.
+
+```yaml
+addOns:
+  extraSeats:
+    price: 10.00
+    ...
+    subscriptionConstraints:
+      minQuantity: 1
+      maxQuantity: 10
+      quantityStep: 2
+```
+
+**Libraries support**
+
+<VersionTable
+  name="addOns.<name>.subscriptionContraints"
+  libraries={[false, true]}
+/>
