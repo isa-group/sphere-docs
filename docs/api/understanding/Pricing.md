@@ -31,15 +31,15 @@ plans, three by add-ons) and imposes **usage limits** on the _pets_ and _visits_
 features. Moreover, the _Pets Dashboard_ can be contracted only if the user
 subscribes to the _PLATINUM_ plan.
 
-<details>
-  <summary>A new model to represent pricings</summary>
-
 Given this running example, it is important to note that not all pricing
 features are necessarily translated into code within the service. Those that are
 will be referred to as **functional features** (_Pets_, _Appointments Calendar_,
 _Vet Selection_, _Online Consultations_ and _Pets Dashboard_), while those that
 aren't will be referred to as **extra-functional features** (_Support Priority_
 and _SLA Coverage_ represents service-level guarantees).
+
+<details>
+  <summary>Pricings as a new way of representing variability</summary>
 
 Therefore, a SaaS pricing can be considered as the intersection of two distinct,
 yet complementary, paradigms:
@@ -61,7 +61,7 @@ addressing the broader business and technical needs of SaaS providers.
 
 In order to interact with the service, a customer establishes a **contract**.
 Through it, they accept the **terms and conditions** exposed in the service’s
-customer agreement and select a subscription, i.e., a _bundle_ that may include
+customer agreement and select a **subscription**, i.e., a _bundle_ that may include
 a plan and optionally a set of add-ons, ensuring that:
 
 1. The subscription is not empty, i.e., it contains at least a plan or an
