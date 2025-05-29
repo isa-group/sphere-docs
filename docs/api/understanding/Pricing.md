@@ -41,8 +41,8 @@ and _SLA Coverage_ represents service-level guarantees).
 <details>
   <summary>Pricings as a new way of representing variability</summary>
 
-Therefore, a SaaS pricing can be considered as the intersection of two distinct,
-yet complementary, paradigms:
+Therefore, a SaaS pricing can be considered as the **intersection** of two distinct,
+yet complementary, **paradigms**:
 
 - The modularity and configurability typical of feature models (FMs) in Software
   Product Lines[^4] (SPLs)
@@ -53,8 +53,8 @@ functional feature level, SLAs focus on representing and enforcing
 non-functional guarantees (e.g., coverage, support levels), i.e.
 extra-functional features.
 
-Pricing models unify these perspectives, capturing both dimensions in a single
-variability structure. As a result, they become powerful artifacts for
+Pricing models **unify** these perspectives, capturing both dimensions in a
+**single variability** structure. As a result, they become powerful artifacts for
 addressing the broader business and technical needs of SaaS providers.
 
 </details>
@@ -94,6 +94,39 @@ variability in such models. In this regard, **add-ons** play a crucial role in
 pricing design by enabling a compact set of plans to support a much larger
 configuration space accommodating a wide range of user needs without
 overwhelming customers with too many plan choices.
+
+**Configuration space cardinality**
+
+To calculate the cardinality of the configuration space we propose the following
+formula:
+
+- Let $C$ be the cardinality space
+- Let $P$ be the set of plans in the pricing
+- Let $m$ be the number of add-ons in the pricing
+- Let $n$ be the number of plans in the pricing
+
+```math
+\max\ |C| =
+\begin{cases}
+  2^m - 1 & \text{if } P = \emptyset \\
+  n \cdot 2^m & \text{if } P \neq \emptyset
+\end{cases}
+```
+
+**Example**
+
+Using the previous example we can calculate the cardinality of PetClinic:
+
+- In this PetClinic has three plans so the set is the following: $P = \{Basic, Gold, Platinum\}$
+- Since PetClinic has three addons: $m = 3$
+- Since PetClinic has three plans: $n = 3$
+
+According to the formula we use $n \cdot 2^m$ to calculate the
+cardinality of Petclinic giving the following result:
+
+$$
+|C| = 3 \cdot 2^{3} = 3 \cdot 8 = 24
+$$
 
 This approach helps to mitigate **decision fatigue**, in line with the _Paradox
 of Choice_[^6], which suggests that an excess of options can reduce satisfaction
