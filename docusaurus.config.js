@@ -129,6 +129,12 @@ const config = {
             label: "FAQs",
           },
           {
+            type: "docSidebar",
+            sidebarId: "spaceSidebar",
+            position: "left",
+            label: "Space",
+          },
+          {
             type: "docsVersionDropdown",
             position: "right",
             dropdownActiveClassDisabled: true,
