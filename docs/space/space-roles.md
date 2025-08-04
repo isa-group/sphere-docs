@@ -59,16 +59,20 @@ Here is a matrix breaking down every API operation access by user role
 
 ### Users endpoints role access
 
-| **Endpoint\Role**               | **Unauthenticated user** | **EVALUATOR**      | **MANAGER**        | **ADMIN**          |
-| ------------------------------- | ------------------------ | ------------------ |--------------------| ------------------ |
-| POST `/users/authenticate`      | :white_check_mark:       | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| GET `/users`                    | :x:                      | :x:                | :white_check_mark: | :white_check_mark: |
-| POST `/users`                   | :x:                      | :x:                | :white_check_mark: | :white_check_mark: |
-| GET `/users/{username}`         | :x:                      | :x:                | :white_check_mark: | :white_check_mark: |
-| PUT `/users/{username}`         | :x:                      | :x:                | :white_check_mark: | :white_check_mark: |
-| DELETE `/users/{username}`      | :x:                      | :x:                | :x:                | :white_check_mark: |
-| PUT `/users/{username}/api-key` | :x:                      | :x:                | :white_check_mark: | :white_check_mark: |
-| GET `/users/{username}/role`    | :x:                      | :x:                | :white_check_mark: | :white_check_mark: |
+| **Endpoint\Role**               | **Unauthenticated user** | **EVALUATOR**      | **MANAGER**            | **ADMIN**              |
+| ------------------------------- | ------------------------ | ------------------ |------------------------|------------------------|
+| POST `/users/authenticate`      | :white_check_mark:       | :white_check_mark: | :white_check_mark:     | :white_check_mark:     |
+| GET `/users`                    | :x:                      | :x:                | :white_check_mark:     | :white_check_mark:     |
+| POST `/users`                   | :x:                      | :x:                | :white_check_mark: (1) | :white_check_mark: (2) |
+| GET `/users/{username}`         | :x:                      | :x:                | :white_check_mark:     | :white_check_mark:     |
+| PUT `/users/{username}`         | :x:                      | :x:                | :white_check_mark:     | :white_check_mark:     |
+| DELETE `/users/{username}`      | :x:                      | :x:                | :x:                    | :white_check_mark:     |
+| PUT `/users/{username}/api-key` | :x:                      | :x:                | :white_check_mark:     | :white_check_mark:     |
+| GET `/users/{username}/role`    | :x:                      | :x:                | :white_check_mark:     | :white_check_mark:     |
+
+1) User accounts with `MANAGER` role can create users with `EVALUATOR` and `MANAGER` role.
+2) accounts with `ADMIN` role can create users with `EVALUATOR`, `MANAGER` and `ADMIN` role.
+
 
 ### Services endpoints role access
 
