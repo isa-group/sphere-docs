@@ -40,6 +40,7 @@ const config = {
 
   customFields: {
     currentVersion: currentVersion,
+    spaceOasUrl: "https://raw.githubusercontent.com/Alex-GF/space/refs/heads/main/api/docs/space-api-docs.yaml"
   },
 
   themes: ["@docusaurus/theme-mermaid"],
