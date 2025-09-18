@@ -55,7 +55,7 @@ public class MyFirstPricingDrivenSaaSApplication {
 
 ### 2. Declare a pricing configuration file
 
-Pricing4Java uses a YAML file written in the [Pricing2Yaml](../../api/Pricing2Yaml/the-pricing2yaml-syntax) syntax to represent and manage the whole pricing. Place the pricing configuration file anywhere inside the folder `src/main/resources`. Create the file `pricing.yml` within such directory and copy the snippet below, which shows a basic structure of such syntax:
+Pricing4Java uses a YAML file written in the [Pricing2Yaml](../../api/pricing-description-languages/Pricing2Yaml/the-pricing2yaml-syntax) syntax to represent and manage the whole pricing. Place the pricing configuration file anywhere inside the folder `src/main/resources`. Create the file `pricing.yml` within such directory and copy the snippet below, which shows a basic structure of such syntax:
 
 ```yaml title="src/main/resources/pricing.yml"
 saasName: My First Pricing Driven SaaS
@@ -127,11 +127,11 @@ void parsePostmanYamlToClassTest() {
 }
 ```
 
-The test will fail if the YAML file does not correctly follow the [Pricing2Yaml syntax](../../api/Pricing2Yaml/the-pricing2yaml-syntax.md), and will throw an exception explaining the problem.
+The test will fail if the YAML file does not correctly follow the [Pricing2Yaml syntax](../../api/pricing-description-languages/Pricing2Yaml/the-pricing2yaml-syntax.md), and will throw an exception explaining the problem.
 
 ### 3. Configure the pricing context
 
-Once the pricing configuration file is ready, the next step is to create a component that extends the [PricingContext](../../api/Pricing4Java/pricing-context) abstract class. This component will be the key to manage all the pricing configuration, including user context evaluation, JWT generation, pricing operations, etc.
+Once the pricing configuration file is ready, the next step is to create a component that extends the [PricingContext](../../api/Pricing4SaaS/Pricing4Java/pricing-context) abstract class. This component will be the key to manage all the pricing configuration, including user context evaluation, JWT generation, pricing operations, etc.
 
 ```java title=title="src/main/java/org/example/config/PricingConfiguration.java"
 @Component
@@ -171,7 +171,7 @@ public class PricingConfiguration extends PricingContext {
 
 ### 4. Configure the security context
 
-After the `PricingConfiguration` is set, you must add a `@Bean` [RenewTokenFilter](../../api/Pricing4Java/renew-token-filter) in
+After the `PricingConfiguration` is set, you must add a `@Bean` [RenewTokenFilter](../../api/Pricing4SaaS/Pricing4Java/renew-token-filter) in
 some configuration class with annotation `@Configuration`. This filter will be responsible for checking the JWT token in every request, keeping your frontend's feature evaluation context up to date with your backend's.
 
 ```java title="src/main/java/org/example/config/WebConfig.java"
@@ -193,7 +193,7 @@ public class WebConfig {
 
 :::warning
 
-If you have Cross-Origin Resource Sharing (CORS) within your application, we recommend to check the [RenewTokenFilter documentation](../../api/Pricing4Java/renew-token-filter).
+If you have Cross-Origin Resource Sharing (CORS) within your application, we recommend to check the [RenewTokenFilter documentation](../../api/Pricing4SaaS/Pricing4Java/renew-token-filter).
 
 :::
 
