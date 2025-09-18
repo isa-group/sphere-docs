@@ -1,5 +1,5 @@
 ---
-sidebar_position: 9
+sidebar_position: 10
 custom_edit_url: null
 ---
 
@@ -324,15 +324,15 @@ Here are some SaaS providers using this technique:
 
 [Mailchimp](https://mailchimp.com/pricing/marketing/compare-plans):
 
-![Mailchimp tags](../../static/img/tags-mailchimp.png)
+![Mailchimp tags](../../../static/img/tags-mailchimp.png)
 
 [Salesforce](https://www.salesforce.com/sales/pricing/):
 
-![Mailchimp tags](../../static/img/tags-salesforce.png)
+![Mailchimp tags](../../../static/img/tags-salesforce.png)
 
 [Slack](https://slack.com/pricing):
 
-![Mailchimp tags](../../static/img/tags-slack.png)
+![Mailchimp tags](../../../static/img/tags-slack.png)
 
 ### Example
 
@@ -469,7 +469,7 @@ necessary to provide a little more context.
 
 Here is an example extracted from [Databox](https://databox.com/pricing):
 
-![Databox description](../../static/img/databox-description.png)
+![Databox description](../../../static/img/databox-description.png)
 
 Good practice:
 
@@ -508,7 +508,7 @@ and `NUMERIC` as much as possible.
 
 Take a look at Search engine indexing (SEO) feature in [Notion](https://www.notion.com/pricing) pricing:
 
-![Stacked features](../../static/img/stacked-features.png)
+![Stacked features](../../../static/img/stacked-features.png)
 
 You could be tempted to model this as a `TEXT` feature, but there is another option that uses
 `BOOLEAN` features. In this case we can model this feature as two `BOOLEAN` features,
@@ -580,7 +580,7 @@ be enabled for that particular plan.
 
 Example from [Notion](https://www.notion.com/pricing) pricing:
 
-![Notion](../../static/img/limited-trial.png)
+![Notion](../../../static/img/limited-trial.png)
 
 
 ### Example
@@ -588,7 +588,7 @@ Example from [Notion](https://www.notion.com/pricing) pricing:
 Example from [Mailchimp](https://mailchimp.com/pricing/marketing/compare-plans/):
 
 
-![Mailchimp](../../static/img/preview-mailchimp.png)
+![Mailchimp](../../../static/img/preview-mailchimp.png)
 
 Good practice:
 
@@ -647,7 +647,7 @@ be modeled since there is no restriction for that feature.
 
 Example extracted from [Crowdcast](https://www.crowdcast.io/pricing) pricing:
 
-![Recommend user limits](../../static/img/recommended-users.png)
+![Recommend user limits](../../../static/img/recommended-users.png)
 
 ### Example
 

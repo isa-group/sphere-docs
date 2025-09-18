@@ -9,25 +9,22 @@ custom_edit_url: null
 
 ```yaml
 saasName: GitHub
-version: "1.0"
-day: 15
-month: 11
-year: 2023
+syntaxVersion: "3.0"
+createdAt: "2025-10-01"
+version: 2025
 currency: USD
-hasAnnualPayment: true
 features:
   githubPackages:
-    description: ...
     valueType: BOOLEAN
     defaultValue: true
     type: DOMAIN
-    expression: #SPEL Expression
+    expression: planContext['features']['githubPackages'] && subscriptionContext['githubPackagesLimit'] < planContext['usageLimits']['githubPackagesLimit']
     serverExpression: #OPTIONAL: SPEL Expression to be evaluated on the server side
   standardSupport:
     valueType: BOOLEAN
     defaultValue: false
     type: SUPPORT
-    expression: #SPEL Expression
+    expression: planContext['features']['standardSupport']
     serverExpression: #OPTIONAL: SPEL Expression to be evaluated on the server side
   #...
 usageLimits:
@@ -35,17 +32,17 @@ usageLimits:
     valueType: NUMERIC
     unit: GB
     defaultValue: 0.5
+    trackable: true
+    type: NON_RENEWABLE
     linkedFeatures:
       - githubPackages
   #...
 plans:
   FREE:
-    monthlyPrice: 0
-    annualPrice: 0
+    price: 0
     unit: user/month
   TEAM:
-    monthlyPrice: 4
-    annualPrice: 3.67
+    price: 4
     unit: user/month
     features:
       standardSupport:
@@ -56,9 +53,6 @@ plans:
   #...
 addOns:
   extraGithubPackages:
-    availableFor:
-      - FREE
-      - TEAM
     price: 0.5
     unit: GB/month
     features: null
@@ -82,13 +76,12 @@ Starting with the top-level placeholder, we can describe basic information about
 - SUPPORT
 - PAYMENT
 
-detailing each feature's `description`, `valueType` (BOOLEAN, NUMERIC TEXT), and `defaultValue`, whose data type has to be aligned with the `valueType` defined:
+detailing each feature's `description`, `valueType` (BOOLEAN or TEXT), and `defaultValue`, whose data type has to be aligned with the `valueType` defined:
 
 - If the `type` is `BOOLEAN`, the `defaultValue` must be a Boolean.
-- If the `type` is `NUMERIC`, the `defaultValue` must be Integer or Double
 - If the `type` is `TEXT`, the `defaultValue` must be a String.
 
-<!-- Notably, features do not handle NUMERIC values, which are reserved for limits. -->
+Notably, features do not handle NUMERIC values, which are reserved for limits.
 
 In addition, depending on each type of feature, the syntax extends expressiveness for each feature type with additional fields:
 
@@ -101,12 +94,10 @@ Similar to features, **UsageLimits** expounds on limitations affecting plans, ad
 
 - NON_RENEWABLE
 - RENEWABLE
-- RESPONSE_DRIVEN
-- TIME_DRIVEN
 
-For each limit, similar to features, a `description`, `valueType` (BOOLEAN, TEXT, NUMERIC), and `defaultValue` are provided, accompanied by additional fields such as `unit` or `linkedFeatures`. The latter must be a list of previously described features affected by the limitation.
+For each limit, similar to features, a `description`, `valueType` (BOOLEAN, or NUMERIC), and `defaultValue` are provided, accompanied by additional fields such as `unit` or `linkedFeatures`. The latter must be a list of previously described features affected by the limitation. In addition, if valueType === NUMERIC, `defaultValue` must be an integer or double.
 
-The **plans** section provides comprehensive details about the distinct pricing plans offered within the SaaS. Each plan is identified by a unique `name`, allowing for easy reference and differentiation. For each one, essential information is specified, including a brief `description`, the `monthlyPrice`, the `annualPrice` (if different from monthly) and the `unit` affected by them, typically expressed as "user/month".
+The **plans** section provides comprehensive details about the distinct pricing plans offered within the SaaS. Each plan is identified by a unique `name`, allowing for easy reference and differentiation. For each one, essential information is specified, including a brief `description`, the `price` and the `unit` affected by them, typically expressed as "user/month".
 
 In the `features` and `usageLimits` subsections of each plan, only those requiring a modification in their `defaultValue` should be explicitly listed. For those not mentioned, the `defaultValue` is understood to be equivalent to the `value`.
 

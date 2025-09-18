@@ -51,7 +51,7 @@ At the moment, we have these libraries to parse a Pricing2Yaml specification:
 ## Think about the extension
 
 :::warning
-Please before contributing, read the [latest version](../api/Pricing2Yaml/pricing2yaml-v20-specification.mdx)
+Please before contributing, read the [latest version](../api/pricing-description-languages/Pricing2Yaml/pricing2yaml-v20-specification.mdx)
 of the specification, duplicated extensions will be ignored.
 :::
 

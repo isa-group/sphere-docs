@@ -1,5 +1,5 @@
 ---
-sidebar_position: 2
+sidebar_position: 3
 custom_edit_url: null
 ---
 
@@ -34,7 +34,7 @@ feature1:
 As the `pricingContext` utilized within the expression repressents as a map the current plan of the user, you should be aware of using either `features` or `usageLimits` to access the atribute you want to evaluate. The `features` key will have the `value` or `defaultValue` of the feature with the given key, while `usageLimits` will return the equivalent of a declared usage limit.
 :::
 
-Similarly, the `serverExpresion` field can handle expressions with the same syntax, but its specification will only be used to evaluate the system's consistency using [@PricingPlanAware](../Pricing4Java/pricingplan-aware.md) annotation. This use can be interesting on NUMERIC features, let's see an example.
+Similarly, the `serverExpresion` field can handle expressions with the same syntax, but its specification will only be used to evaluate the system's consistency using [@PricingPlanAware](../../Pricing4SaaS/Pricing4Java/pricingplan-aware.md) annotation. This use can be interesting on NUMERIC features, let's see an example.
 
 If we have a button on the UI to add items to a list, it should be only available while the amount of products is under the feature limit, so when it is reached, the button disapears. The expression that models this behaviour will be the following:
 
@@ -56,7 +56,7 @@ feature1:
   # ...
 ```
 
-To handle this type of situations, the use of the field `serverExpression` is necessary, as its expression will be used to evaluate the feature on the server side (when using [@PricingPlanAware](../Pricing4Java/pricingplan-aware.md) annotation). If `serverEspression` is not defined, the `expression` will be used instead on any evaluation context. The snippet below shows how to define the situation described above:
+To handle this type of situations, the use of the field `serverExpression` is necessary, as its expression will be used to evaluate the feature on the server side (when using [@PricingPlanAware](../../Pricing4SaaS/Pricing4Java/pricingplan-aware.md) annotation). If `serverEspression` is not defined, the `expression` will be used instead on any evaluation context. The snippet below shows how to define the situation described above:
 
 ```yaml
 # ...

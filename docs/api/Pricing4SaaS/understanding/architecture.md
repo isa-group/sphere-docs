@@ -14,13 +14,13 @@ Pricing4SaaS is presented as a specification of a reference architecture that ad
 
 In general, it elevates pricing plans to a first-class citizen within the architecture of the system, leveraging feature toggles technology to enable dynamic adjustments to the system's functionality without needing to modify the source code, as highlighted by [Martin Fowler](https://martinfowler.com/articles/feature-toggles.html).
 
-![Pricing4SaaS Architecture](../../static/img/architecture.png)
+![Pricing4SaaS Architecture](../../../static/img/architecture.png)
 
 The figure above represents the process of a request within the architecture a system that integrates Pricing4SaaS. 
 
 The journey begins at the front-end, where users interact with the system's User Interface (UI). Each user's session is associated with a JWT that contains user subscription details, and optionally user permissions. When a client uses a feature *F*, the front-end can send a request to the back-end, carrying the JWT. 
 
-In the back-end, a **Feature Checker** middle-ware component intercepts the request, and use the **Pricing Service** to evaluate the user's permissions against a [**Pricing2Yaml**](../Pricing2Yaml/the-pricing2yaml-syntax) specification, a YAML-based syntax that models the rules and conditions of a pricing, providing the information needed to determine which features are available under certain circumstances. If the user can access the feature *F*, and the token signature is valid, which means it has not suffered any alterations during the transmission over the network, the back-end processes the request and returns the required data back to the Feature Checker which, in the case that the list of allowed features has changed, generates a new JWT the new list.
+In the back-end, a **Feature Checker** middle-ware component intercepts the request, and use the **Pricing Service** to evaluate the user's permissions against a [**Pricing2Yaml**](../../pricing-description-languages/Pricing2Yaml/the-pricing2yaml-syntax) specification, a YAML-based syntax that models the rules and conditions of a pricing, providing the information needed to determine which features are available under certain circumstances. If the user can access the feature *F*, and the token signature is valid, which means it has not suffered any alterations during the transmission over the network, the back-end processes the request and returns the required data back to the Feature Checker which, in the case that the list of allowed features has changed, generates a new JWT the new list.
 
 Finally, the response is sent back to the front-end, where the new pricing JWT, if present, is processed by the **Pricing Interceptor** and utilized to update the UI according to the new list of allowed features, ensuring a user experience tailored to his subscription.
 

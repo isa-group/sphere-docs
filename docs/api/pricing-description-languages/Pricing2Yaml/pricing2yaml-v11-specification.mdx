@@ -1,5 +1,5 @@
 ---
-sidebar_position: 4
+sidebar_position: 6
 custom_edit_url: null
 ---
 
@@ -49,8 +49,12 @@ import AddOnsUsageLimits from "./common/_addOns_usageLimits.mdx";
 import AddOnsUsageLimitsValue from "./common/_addOns_usageLimits_value.mdx";
 import AddOnsUsageLimitsExtensions from "./common/_addOns_usageLimitsExtensions.mdx";
 import AddOnsUsageLimitsExtensionsValue from "./common/_addOns_usageLimitsExtensions_value.mdx";
+import AddOnsDependsOn from "./v1.1/_addons_dependsOn.mdx";
+import CreatedAt from "./v1.1/_createdAt.mdx";
+import Starts from "./v1.1/_starts.mdx";
+import Ends from "./v1.1/_ends.mdx";
 
-# Version 1.0
+# Version 1.1
 
 :::info
 We use [YAML type](https://yaml.org/type/) abbreviations to describe the supported types of fields.
@@ -66,26 +70,30 @@ Certain fields have been omitted for clarity and explanation purposes.
 
 ## `version`
 
-- **mandatory**
-- Supported value: `1.0`
+- **required**
+- Supported value: `1.1`
+
+Version of the Pricing2Yaml specification
 
 ```yaml
-version: "1.0"
+version: "1.1"
 ```
+
+**Libraries support**
 
 <VersionTable name="version" libraries={[true, true]} />
 
-## `day`
+## `starts`
 
-<Day />
+<Starts />
 
-## `month`
+## `ends`
 
-<Month />
+<Ends />
 
-## `year`
+## `createdAt`
 
-<Year />
+<CreatedAt />
 
 ## `currency`
 
@@ -214,6 +222,10 @@ version: "1.0"
 ## `addOns.<name>.availableFor`
 
 <AddOnsAvailableFor />
+
+## `addOns.<name>.dependsOn`
+
+<AddOnsDependsOn />
 
 ## `addOns.<name>.monthlyPrice`
 
