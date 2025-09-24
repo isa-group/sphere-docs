@@ -1,16 +1,25 @@
 import { VersionTable } from "@site/src/components/common";
 
 - **optional**
-- Field type: one of `AUTO`, `DISABLED`, `ENABLED`
+- Field type: one of `AUTO`, `DISABLED`, `ENABLED`; if not provided `render` is set to `AUTO` by default
 
-Choose the behaviour when displaying the feature of the pricing. Use this
-feature in the Pricing2Yaml editor.
+Choose the behaviour when displaying a feature of the pricing. This field will only take effect on the [Pricing2Yaml editor](https://sphere.score.us.es/editor).
 
 ```yaml
 features:
   googleWorkspaceIntegration:
     render: DISABLED
 ```
+
+Depending on the selected value, the feature will be rendered differently:
+
+- If `render` is set to **AUTO**, no action is taken.
+- If `render` is set to **ENABLED** for a feature that has associated usage limits, the pricing will include one row showing the feature’s boolean value (i.e., whether it is available and for which plans). In addition, a separate row will be rendered for each associated usage limit, this time displaying the usage limit’s name in the table’s name column, along with its corresponding values.
+- If `render` is set to **DISABLED**, the feature will not be displayed in the pricing, nor will its associated usage limits. 
+
+:::warning
+If a usage limit is linked to multiple features and at least one of them is not set to DISABLED, then the usage limit will still be rendered—using its own name instead of the name of the feature.
+:::
 
 **Libraries support**
 

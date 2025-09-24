@@ -1,16 +1,21 @@
 import { VersionTable } from "@site/src/components/common";
 
 - **optional**
-- Field type: one of `AUTO`, `DISABLED`, `ENABLED`
+- Field type: one of `AUTO`, `DISABLED`, `ENABLED`; if not provided `render` is set to `AUTO` by default
 
-Choose the behaviour when displaying the usage limit of the pricing. Use this
-feature in the Pricing2Yaml editor.
+Choose the behaviour when displaying the usage limit of the pricing. This field will only take effect on the [Pricing2Yaml editor](https://sphere.score.us.es/editor).
 
 ```yaml
 usageLimits:
   usageLimit1:
     render: DISABLED
 ```
+
+Depending on the selected value, the usage limit will be rendered differently:
+
+- If `render` is set to **AUTO**, no action is taken.
+- If `render` is set to **ENABLED**, a row will be added to the pricing with the usage limit’s name and values, rather than the name of the feature it is linked to (regardless of whether the linked feature is even set to DISABLED).
+- If `render` is set to **DISABLED**, no row will be displayed in the pricing for it. If it was the only usage limit associated with a feature, then the feature itself will appear in the table with its values.
 
 **Libraries support**
 
