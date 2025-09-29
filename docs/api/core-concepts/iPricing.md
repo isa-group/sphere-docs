@@ -17,7 +17,7 @@ Pricing entries that impose or extend limits on meetings are considered usage li
 :::
 
 
-![iPricing Metamodel](../../static/img/iPricing.png)
+![iPricing Metamodel](../../static/img/core-concepts/iPricing.png)
 
 Returning to the iPricing metamodel (see figure above), it dictates that the user interacts with the pricing —encompassing **plans**, **add-ons**, or a combination thereof— through a **subscription**, which acts as a pivotal component in regulating the user’s access to the information system (IS) functionalities according to the contract. In addition plans and add-ons consist of **features**, which are the minimum unit within the dissection of the structure. Depending on their contribution to the system they can be classified in one of these types:
 
@@ -43,8 +43,6 @@ Features may also be subject to **usage limits**, a concept also found in APIs. 
 
 - **Renewable:** Limits that reset after a defined period (e.g., daily, monthly). Example: Max participants per meeting in Zoom resets each session.
 - **Non-renewable:** Fixed caps that do not reset during the subscription period. Example: Cloud storage capacity for recordings in Zoom.
-- **Response-driven:** Quota usage depends on system workload per request. Example: OpenAI’s LLM pricing is token-based, with consumption varying by response length.
-- **Time-driven:** Quota is consumed based on active time usage, often tied to a non-renewable cap. Example: Max time per meeting in Zoom.
 
 Finally, iPricings also distinguishes between **public and private plans**:
 
