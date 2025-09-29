@@ -12,7 +12,7 @@ const currentVersion = "2.0.1";
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
-  title: "Pricing4SaaS",
+  title: "SPHERE",
   tagline: "A new way to manage your SaaS pricing",
   favicon: "img/favicon.ico",
 
@@ -25,7 +25,7 @@ const config = {
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
   organizationName: "isa-group", // Usually your GitHub org/user name.
-  projectName: "Pricing4SaaS", // Usually your repo name.
+  projectName: "SPHERE", // Usually your repo name.
 
   onBrokenLinks: "throw",
   onBrokenMarkdownLinks: "warn",
@@ -40,7 +40,8 @@ const config = {
 
   customFields: {
     currentVersion: currentVersion,
-    spaceOasUrl: "https://raw.githubusercontent.com/Alex-GF/space/refs/heads/main/api/docs/space-api-docs.yaml"
+    spaceOasUrl: "https://raw.githubusercontent.com/Alex-GF/space/refs/heads/main/api/docs/space-api-docs.yaml",
+    githubUrl: "https://github.com/Alex-GF/sphere"
   },
 
   themes: ["@docusaurus/theme-mermaid"],
