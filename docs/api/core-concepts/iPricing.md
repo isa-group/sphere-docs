@@ -1,6 +1,6 @@
 ---
 sidebar_position: 2
-title: The iPricing Metamodel
+title: iPricing
 custom_edit_url: null
 ---
 
@@ -8,7 +8,7 @@ custom_edit_url: null
 
 The iPricing metamodel represents one of the first attempts to formalize pricing, so that they can all be designed following the same structure, which favors the creation of automated tools for their generation, analysis, validation, operation, etc.
 
-![Zoom Pricing](../../../static/img/zoom.png)
+![Zoom Pricing](../../static/img/zoom.png)
 
 In order to illustrate the upcomming concepts, we will introduce Zoom, a cloud-based video conferencing service that enables users to conduct virtual meetings (see figure above). In this example, nine features are managed through plans, one feature is associated with an add-on ("translated captions"), and one is governed by both ("phone dialing"). The pricing also enforces usage limits on the "meetings" feature (e.g., maximum assistants per meeting and maximum meeting duration) meaning that although the feature is available in all plans, the extent of their usage differs –higher-priced plans offer higher limits.
 
@@ -17,7 +17,7 @@ Pricing entries that impose or extend limits on meetings are considered usage li
 :::
 
 
-![iPricing Metamodel](../../../static/img/iPricing.png)
+![iPricing Metamodel](../../static/img/iPricing.png)
 
 Returning to the iPricing metamodel (see figure above), it dictates that the user interacts with the pricing —encompassing **plans**, **add-ons**, or a combination thereof— through a **subscription**, which acts as a pivotal component in regulating the user’s access to the information system (IS) functionalities according to the contract. In addition plans and add-ons consist of **features**, which are the minimum unit within the dissection of the structure. Depending on their contribution to the system they can be classified in one of these types:
 

@@ -3,7 +3,7 @@ sidebar_position: 1
 custom_edit_url: null
 ---
 
-# What is a pricing?
+# Pricing
 
 A pricing is a part of a SaaS customer agreement[^1]. It structures the
 **features** of a service into **plans** and/or **add-ons** to control users'
@@ -21,7 +21,7 @@ subscribe to as many add-ons as are available for the selected plan. In pricings
 without plans, where only add-ons are offered, users can subscribe to the
 allowed combination of add-ons of their choice.
 
-![PetClinic Pricing](../../../static/img/petclinic.png)
+![PetClinic Pricing](../../static/img/petclinic.png)
 
 The figure above illustrates a pricing for PetClinic, a sample veterinary clinic
 management service that developers use to demonstrate the features of a
