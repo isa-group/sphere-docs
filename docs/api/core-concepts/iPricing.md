@@ -16,7 +16,6 @@ In order to illustrate the upcomming concepts, we will introduce Zoom, a cloud-b
 Pricing entries that impose or extend limits on meetings are considered usage limits rather than individual features –the overarching feature in this case is “meetings”.
 :::
 
-
 ![iPricing Metamodel](../../static/img/core-concepts/iPricing.png)
 
 Returning to the iPricing metamodel (see figure above), it dictates that the user interacts with the pricing —encompassing **plans**, **add-ons**, or a combination thereof— through a **subscription**, which acts as a pivotal component in regulating the user’s access to the information system (IS) functionalities according to the contract. In addition plans and add-ons consist of **features**, which are the minimum unit within the dissection of the structure. Depending on their contribution to the system they can be classified in one of these types:
