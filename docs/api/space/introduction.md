@@ -1,3 +1,8 @@
+---
+sidebar_position: 1
+custom_edit_url: null
+---
+
 # What is SPACE?
 
 **Subscription and Pricing Access Control Engine (SPACE)** is a pricing-driven self-adaptation solution. This means that its primary objective is to enable services to dynamically adjust their behavior based on the pricing model and contractual agreements of each user. In practice, this ensures that users can only access the features included in their subscription and are restricted according to the usage limits defined in their contracts.
