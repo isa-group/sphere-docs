@@ -17,7 +17,7 @@ function SphereHero() {
 
   // We will render a CSS-only hero (no external video) — responsive and centered.
   return (
-    <header className={styles.heroRoot} role="banner" aria-label="SPHERE documentation hero" data-theme={localStorage.getItem('theme') || 'light'}>
+    <header className={styles.heroRoot} role="banner" aria-label="SPHERE documentation hero">
       <div className={styles.heroInner + (mounted ? ` ${styles.enter}` : '')}>
         <div className={styles.leftCol}>
           <h1 className={styles.brand}>
