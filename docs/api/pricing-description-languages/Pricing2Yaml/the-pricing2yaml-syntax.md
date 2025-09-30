@@ -5,6 +5,10 @@ custom_edit_url: null
 
 # The Pricing2Yaml Syntax
 
+:::tip Pricing2Yaml Editor
+A real-time [Pricing2Yaml editor](https://sphere.score.us.es/editor) is available, allowing you to render and visualize changes instantly. It provides an interactive way to explore the syntax and experiment with modifications. It also serves as a foundamental tool for designing real-world pricings.
+:::
+
 ## Overview
 
 **Pricing2Yaml** (originally introduced as *Yaml4SaaS*) is a **YAML-based serialization format** designed to operationalize the [iPricing metamodel](../../core-concepts/iPricing.md). As modern SaaS pricings have grown from a few simple options to **thousands of potential configurations** [^1], manual management has become increasingly **time-consuming and error-prone**. Pricing2Yaml addresses this challenge by providing a formalized, structured representation of pricing information that is both **human-readable** and **machine-processable**. It does so through a **concise yet expressive syntax** capable of capturing:  
@@ -171,6 +175,10 @@ The `addOns` section extends the core pricing with optional upgrades:
 These add-ons demonstrate how Pricing2Yaml supports **scalable add-ons** and **dependencies**.
 
 ### Pricing2Yaml Representation
+
+:::tip
+You can experiment with this example directly in the [online Pricing2Yaml editor](https://sphere.score.us.es/editor?pricing=M4QxwORBbBTAuABABVgFwMIBsCWA7HAYwChgBPPNEADwDVYAnYHAezyQCIBmAOgAYOxAG6NmbTlhBpYwNIMINYU2ABMAgmk4AmPloCsAWj4BOAwEZj8gK4NFeQmSQBRAKoAlYgDMlaGzPjEiIgADujAAUFBKjIKOMForOwoYYjRwLHxiYGRQiBYVrAAKmShSABCAPIVADJOahDZUbCeIFZYaLR5BUhoDAWNiLDUwYrAYknAVgBG6QxxCWwYbNLUaADaAOShaMAbALqIADwhc4T4AOZLlEPrG1ag57DVONA4O-ub0DSo73sDwIwRAwnMNRuMkJMZhkFngritbttdgdDgBeE5EC5wm6be4gR7PV6-T7fML7AZoEoIRAAEQqAFk1ABJBpBIQ4Zg7CKRNLQxJINkc4CpGJzTJsAa5fJFSnlKq1eoDaItNodLpU3r9SKDUEycGISGzeaJLGrTYCt5Io7os54S7LbF3B5PF4Wj4bL50dkW1AMOnLAAWajwKh+ZK1FNKNPpTJZ+qswWCLAYaGQcyTb0cipFRvEcYTSZTabmFOFhrFeAlauKkcKTgAGoUs8r2p0pUhqhUAOrkmWIADKLmQyAqbkbQUIeVgwZADC5TTLMKQ-pAIgwk+nDFLvPFWslBWrVMqNTqsaazdVbcQLSwAIGQxGur51sx9tNG28Uj8SM2y9X65UM5hpEEZUsytYAOJuGohSMhUp6IPg0jnAwUiJAeSCdk4ZQAPp9moah9tkIhoH2sBYLAhCLlmC5Pr+sD0CRZEUTCW6ijClZSuhiBHvK8FKq0LZqkg163lq95gk+IwYraJq3B+vijG6dEMaR5GUYkQFBCBSC0gyzLZIQbCTO0qFGXOrE5kkhl4MZVAwkKPJsVku5Vr2PEnk2AkXt0V55KJkTiY+uZSTadrXG+8lfm61m2aZNmaYg2lRnpsbbGoKgsOWGBTr0CDUduSRpRlWU5YoFnlhx+5uXKHlavxKqtj5ImwD2ka6TG2SItS4D+lMLAzio5mOZZS4rrAPzAN1wC9f1DAqOV7EuZx1XHgqdXNF5jVUs1d46mMkmnC+4VyT4UV7D+Y0TVNM0DQlSXMgAYiODIwXB2TAF8ybYPgRBuLAibJuE+VObmH0zpguAEIQf0AzsC3OTkrmRu5a3chtDVCb5N4teGvaPc90GwQ0uL4i6nLZB6E1Ddm5ZIBsGyVdKkYQC4dJOG4jIYJ5GOXloAxWAQmghOgrVUhAcHYW4TgQE4nZqGUtTkihhAANYgFM5E9H0OORJDKuqA9p2jOZBjCzsFM0LQXo7D6fqUIGwY-NTNG5vTjNcSzbMc1z63nltSBmPzgv8tbotIFLMtywrTgDKEaaDQMrKY4HWpBALbxIHScGFAAEgMesG0b-gDKb5rm8Ekg2VyZQEZzzsFeU4BECElex6cVJ8PwQcZ4g9yMAA9NAAYDJFxuIHgbRYPzToEhaSAT1gU9BOBNTUvXINJOluT2KoLcgBWWohVSehd1q6dC33DCD8PWqj8Xqd5rDqasMWmYP0nl5s9SjKs4niATuRDc5klo+Q1DrXc6BVLMT5H-D+oDtZ-xiiqOKQN36ID3NtPy4De4zzJqg1OlMwjAMRpeAALH-D0VtBS2wDEGEM6BiFwKpFwbIyBqiE09uvEaKAGAsD3gfSIR8A6dz4N3C+AIr5D3tiPIu+CtSTHzMmZ+6YKSMPQZjHOjJwJ5wfgAqcAFZywPUZeMBf9iJQPUuIIxGCtaalTkgky9k1E2MSggs+uDCRyMiIQ8maCXEAHYKGW2tsAGh9s6FO2sZjAAbMQEAKgVAVCrtkG4KFInrRdkkVJIAfjwx3II9uSAtA8GMHoMRSBtjX2kfI6YmSriyBQohLxQRXhJBTgQmgRTREP1kP9AO088TOk8cQnxzSSE+XaV1HqfUBpcNpmbSa0zZrzWGhVLUK4QA4EkBrWAD0kzENNmwjhv9D6FMQCfUp5ScEDykWgf0MjPzGz-lM6aMy5rOMxqYoIYMvqQ1+v9AsXjVmLn1J9CGP1oYAsBnkgRTRQjBmAEkg5CzrpvJUG3IgzCSllLPsHa5kib6RDvmMn54KoYw0BR8kxbizbpUyjCbKlBFBzJBUVelxpSqwBhRiwgVIzAXJxZEc+SBL5VLuQ8hS99U5spKkyvKfjPkIKAA) — a playground where you can modify the YAML, explore changes in real time, and get familiar with the syntax and its terminology.
+:::
 
 ```yaml
 saasName: PetClinic
