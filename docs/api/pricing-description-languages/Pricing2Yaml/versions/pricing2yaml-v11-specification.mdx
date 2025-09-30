@@ -1,5 +1,5 @@
 ---
-sidebar_position: 7
+sidebar_position: 4
 custom_edit_url: null
 ---
 
@@ -8,6 +8,7 @@ import SaaSName from "./common/_saasName.mdx";
 import Day from "./v1.0/_day.mdx";
 import Month from "./v1.0/_month.mdx";
 import Year from "./v1.0/_year.mdx";
+import HasAnnualPayment from "./common/_hasAnnualPayment.mdx";
 import Currency from "./common/_currency.mdx";
 import Features from "./common/_features.mdx";
 import FeaturesDescription from "./common/_features_description.mdx";
@@ -29,7 +30,8 @@ import UsageLimitsUnit from "./common/_usage_limits_unit.mdx";
 import UsageLimitsLinkedFeatures from "./common/_usage_limits_linkedFeatures.mdx";
 import Plans from "./common/_plans.mdx";
 import PlansDescription from "./common/_plans_description.mdx";
-import Price from "./v2.0/_price.mdx";
+import PlansMonthlyPrice from "./common/_plans_monthlyPrice.mdx";
+import PlansAnnualPrice from "./common/_plans_annualPrice.mdx";
 import PlansUnit from "./common/_plans_unit.mdx";
 import PlansFeatures from "./common/_plans_features.mdx";
 import PlansFeaturesValue from "./common/_plans_features_value.mdx";
@@ -38,6 +40,8 @@ import PlansUsageLimitsValue from "./common/_plans_usageLimits_value.mdx";
 import AddOns from "./common/_addOns.mdx";
 import AddOnsDescription from "./common/_addOns_description.mdx";
 import AddOnsAvailableFor from "./common/_addOns_availableFor.mdx";
+import AddOnsMonthlyPrice from "./common/_addOns_monthlyPrice.mdx";
+import AddOnsAnnualPrice from "./common/_addOns_annualPrice.mdx";
 import AddOnsUnit from "./common/_addOns_unit.mdx";
 import AddOnsFeatures from "./common/_addOns_features.mdx";
 import AddOnsFeaturesValue from "./common/_addOns_features_value.mdx";
@@ -46,21 +50,11 @@ import AddOnsUsageLimitsValue from "./common/_addOns_usageLimits_value.mdx";
 import AddOnsUsageLimitsExtensions from "./common/_addOns_usageLimitsExtensions.mdx";
 import AddOnsUsageLimitsExtensionsValue from "./common/_addOns_usageLimitsExtensions_value.mdx";
 import AddOnsDependsOn from "./v1.1/_addons_dependsOn.mdx";
-import AddOnsExcludes from "./v2.0/_excludes.mdx";
 import CreatedAt from "./v1.1/_createdAt.mdx";
 import Starts from "./v1.1/_starts.mdx";
 import Ends from "./v1.1/_ends.mdx";
-import URL from "./v2.0/_url.mdx";
-import Billing from "./v2.0/_billing.mdx";
-import Tags from "./v2.0/_tags.mdx";
-import FeaturesTag from "./v2.0/_features_tag.mdx";
-import Variables from "./v2.0/_variables.mdx";
-import FeaturesRender from "./v2.0/_features_render.mdx";
-import UsageLimitsRender from "./v2.0/_usageLimits_render.mdx";
-import PlansPrivate from "./v2.0/_plans_private.mdx";
-import AddOnsPrivate from "./v2.0/_addons_private.mdx";
 
-# Version 2.0
+# Version 1.1
 
 :::info
 We use [YAML type](https://yaml.org/type/) abbreviations to describe the supported types of fields.
@@ -76,44 +70,38 @@ Certain fields have been omitted for clarity and explanation purposes.
 
 ## `version`
 
-:::warning Migration from 2.0 to 2.1
-From `2.1` in advance `version` no longuer indicates the version
-of the specification, use `syntaxVersion` instead. `version` field
-still remains to indicate the current version of the pricing.
-:::
-
 - **required**
-- Supported value: `2.0`
+- Supported value: `1.1`
 
 Version of the Pricing2Yaml specification
 
 ```yaml
-version: "2.0"
+version: "1.1"
 ```
 
 **Libraries support**
 
 <VersionTable name="version" libraries={[true, true]} />
 
+## `starts`
+
+<Starts />
+
+## `ends`
+
+<Ends />
+
 ## `createdAt`
 
 <CreatedAt />
-
-## `url`
-
-<URL />
-
-## `tags`
-
-<Tags />
 
 ## `currency`
 
 <Currency />
 
-## `billing`
+## `hasAnnualPayment`
 
-<Billing />
+<HasAnnualPayment />
 
 ## `features`
 
@@ -122,10 +110,6 @@ version: "2.0"
 ## `features.<name>.description`
 
 <FeaturesDescription />
-
-## `features.<name>.tag`
-
-<FeaturesTag />
 
 ## `features.<name>.type`
 
@@ -163,10 +147,6 @@ version: "2.0"
 
 <FeaturesPricingUrls />
 
-## `features.<name>.render`
-
-<FeaturesRender />
-
 ## `usageLimits`
 
 <UsageLimits />
@@ -195,10 +175,6 @@ version: "2.0"
 
 <UsageLimitsLinkedFeatures />
 
-## `usageLimits.<name>.render`
-
-<UsageLimitsRender />
-
 ## `plans`
 
 <Plans />
@@ -207,13 +183,13 @@ version: "2.0"
 
 <PlansDescription />
 
-## `plans.<name>.private`
+## `plans.<name>.monthlyPrice`
 
-<PlansPrivate />
+<PlansMonthlyPrice />
 
-## `plans.<name>.price`
+## `plans.<name>.annualPrice`
 
-<Price subscription="plan" />
+<PlansAnnualPrice />
 
 ## `plans.<name>.unit`
 
@@ -247,21 +223,17 @@ version: "2.0"
 
 <AddOnsAvailableFor />
 
-## `addOns.<name>.private`
-
-<AddOnsPrivate />
-
 ## `addOns.<name>.dependsOn`
 
 <AddOnsDependsOn />
 
-## `addOns.<name>.excludes`
+## `addOns.<name>.monthlyPrice`
 
-<AddOnsExcludes />
+<AddOnsMonthlyPrice />
 
-## `addOns.<name>.price`
+## `addOns.<name>.annualPrice`
 
-<Price />
+<AddOnsAnnualPrice />
 
 ## `addOns.<name>.unit`
 
@@ -290,7 +262,3 @@ version: "2.0"
 ## `addOns.<name>.usageLimitsExtensions.<name>.value`
 
 <AddOnsUsageLimitsExtensionsValue />
-
-## `variables`
-
-<Variables />

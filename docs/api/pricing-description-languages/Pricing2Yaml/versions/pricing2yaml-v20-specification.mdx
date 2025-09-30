@@ -1,10 +1,13 @@
 ---
-sidebar_position: 8
+sidebar_position: 3
 custom_edit_url: null
 ---
 
 import { VersionTable } from "@site/src/components/common";
 import SaaSName from "./common/_saasName.mdx";
+import Day from "./v1.0/_day.mdx";
+import Month from "./v1.0/_month.mdx";
+import Year from "./v1.0/_year.mdx";
 import Currency from "./common/_currency.mdx";
 import Features from "./common/_features.mdx";
 import FeaturesDescription from "./common/_features_description.mdx";
@@ -43,6 +46,7 @@ import AddOnsUsageLimitsValue from "./common/_addOns_usageLimits_value.mdx";
 import AddOnsUsageLimitsExtensions from "./common/_addOns_usageLimitsExtensions.mdx";
 import AddOnsUsageLimitsExtensionsValue from "./common/_addOns_usageLimitsExtensions_value.mdx";
 import AddOnsDependsOn from "./v1.1/_addons_dependsOn.mdx";
+import AddOnsExcludes from "./v2.0/_excludes.mdx";
 import CreatedAt from "./v1.1/_createdAt.mdx";
 import Starts from "./v1.1/_starts.mdx";
 import Ends from "./v1.1/_ends.mdx";
@@ -50,16 +54,13 @@ import URL from "./v2.0/_url.mdx";
 import Billing from "./v2.0/_billing.mdx";
 import Tags from "./v2.0/_tags.mdx";
 import FeaturesTag from "./v2.0/_features_tag.mdx";
-import AddOnsExcludes from "./v2.0/_excludes.mdx";
 import Variables from "./v2.0/_variables.mdx";
 import FeaturesRender from "./v2.0/_features_render.mdx";
 import UsageLimitsRender from "./v2.0/_usageLimits_render.mdx";
 import PlansPrivate from "./v2.0/_plans_private.mdx";
 import AddOnsPrivate from "./v2.0/_addons_private.mdx";
-import Version from "./v2.1/_version.mdx";
-import SyntaxVersion from "./v2.1/_syntax_version_21.mdx";
 
-# Version 2.1
+# Version 2.0
 
 :::info
 We use [YAML type](https://yaml.org/type/) abbreviations to describe the supported types of fields.
@@ -69,17 +70,30 @@ Certain fields have been omitted for clarity and explanation purposes.
 
 :::
 
-## `syntaxVersion`
-
-<SyntaxVersion />
-
 ## `saasName`
 
 <SaaSName />
 
 ## `version`
 
-<Version />
+:::warning Migration from 2.0 to 2.1
+From `2.1` in advance `version` no longuer indicates the version
+of the specification, use `syntaxVersion` instead. `version` field
+still remains to indicate the current version of the pricing.
+:::
+
+- **required**
+- Supported value: `2.0`
+
+Version of the Pricing2Yaml specification
+
+```yaml
+version: "2.0"
+```
+
+**Libraries support**
+
+<VersionTable name="version" libraries={[true, true]} />
 
 ## `createdAt`
 

@@ -125,7 +125,7 @@ In addition, add-ons also support the following fields:
 - `excludes` (optional): A list of other add-ons that cannot be subscribed to if this add-on is selected. This is particularly relevant for validating subscriptions.
 
 :::info
-This guide does not include all the fields and options available in the Pricing2Yaml syntax (e.g. billing periods, tags, rendering options, etc). For a comprehensive specification, please refer to the [complete Pricing2Yaml specification](./pricing2yaml-v30-specification.mdx).
+This guide does not include all the fields and options available in the Pricing2Yaml syntax (e.g. billing periods, tags, rendering options, etc). For a comprehensive specification, please refer to the [complete Pricing2Yaml specification](./versions/pricing2yaml-v30-specification.mdx).
 :::
 
 ## Example  
