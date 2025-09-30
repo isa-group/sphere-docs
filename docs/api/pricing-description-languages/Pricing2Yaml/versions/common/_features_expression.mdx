@@ -27,6 +27,10 @@ while the `subscriptionContext` will have the following structure:
 
 With this in mind, the `expression` field can be used to define the conditions under which a feature is enabled.
 
+:::info
+As the `pricingContext` utilized within the expression repressents as a map the current configuration of a user, you should be aware of using either `features` or `usageLimits` to access the atribute you want to evaluate. The `features` key will have the `value` or `defaultValue` of the feature with the given key, while `usageLimits` will return the equivalent of a declared usage limit.
+:::
+
 For example, if we have a feature `feature1` that should only be enabled if the user has not exceeded the usage limit `usageLimit1`, the expression would be:
 
 ```yaml
