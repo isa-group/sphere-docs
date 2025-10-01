@@ -22,7 +22,7 @@ The word _novate_ means to replace an old obligation with a new one [^1]. In the
 
 ## 🧩 Overview
 
-Like other SPHERE pricing-driven self-adaptation solutions, SPACE leverages [iPricings](../core-concepts/iPricing.md) to orchestrate both contracts and variability. Its distinctive contribution lies in the fact that, unlike previous approaches, SPACE does not require the host application—i.e., the service integrating the solution—to embed a dedicated subscription management module. This represents a major architectural shift: **SPACE can be scaled and deployed independently from the managed service(s).** Consequently, the host application only needs to interact with SPACE through its **REST API** to query the current subscription state of a user, evaluate feature toggles, and enforce access control.
+Like other SPHERE pricing-driven self-adaptation solutions, SPACE leverages [iPricings](../core-concepts/iPricing.md) to orchestrate both contracts and variability. Its distinctive contribution lies in the fact that, unlike previous approaches, SPACE does not require the host application—i.e., the service integrating the solution—to embed a dedicated subscription management module. This represents a major architectural shift: **SPACE can be scaled and deployed independently from managed service(s).** Consequently, the host application only needs to interact with SPACE through its **REST API** to query the current subscription state of a user, evaluate feature toggles, and enforce access control.
 
 :::info 🤔 Why externalizing subscription state?
 
@@ -37,6 +37,29 @@ Experience has shown that embedding subscription state logic directly into the m
 | Supports management of multiple services and instances simultaneously              |                                                                                         |
 | Offers a dedicated UI for managing pricing versions and permissions                |                                                                                         |
 
+:::
+
+:::warning Important Note
+
+Before diving into the details of SPACE, it’s important to remember the following concepts (this is a quick reminder from the [core concepts](../core-concepts/terminology.md) section):
+
+- **Managed Application**: This application relies on SPACE to manage user subscriptions, evaluate feature access, and enforce usage limits based on the defined pricing models.
+
+- **Service**: a distinct component or microservice within the managed application that interacts with SPACE. Each service can have its own pricing model and subscription requirements.
+
+- **Feature**: defined in the pricing and may have associated usage limits.
+
+- **Usage Limit:** additional constraints to further restrict feature access and usage.
+
+- **Pricings** are versioned and managed within SPACE.
+
+- **Subscription**: Represents the choice of a user for a given plan and, optionally, a set of add-ons.
+
+- **Configuration**: It is the combination of features and usage limits that results from a user’s subscription within a specific pricing version.
+
+- **Usage level:** It is tracked by SPACE to decide whether usage limits have been reached.
+
+- **Subscription State:** The current status of a user’s subscription, including the active plan, add-ons, and usage levels. SPACE keeps this synchronized to ensure consistent access control.
 :::
 
 ## 🏛️ Architecture
