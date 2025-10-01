@@ -1,5 +1,5 @@
 ---
-sidebar_position: 4
+sidebar_position: 5
 title: Pricing-driven DevOps
 custom_edit_url: null
 ---

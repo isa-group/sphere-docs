@@ -1,5 +1,5 @@
 ---
-sidebar_position: 1
+sidebar_position: 2
 custom_edit_url: null
 ---
 
@@ -21,7 +21,7 @@ subscribe to as many add-ons as are available for the selected plan. In pricings
 without plans, where only add-ons are offered, users can subscribe to the
 allowed combination of add-ons of their choice.
 
-![PetClinic Pricing](../../static/img/petclinic.png)
+![PetClinic Pricing](../../static/img/core-concepts/petclinic.png)
 
 The figure above illustrates a pricing for PetClinic, a sample veterinary clinic
 management service that developers use to demonstrate the features of a
