@@ -9,6 +9,12 @@ Welcome to the **SPACE User Guides** section.
 
 Here you’ll find **step-by-step tutorials** that explain how to perform common contracts and services management operations with SPACE, always grounded in a practical running example: **PetClinic**, a sample veterinary clinic management SaaS that is widely used to demonstrate the features of a particular software framework or technology in a real-world scenario.
 
+:::warning  
+All management operations described in this section are performed through the **SPACE UI**.
+If you need to perform them programmatically, please refer to the [SPACE API Reference](../space-api.mdx).
+The theory behind each operation would be the same.
+:::
+
 ## 🎯 What you’ll learn
 
 :::danger 
