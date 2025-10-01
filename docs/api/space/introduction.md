@@ -160,6 +160,28 @@ All SPACE SDKs are designed with a server-issued token workflow:
 ➡️ Always generate tokens in a secure server-side environment and deliver them to the client through controlled channels.
 :::
 
+## 🧑‍💻 Tech Stack
+
+<div align="center">
+
+| Frontend         | Backend         | Tooling & DevOps      | Other                |
+|------------------|----------------|-----------------------|----------------------|
+| ![React](https://img.shields.io/badge/-React-61DAFB?logo=react&logoColor=white&style=for-the-badge) | ![Express](https://img.shields.io/badge/-Express-000?logo=express&logoColor=white&style=for-the-badge) | ![Docker](https://img.shields.io/badge/-Docker-2496ED?logo=docker&logoColor=white&style=for-the-badge) | ![TypeScript](https://img.shields.io/badge/-TypeScript-3178C6?logo=typescript&logoColor=white&style=for-the-badge) |
+| ![Vite](https://img.shields.io/badge/-Vite-646CFF?logo=vite&logoColor=white&style=for-the-badge) | ![Node.js](https://img.shields.io/badge/-Node.js-339933?logo=node.js&logoColor=white&style=for-the-badge) | ![pnpm](https://img.shields.io/badge/-pnpm-F69220?logo=pnpm&logoColor=white&style=for-the-badge) | ![TailwindCSS](https://img.shields.io/badge/-TailwindCSS-06B6D4?logo=tailwindcss&logoColor=white&style=for-the-badge) |
+| ![Framer Motion](https://img.shields.io/badge/-Framer%20Motion-EF008F?logo=framer&logoColor=white&style=for-the-badge) | ![Helmet](https://img.shields.io/badge/-Helmet-000?logo=helmet&logoColor=white&style=for-the-badge) | ![ESLint](https://img.shields.io/badge/-ESLint-4B32C3?logo=eslint&logoColor=white&style=for-the-badge) | ![Prettier](https://img.shields.io/badge/-Prettier-F7B93E?logo=prettier&logoColor=white&style=for-the-badge) |
+
+</div>
+
+## ⚠️ Disclaimer & License
+
+### LICENSE
+
+This project is licensed under the MIT License. See [LICENSE](https://github.com/Alex-GF/space/blob/main/LICENSE) for details
+
+### DISCLAIMER
+
+This tool is part of ongoing research by the [ISA group](https://github.com/isa-group) in pricing-driven development and operation of SaaS. It is in a **very early stage** and is not intended for production use. The ISA group does not accept responsibility for any issues or damages that may arise from its use in real-world environments
+
 [^1]:
     Hollenbeck, S. 2025-02-17. Novation Agreement Process: Step-by-Step Guide
     for Businesses. Retrieved from
