@@ -89,24 +89,6 @@ We can instantiate previous class diagram into an **object diagram** with our Ca
 
 ## Service management
 
-In order to create a service go to **Services Management** tab located at the left side panel and
-click on **Add Service** button:
-
-![Services Management](/img/space/starter-guide/services-management.png)
-
-A dialog will appear prompting you to upload a YAML file. The file must follow the **Pricing2Yaml** specification.
-
-![Add Service dialog](/img/space/starter-guide/add-new-service-dialog.png)
-
-
-Hit **Upload** button and a service will be created and your pricing will be automatically linked.
-
-![Service uploaded](/img/space/starter-guide/services-management-with-service.png)
-
-:::info
-When you upload a new service, its name is taken from the `saasName` field in the uploaded **Pricing2Yaml** file.
-:::
-
 
 ## Pricing management
 
@@ -254,7 +236,7 @@ Petclinic V1 and V2 pricing **changes** are highlighted in **grey**:
 If you want to upload more versions of your service click on the one you are interested and
 then click on the three aligned button at the top right corner and click on **Add Version**.
 
-![Add pricing version](/img/space/starter-guide/add-pricing-version.png)
+![Add pricing version](../../../static/img/space/user-guides/add-pricing-version.png)
 
 
 A dialog will prompt you to upload a new **Pricing2Yaml** file. Make sure the `saasName`
@@ -262,7 +244,7 @@ field matches your service exactly, and the `version` field is unique compared t
 versions for that service.
 
 
-![Add service](/img/space/starter-guide/add-new-service-dialog.png)
+![Add service](../../../static/img/space/user-guides/add-new-service-dialog.png)
 
 
 ## Pricing Lifecycle
@@ -277,7 +259,7 @@ stateDiagram-v2
 
 
 
-![Pricing lifecycle](/img/space/starter-guide/pricing-lifecycle.png)
+![Pricing lifecycle](../../../static/img/space/user-guides/pricing-lifecycle.png)
 
 <details>
 
