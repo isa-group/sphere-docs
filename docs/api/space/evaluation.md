@@ -1,10 +1,10 @@
 ---
 sidebar_position: 2
-title: Evaluation Process
+title: 📊 Evaluation Process
 custom_edit_url: null
 ---
 
-# 🚀 SPACE Feature Evaluation Workflow
+# 📊 SPACE Feature Evaluation Workflow
 
 SPACE helps you decide whether a user can access a feature, while keeping **subscription states consistent** even under concurrency or partial failures.
 
