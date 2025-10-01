@@ -23,10 +23,10 @@ These variables configure the **SPACE server**:
 | `DATABASE_NAME`     | ❌       | `space_db`                                            | MongoDB database name _(ignored if `MONGO_URI` is set)_ |
 | `DATABASE_USERNAME` | ❌       | `mongoUser`                                           | MongoDB username _(ignored if `MONGO_URI` is set)_      |
 | `DATABASE_PASSWORD` | ❌       | `mongoPassword`                                       | MongoDB password _(ignored if `MONGO_URI` is set)_      |
-| `MONGO_URI`         | ❌       | `mongodb://${dbCredentials}localhost:27017/${dbName}` | Full MongoDB connection string                          |
+| `MONGO_URI`         | ❌       | `mongodb://${dbCredentials}localhost:27017/${dbName}` | Full MongoDB connection string. `dbCredentials` correspond to the formatted version of DATABASE_USERNAME and DATABASE_PASSWORD, and dbName corresponds to DATABASE_NAME |
 | `REDIS_URL`         | ✅       | —                                                     | Redis URL for caching                                   |
-| `JWT_SECRET`        | ✅       | —                                                     | Secret key for JWT generation                           |
-| `JWT_SALT`          | ✅       | —                                                     | Salt for JWT hashing                                    |
+| `JWT_SECRET`        | ✅       | —                                                     | Secret key for JWT generation. It can be any random string.                           |
+| `JWT_SALT`          | ✅       | —                                                     | Salt for JWT hashing. It can be any random string.                                    |
 | `JWT_EXPIRATION`    | ❌       | `1h`                                                  | JWT expiration (e.g., `1d`, `2h`)                       |
 | `ADMIN_USER`        | ❌       | `admin`                                               | Default admin username                                  |
 | `ADMIN_PASSWORD`    | ❌       | `space4all`                                           | Default admin password                                  |
@@ -40,7 +40,7 @@ These variables configure the **SPACE client**:
 | Variable                   | Required       | Description                                            |
 | -------------------------- | -------------- | ------------------------------------------------------ |
 | `VITE_ENVIRONMENT`         | ✅             | `development` or `production`                          |
-| `VITE_SPACE_BASE_URL`      | ✅             | Base URL of the SPACE server                           |
+| `VITE_SPACE_BASE_URL`      | ✅             | Base URL of the SPACE server. For example: http://space-instance:5403/api/v1 |
 | `VITE_SPACE_ADMIN_API_KEY` | ⚠️ Only in dev | API key for admin access (only works in `development`) |
 
 ---
