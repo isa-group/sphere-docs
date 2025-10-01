@@ -1,16 +1,45 @@
-# SPACE Role based Access Control
+---
+sidebar_position: 5
+title: 🔐 Roles & Permissions
+---
 
-Space restricts the API operations based on the role of the user. SPACE distinguishes three different roles:
+# 🔐 SPACE Role-based Access Control
 
-- EVALUATOR
-- MANAGER
-- ADMIN
+SPACE enforces **role-based access control (RBAC)** to determine which API operations each service can perform.  
 
-:::info
-Every request to SPACE API, except `POST /users/authenticate`, must include a header called `x-api-key`
-with the value of the `apiKey` of the corresponding user.
+:::warning **Important distinction**
 
-Example of an authenticated request:
+The **users declared in SPACE are *not end-users of your SaaS***.
+
+Instead, they represent the **components** that will interact with SPACE.
+
+Each `apiKey` maps to a SPACE user, and that user is assigned a role.  
+
+This model is particularly powerful in **microservice architectures**:  
+
+- 🛠️ For example, your **Authentication microservice** could have the `MANAGER` role, allowing it to create and manage contracts.  
+- 🎛️ While other microservices that only need to check if a feature is available for a user can be assigned the `EVALUATOR` role. This ensures they cannot create or modify contracts.
+
+This separation improves **security** and **clarity** in large-scale deployments.
+:::
+
+---
+
+## 👥 Available Roles
+
+SPACE defines three roles:
+
+- **EVALUATOR** → Can only evaluate features and retrieve allowed services.  
+- **MANAGER** → Can manage contracts and pricings, in addition to evaluator permissions.  
+- **ADMIN** → Full access, including user management and deletion.  
+
+---
+
+## 🔑 Authentication
+
+Every request to SPACE API (except `POST /users/authenticate`) must include an `x-api-key` header with the corresponding user’s API key.
+
+📌 Example of an authenticated request:
 
 ```http
 POST /api/v1/features
@@ -21,10 +50,7 @@ Content-Type: application/json
 x-api-key: <your_api_key>
 ```
 
-You can get your API Key by calling making a request to `POST /users/authenticate` and specifying your credentials,
-that is your username and password.
-
-Login request to SPACE:
+To obtain an API key, you first authenticate with your SPACE username and password:
 
 ```http
 POST /api/v1/user/authenticate
@@ -40,82 +66,90 @@ Content-Type: application/json
 // highlight-end
 ```
 
-Login response body:
+Example response:
 
 ```json
 {
   "username": "<your_username>",
-  // highlight-next-line
   "apiKey": "<your_api_key>",
   "role": "EVALUATOR"
 }
 ```
 
-:::
+---
 
-## API operations access by role
+## 📊 API Operations by Role
 
-Here is a matrix breaking down every API operation access by user role
+Below is a detailed matrix showing which endpoints each role can access.  
 
-### Users endpoints role access
+---
 
-| **Endpoint\Role**               | **Unauthenticated user** | **EVALUATOR**      | **MANAGER**            | **ADMIN**              |
-| ------------------------------- | ------------------------ | ------------------ |------------------------|------------------------|
-| POST `/users/authenticate`      | :white_check_mark:       | :white_check_mark: | :white_check_mark:     | :white_check_mark:     |
-| GET `/users`                    | :x:                      | :x:                | :white_check_mark:     | :white_check_mark:     |
-| POST `/users`                   | :x:                      | :x:                | :white_check_mark: (1) | :white_check_mark: (2) |
-| GET `/users/{username}`         | :x:                      | :x:                | :white_check_mark:     | :white_check_mark:     |
-| PUT `/users/{username}`         | :x:                      | :x:                | :white_check_mark:     | :white_check_mark:     |
-| DELETE `/users/{username}`      | :x:                      | :x:                | :x:                    | :white_check_mark:     |
-| PUT `/users/{username}/api-key` | :x:                      | :x:                | :white_check_mark:     | :white_check_mark:     |
-| GET `/users/{username}/role`    | :x:                      | :x:                | :white_check_mark:     | :white_check_mark:     |
+### 👤 Users endpoints
 
-1) User accounts with `MANAGER` role can create users with `EVALUATOR` and `MANAGER` role.
-2) accounts with `ADMIN` role can create users with `EVALUATOR`, `MANAGER` and `ADMIN` role.
+| **Endpoint\Role**               | **Unauthenticated user** | **EVALUATOR** | **MANAGER**            | **ADMIN**              |
+| -------------------------------- | ------------------------ | ------------- | ---------------------- | ---------------------- |
+| POST `/users/authenticate`      | ✅                       | ✅            | ✅                     | ✅                     |
+| GET `/users`                    | ❌                       | ❌            | ✅                     | ✅                     |
+| POST `/users`                   | ❌                       | ❌            | ✅ (1)                 | ✅ (2)                 |
+| GET `/users/{username}`         | ❌                       | ❌            | ✅                     | ✅                     |
+| PUT `/users/{username}`         | ❌                       | ❌            | ✅                     | ✅                     |
+| DELETE `/users/{username}`      | ❌                       | ❌            | ❌                     | ✅                     |
+| PUT `/users/{username}/api-key` | ❌                       | ❌            | ✅                     | ✅                     |
+| GET `/users/{username}/role`    | ❌                       | ❌            | ✅                     | ✅                     |
 
+1. `MANAGER` can create users with roles: `EVALUATOR` and `MANAGER`.  
+2. `ADMIN` can create users with roles: `EVALUATOR`, `MANAGER`, and `ADMIN`.  
 
-### Services endpoints role access
+---
 
-| **Endpoint\Role**                                          | **Unauthenticated user** | **EVALUATOR**      | **MANAGER**        | **ADMIN**          |
-| ---------------------------------------------------------- | ------------------------ | ------------------ | ------------------ | ------------------ |
-| GET `/services`                                            | :x:                      | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| POST `/services`                                           | :x:                      | :x:                | :white_check_mark: | :white_check_mark: |
-| DELETE `/services`                                         | :x:                      | :x:                | :x:                | :white_check_mark: |
-| GET `/services/{serviceName}`                              | :x:                      | :x:                | :white_check_mark: | :white_check_mark: |
-| PUT `/services/{serviceName}`                              | :x:                      | :x:                | :white_check_mark: | :white_check_mark: |
-| DELETE `/services/{serviceName}`                           | :x:                      | :x:                | :x:                | :white_check_mark: |
-| GET `/services/{serviceName}/pricings`                     | :x:                      | :x:                | :white_check_mark: | :white_check_mark: |
-| POST `/services/{serviceName}/pricings`                    | :x:                      | :x:                | :white_check_mark: | :white_check_mark: |
-| GET `/services/{serviceName}/pricings/{pricingVersion}`    | :x:                      | :x:                | :white_check_mark: | :white_check_mark: |
-| PUT `/services/{serviceName}/pricings/{pricingVersion}`    | :x:                      | :x:                | :white_check_mark: | :white_check_mark: |
-| DELETE `/services/{serviceName}/pricings/{pricingVersion}` | :x:                      | :x:                | :x:                | :white_check_mark: |
+### 🛠️ Services endpoints
 
-### Contracts endpoints role access
+| **Endpoint\Role**                                          | **Unauthenticated user** | **EVALUATOR** | **MANAGER** | **ADMIN** |
+| ---------------------------------------------------------- | ------------------------ | ------------- | ----------- | --------- |
+| GET `/services`                                            | ❌                       | ✅            | ✅          | ✅        |
+| POST `/services`                                           | ❌                       | ❌            | ✅          | ✅        |
+| DELETE `/services`                                         | ❌                       | ❌            | ❌          | ✅        |
+| GET `/services/{serviceName}`                              | ❌                       | ❌            | ✅          | ✅        |
+| PUT `/services/{serviceName}`                              | ❌                       | ❌            | ✅          | ✅        |
+| DELETE `/services/{serviceName}`                           | ❌                       | ❌            | ❌          | ✅        |
+| GET `/services/{serviceName}/pricings`                     | ❌                       | ❌            | ✅          | ✅        |
+| POST `/services/{serviceName}/pricings`                    | ❌                       | ❌            | ✅          | ✅        |
+| GET `/services/{serviceName}/pricings/{pricingVersion}`    | ❌                       | ❌            | ✅          | ✅        |
+| PUT `/services/{serviceName}/pricings/{pricingVersion}`    | ❌                       | ❌            | ✅          | ✅        |
+| DELETE `/services/{serviceName}/pricings/{pricingVersion}` | ❌                       | ❌            | ❌          | ✅        |
 
-| **Endpoint\Role**                       | **Unauthenticated user** | **EVALUATOR** | **MANAGER**        | **ADMIN**          |
-| --------------------------------------- | ------------------------ | ------------- | ------------------ | ------------------ |
-| GET `/contracts`                        | :x:                      | :x:           | :white_check_mark: | :white_check_mark: |
-| POST `/contracts`                       | :x:                      | :x:           | :white_check_mark: | :white_check_mark: |
-| DELETE `/contracts`                     | :x:                      | :x:           | :x:                | :white_check_mark: |
-| GET `/contracts/{userId}`               | :x:                      | :x:           | :white_check_mark: | :white_check_mark: |
-| PUT `/contracts/{userId}`               | :x:                      | :x:           | :white_check_mark: | :white_check_mark: |
-| DELETE `/contracts/{userId}`            | :x:                      | :x:           | :x:                | :white_check_mark: |
-| PUT `/contracts/{userId}/usageLevels`   | :x:                      | :x:           | :white_check_mark: | :white_check_mark: |
-| PUT `/contracts/{userId}/userContract`  | :x:                      | :x:           | :white_check_mark: | :white_check_mark: |
-| PUT `/contracts/{userId}/billingPeriod` | :x:                      | :x:           | :white_check_mark: | :white_check_mark: |
+---
 
-### Features endpoints role access
+### 📄 Contracts endpoints
 
-| **Endpoint\Role**                       | **Unauthenticated user** | **EVALUATOR**      | **MANAGER**        | **ADMIN**          |
-| --------------------------------------- | ------------------------ | ------------------ | ------------------ | ------------------ |
-| GET `/features`                         | :x:                      | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| POST `/features/{userId}`               | :x:                      | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| POST `/features/{userId}/pricing-token` | :x:                      | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| POST `/features/{userId}/{featureId}`   | :x:                      | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| **Endpoint\Role**                       | **Unauthenticated user** | **EVALUATOR** | **MANAGER** | **ADMIN** |
+| --------------------------------------- | ------------------------ | ------------- | ----------- | --------- |
+| GET `/contracts`                        | ❌                       | ❌            | ✅          | ✅        |
+| POST `/contracts`                       | ❌                       | ❌            | ✅          | ✅        |
+| DELETE `/contracts`                     | ❌                       | ❌            | ❌          | ✅        |
+| GET `/contracts/{userId}`               | ❌                       | ❌            | ✅          | ✅        |
+| PUT `/contracts/{userId}`               | ❌                       | ❌            | ✅          | ✅        |
+| DELETE `/contracts/{userId}`            | ❌                       | ❌            | ❌          | ✅        |
+| PUT `/contracts/{userId}/usageLevels`   | ❌                       | ❌            | ✅          | ✅        |
+| PUT `/contracts/{userId}/userContract`  | ❌                       | ❌            | ✅          | ✅        |
+| PUT `/contracts/{userId}/billingPeriod` | ❌                       | ❌            | ✅          | ✅        |
 
-### Analytics endpoints role access
+---
 
-| **Endpoint\Role**            | **Unauthenticated user** | **EVALUATOR** | **MANAGER**        | **ADMIN**          |
-| ---------------------------- | ------------------------ | ------------- | ------------------ | ------------------ |
-| GET `/analytics/api-calls`   | :x:                      | :x:           | :white_check_mark: | :white_check_mark: |
-| GET `/analytics/evaluations` | :x:                      | :x:           | :white_check_mark: | :white_check_mark: |
+### 🎛️ Features endpoints
+
+| **Endpoint\Role**                       | **Unauthenticated user** | **EVALUATOR** | **MANAGER** | **ADMIN** |
+| --------------------------------------- | ------------------------ | ------------- | ----------- | --------- |
+| GET `/features`                         | ❌                       | ✅            | ✅          | ✅        |
+| POST `/features/{userId}`               | ❌                       | ✅            | ✅          | ✅        |
+| POST `/features/{userId}/pricing-token` | ❌                       | ✅            | ✅          | ✅        |
+| POST `/features/{userId}/{featureId}`   | ❌                       | ✅            | ✅          | ✅        |
+
+---
+
+### 📈 Analytics endpoints
+
+| **Endpoint\Role**            | **Unauthenticated user** | **EVALUATOR** | **MANAGER** | **ADMIN** |
+| ---------------------------- | ------------------------ | ------------- | ----------- | --------- |
+| GET `/analytics/api-calls`   | ❌                       | ❌            | ✅          | ✅        |
+| GET `/analytics/evaluations` | ❌                       | ❌            | ✅          | ✅        |
