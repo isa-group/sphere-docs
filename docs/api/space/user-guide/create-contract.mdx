@@ -1,0 +1,197 @@
+---
+custom_edit_url: null
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# ➕ Create a Contract
+
+In **SPACE**, contracts represent the legal and technical agreements between the SaaS provider (who manages SPACE) and the end users of the SaaS application.  
+They define **who the customer is, what are they subscribed to, and how billing is managed.**
+
+Unlike services or pricings, **contracts can only be created programmatically** via the **SPACE API**. It is an action that is expected to be performed by the managed service programmatically.
+
+---
+
+## 📖 Example Scenario
+
+Suppose a customer has purchased the **GOLD plan** of **PetClinic**.  
+After verifying their payment in your billing system, you must **register the contract in SPACE** so that:
+
+- The subscription state can be tracked.
+- Feature access can be enforced.
+
+---
+
+## 🧾 Required Fields
+
+To create a contract, you need to provide:
+
+- **User Information**: at least `userId` and `username` of the subscriber.
+- **Billing Period**: renewal policy (`autoRenew`) and cycle length (`renewalDays`).
+- **Contracted Service(s)**: the service(s) and pricing version(s) the contract refers to.
+- **Subscription Plans**: which plan the user has subscribed to for each service.
+- **Subscription Add-ons (optional)**: any additional features the user purchased.
+
+:::info
+For more details on the contract schema, see the [API Reference](../space-api.mdx).
+:::
+
+---
+
+## 0. Prerequisites
+
+- A valid **API key** with at least the `MANAGER` role. See [SPACE Roles](../space-roles.mdx) for details.
+- The **userId** of the subscriber. This depends on the identification system the managed service employs.
+
+## 1. Create a Contract via the API
+
+### Simplified Request
+
+```http
+POST /api/v1/contracts HTTP/1.1
+Host: localhost:5403
+Accept: application/json
+Content-Type: application/json
+x-api-key: <your_api_key>
+
+{
+  "userContact": {
+    "userId": "72ee0357-e34b-4d8f-9e0f-b710391cb298",
+    "username": "petclinicuser01"
+  },
+  "billingPeriod": {
+    "autoRenew": true,
+    "renewalDays": 365
+  },
+  "contractedServices": {
+    "petclinic": "2025-3-26" # This is the version of the pricing
+  },
+  "subscriptionPlans": {
+    "petclinic": "GOLD"
+  },
+  "subscriptionAddOns": {
+    "petclinic": {
+      "petAdoptionCentre": 1
+    }
+  }
+}
+```
+
+### Programmatic Examples
+
+<Tabs defaultValue="curl">
+  <TabItem value="curl" label="▶️ Using curl">
+```bash
+curl -H 'x-api-key: <your_api_key>' \
+  http://localhost:5403/api/v1/contracts \
+  --json @- << EOF
+{
+  "userContact": {
+    "userId": "72ee0357-e34b-4d8f-9e0f-b710391cb298",
+    "username": "petclinicuser01"
+  },
+  "billingPeriod": {
+    "autoRenew": true,
+    "renewalDays": 365
+  },
+  "contractedServices": {
+    "petclinic": "2025-3-26"
+  },
+  "subscriptionPlans": {
+    "petclinic": "GOLD"
+  },
+  "subscriptionAddOns": {
+    "petclinic": {
+      "petAdoptionCentre": 1
+    }
+  }
+}
+EOF
+```
+
+  </TabItem>
+  <TabItem value="node-client" label="💻 Using the SPACE Node Client">
+```js
+const newContract = {
+  userContact: {
+    userId: "72ee0357-e34b-4d8f-9e0f-b710391cb298",
+    username: "petclinicuser01"
+  },
+  billingPeriod: {
+    autoRenew: true,
+    renewalDays: 365
+  },
+  contractedServices: {
+    petclinic: "2025-3-26"
+  },
+  subscriptionPlans: {
+    petclinic: "GOLD"
+  },
+  subscriptionAddOns: {
+    petclinic: {
+      petAdoptionCentre: 1
+    }
+  }
+};
+
+spaceClient.contracts.addContract(newContract);
+```
+  </TabItem>
+</Tabs>
+
+### ✅ Example Response
+
+If the contract is successfully created, SPACE will respond with the full contract record:
+
+```json
+{
+  "userContact": {
+    "userId": "72ee0357-e34b-4d8f-9e0f-b710391cb298",
+    "username": "petclinicuser01"
+  },
+  "billingPeriod": {
+    "startDate": "2025-08-04T10:31:46.010Z",
+    "endDate": "2026-08-04T10:31:46.010Z",
+    "autoRenew": true,
+    "renewalDays": 365
+  },
+  "usageLevels": {
+    "petclinic": {
+      "maxPets": {
+        "consumed": 0
+      },
+      "maxVisits": {
+        "resetTimeStamp": "2025-09-04T10:31:46.012Z",
+        "consumed": 0
+      },
+      "calendarEventsCreationLimit": {
+        "resetTimeStamp": "2025-09-04T10:31:46.012Z",
+        "consumed": 0
+      }
+    }
+  },
+  "contractedServices": {
+    "petclinic": "2025-3-26"
+  },
+  "subscriptionPlans": {
+    "petclinic": "GOLD"
+  },
+  "subscriptionAddOns": {
+    "petclinic": {
+      "petAdoptionCentre": 1
+    }
+  },
+  "history": [],
+  "id": "68908c121570b332f02d05d9"
+}
+```
+
+:::info Notes
+
+- `usageLevels` are automatically initialized and tracked by SPACE.
+- `history` will contain the lifecycle events of the contract (e.g., upgrades, downgrades, cancellations).
+- Contracts are **immutable in principle**: any change creates a new version in the history log.
+
+:::
