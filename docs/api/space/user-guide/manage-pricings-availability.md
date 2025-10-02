@@ -1,4 +1,5 @@
 ---
+sidebar_position: 9
 title: "🔄 Manage Pricings Availability"
 custom_edit_url: null
 ---

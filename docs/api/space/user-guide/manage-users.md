@@ -1,4 +1,5 @@
 ---
+sidebar_position: 8
 title: "🔄 Manage Users"
 custom_edit_url: null
 ---
