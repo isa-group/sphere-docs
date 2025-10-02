@@ -2,7 +2,7 @@
 custom_edit_url: null
 ---
 
-# ➕ Create Users
+# ➕ Create User
 
 Remember, in **SPACE**, users are not end-users of your SaaS application.  
 Instead, they represent the **components** that need to interact with SPACE through an `apiKey`.

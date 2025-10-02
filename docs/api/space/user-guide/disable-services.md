@@ -6,7 +6,7 @@ custom_edit_url: null
 
 Disabling a service in **SPACE** is a terminal operation that should only be performed when the service is no longer intended to operate.
 
-As explained in the [pricing management guide](./pricings-availability.md), **each service must always have at least one active pricing version**. This ensures that active customers remain subscribed to a valid configuration.  
+As explained in the [pricing management guide](./manage-pricings-availability.md), **each service must always have at least one active pricing version**. This ensures that active customers remain subscribed to a valid configuration.  
 
 However, if the service itself is being phased out —meaning there is no longer a need for any active pricing— you can proceed to disable it. Once disabled:
 
