@@ -100,9 +100,9 @@ const config = {
       // Replace with your project's social card
       image: "img/docusaurus-social-card.jpg",
       navbar: {
-        title: "Pricing4SaaS",
+        title: "SPHERE",
         logo: {
-          alt: "Pricing4SaaS Logo",
+          alt: "SPHERE Logo",
           src: "img/logo.png",
         },
         items: [

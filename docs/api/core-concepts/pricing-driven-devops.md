@@ -12,6 +12,8 @@ Specification languages for APIs (such as [OAS](https://swagger.io/specification
 
 By analogy, SaaS **pricings** –which capture both functional and extra-functional aspects– can also be leveraged in a similar way. **Pricing-driven Development and Operation** advocates precisely this shift: moving from the traditional conception of pricings as purely commercial structures to treating them as machine-oriented artifacts –[iPricings](./iPricing.md)– whose information can be systematically exploited to address the challenges derived from pricings in SaaS, such as pricing validation, identifying optimal configurations for specific user needs, etc.
 
+![Pricing-driven DevOps](../../static/img/core-concepts/pricing-driven-devops.png)
+
 The **[iPricing metamodel](./iPricing.md)** constitutes the first formalization of pricings in this direction, while its YAML-based serialization, [Pricing2Yaml](../pricing-description-languages/Pricing2Yaml/the-pricing2yaml-syntax.md), brings this vision into practice.
 
 ---

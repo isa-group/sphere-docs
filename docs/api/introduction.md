@@ -4,26 +4,62 @@ title: Introduction
 custom_edit_url: null
 ---
 
-# Welcome to the Pricing4SaaS API Documentation 📚
+# Welcome to the SPHERE Documentation 🌐
 
-Explore the heart of Pricing4SaaS with this essential API guide, designed to empower your SaaS platform with dynamic and flexible pricing strategies. This documentation is your roadmap 🗺️ to unlocking the full potential of our libraries.
+Discover **SPHERE**, a comprehensive platform for **pricing-driven solutions**.
 
-## Overview: Your Toolbox for Innovation 🔧
+SPHERE brings the paradigm of **pricing-driven development and operation** to life —enabling the continuous optimization of software and infrastructure processes where **pricing models become a primary driver**, directly shaped by **market dynamics and competition**.
 
-The Pricing4SaaS API offers a comprehensive suite of methods, components, and classes, making it the backbone for integrating advanced pricing plans. Whether you're adapting to market changes or scaling your offerings, our API is your key to success.
+![Pricing-driven DevOps](../static/img/core-concepts/pricing-driven-devops.png)
 
-## Inside the Guide:
+Far beyond a single tool, **SPHERE is an ecosystem** —bringing together **libraries, datasets, and tools** into a unified environment designed to help you **model, design, operate, test, and analyze pricings** with intelligence and agility.
 
-- **Method Guides 🛠️**: Detailed descriptions, parameters, and practical examples for each API method.
-- **Class Insights 👓**: Learn about the classes within Pricing4SaaS, including their properties and interactions.
-- **Seamless Integration 🤝**: Tips on how to ensure smooth communication between the different libraries and components for optimal performance.
+---
+
+## Overview: An Ecosystem for Innovation 🔧
+
+SPHERE offers a broad suite of capabilities, making it the foundation for next-generation SaaS pricing and service engineering.  
+
+With SPHERE you can:
+
+- **Model Pricing Structures and Contracts:** – Capture the complexity of modern SaaS pricing.
+- **Methodologically design and improve pricings** — Apply best practices and frameworks to enhance pricing strategies.
+
+- **Perform pricing-driven self-adaptation:** – Enable your services to atonomously adapt in real-time based on pricing rules.
+
+- **Testing Enforcement:** – Validate pricing models and their impact on service behavior.
+
+- **Analyze & Compare Plans:** – Users and providers can evaluate different pricing strategies to find the optimal fit for them.
+
+All components are designed to integrate seamlessly, offering a **unified workflow** across the full pricing lifecycle.
+
+---
+
+## Inside the Guide
+
+This documentation introduces you to the core of SPHERE:  
+
+- **User Guides 📖**: Step-by-step tutorials for modeling, managing, and deploying pricing-driven services.  
+- **API References ⚙️**: Detailed endpoints, parameters, and examples to integrate SPHERE into your workflows.  
+- **SDKs & Clients 💻**: Explore official libraries (Node.js, React, etc.) to accelerate development.  
+- **Advanced Tools 🔬**: Learn about the analytical engines and datasets included within SPHERE.  
+
+---
 
 ## Getting Started 🚀
 
-We suggest beginning with an overview of the Pricing4SaaS architecture to better understand how our system is put together. This foundational knowledge will help you make the most of the API's capabilities.
+We recommend starting with the **[Core concepts section](./core-concepts/terminology.md)**, to understand the terminology behind this ecosystem.
+
+This foundation will help you fully appreciate SPHERE’s capabilities along the other sections, so that you can effectively leverage them in your SaaS ecosystem.
+
+---
 
 ## Support & Feedback 📣
 
-Our support team is here to assist you through any challenges, and we welcome your feedback to improve further. Together, we can ensure that our documentation and tools best suit your needs.
+Our team is committed to helping you succeed.  
 
-Embark on your journey with the Pricing4SaaS API documentation today and transform your SaaS pricing strategy.
+If you encounter challenges or have suggestions, we welcome your feedback — SPHERE is continuously evolving to support cutting-edge research and industry needs.  
+
+---
+
+Embark on your journey with **SPHERE** today, and transform the way you think about **pricing-driven SaaS engineering**.
