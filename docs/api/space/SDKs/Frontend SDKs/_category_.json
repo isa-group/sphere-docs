@@ -1,6 +1,6 @@
 {
-  "label": "📖 User guide",
-  "position": 7,
+  "label": "Frontend SDKs",
+  "position": 2,
   "link": {
     "type": "generated-index"
   }

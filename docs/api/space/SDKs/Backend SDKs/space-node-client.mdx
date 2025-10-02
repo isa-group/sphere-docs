@@ -1,0 +1,189 @@
+---
+title: "Node.js"
+custom_edit_url: null
+---
+
+# SPACE Client SDK for Node.js
+
+[![npm version](https://img.shields.io/npm/v/space-node-client.svg)](https://www.npmjs.com/package/space-node-client)
+
+A fully-typed **TypeScript/Node.js SDK** for interacting with [SPACE](../../introduction.mdx).  
+
+The client provides everything you need to:  
+
+- 🔐 Connect securely to a SPACE instance  
+- 📜 Manage contracts  
+- ✅ Evaluate feature access and usage limits  
+- 📊 Keep your services in sync with SPACE events  
+
+---
+
+## 📦 Installation
+
+Choose your preferred package manager:
+
+```bash
+npm install space-node-client
+# or
+yarn add space-node-client
+# or
+pnpm add space-node-client
+```
+
+## ✨ Features
+
+- Full **TypeScript support** out of the box
+- Manage **user contracts**.
+- Evaluate **feature access compliance**.
+- Track and update **usage levels**.
+- Built-in **event listeners** for reacting to pricing changes
+
+## ⚡ Quick Start
+
+### 1. Connect to SPACE
+
+```typescript
+import { connect, SpaceClient } from 'space-node-client';
+
+const client: SpaceClient = connect({
+  url: 'your_space_instance_url', // 'http://localhost:5403' (default local instance)
+  apiKey: 'YOUR_API_KEY', // API key for authenticating SPACE requests
+});
+
+client.on('synchronized', () => {
+  console.log('Connected and synchronized with SPACE!');
+});
+```
+
+### 2. Add a Contract
+
+```typescript
+const contract = await client.contracts.addContract({
+  userContact: {
+    userId: 'user-123',
+    username: 'testUser',
+  },
+  billingPeriod: {
+    autoRenew: true,
+    renewalDays: 30,
+  },
+  contractedServices: {
+    tomatoMeter: '1.0.0',
+  },
+  subscriptionPlans: {
+    tomatoMeter: 'ADVANCED',
+  },
+  subscriptionAddOns: {
+    tomatoMeter: {
+      extraTimers: 2,
+    },
+  },
+});
+```
+
+### 3. Evaluate a Feature
+
+```typescript
+// Assuming you have a user with ID 'user-123' and
+// a feature with ID 'tomatometer-pomodoroTimer'
+const result = await client.features.evaluate('user-123', 'tomatometer-pomodoroTimer');
+console.log(result.eval); // true/false
+```
+
+## 📚 API Overview
+
+### 🔑 Connection
+
+- `connect({ url, apiKey })` → Connects to the SPACE server and returns a `SpaceClient` instance.
+
+### 📜 Contracts
+
+- `client.contracts.addContract(contract)` → Adds a new contract.
+- `client.contracts.updateContractSubscription(userId, subscription)` → Updates a user's subscription.
+
+### 🎛️ Features
+
+- `client.features.evaluate(userId, featureId, expectedConsumption?)` → Evaluates a feature for a user.
+- `client.features.revertEvaluation(userId, featureId)` → Reverts the usage level update performed during a past evaluation.
+
+:::warning Rollback evaluations
+The `revertEvaluation` method only works if the evaluation happened less than **2 minutes ago**.
+Use it as a safety net when request processing fails in your service.
+:::
+
+- `client.features.generateUserPricingToken(userId)` → Generate a [Pricing Token](../../introduction.mdx#-communication-strategy-overview) with all evaluated features.
+
+## 🔔 Event Listeners
+
+SPACE emits events whenever significant changes occur.  
+You can attach listeners using the **Node client**:
+
+### ✅ Supported Events
+
+- **`synchronized`** — Client is connected and synced with SPACE.  
+- **`pricing_created`** — A new pricing was added.  
+- **`pricing_activated`** — A pricing moved from archived → active.  
+- **`pricing_archived`** — A pricing moved from active → archived.  
+- **`service_disabled`** — A service was disabled.  
+- **`error`** — Connection or processing error.  
+
+---
+
+### 📦 Event Payload
+
+All events (except `synchronized` and `error`) include the following object:  
+
+```typescript
+{
+  serviceName: string;       // REQUIRED: The name of the service that triggered the event
+  pricingVersion?: string;   // OPTIONAL: The version of the pricing involved
+}
+```
+
+### Example Usage
+
+```typescript
+client.on('pricing_archived', data => {
+  console.log('Pricing archived!');
+  console.log('Service Name:', data.serviceName);
+  console.log('Pricing Version:', data.pricingVersion);
+});
+```
+
+## 🧑‍💻 TypeScript Support
+
+The SDK is written in **TypeScript** and ships with complete type definitions for:
+
+- Contracts
+- Features
+- Pricings
+- Events
+
+This means **auto-complete** and **compile-time safety** when coding 🚀.
+
+## 🛠️ Tech Stack
+
+The project uses the following main tools and technologies:
+
+<div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', justifyContent: 'center', marginTop: '1rem' }}>
+
+![TypeScript](https://img.shields.io/badge/-TypeScript-3178C6?logo=typescript&logoColor=white&style=for-the-badge)
+![Axios](https://img.shields.io/badge/-Axios-5A29E4?logo=axios&logoColor=white&style=for-the-badge)
+![Vitest](https://img.shields.io/badge/-Vitest-6E9F18?logo=vitest&logoColor=white&style=for-the-badge)
+![Prettier](https://img.shields.io/badge/-Prettier-F7B93E?logo=prettier&logoColor=white&style=for-the-badge)
+![ESLint](https://img.shields.io/badge/-ESLint-4B32C3?logo=eslint&logoColor=white&style=for-the-badge)
+![pnpm](https://img.shields.io/badge/-pnpm-F69220?logo=pnpm&logoColor=white&style=for-the-badge)
+
+</div>
+
+## Disclaimer & License
+
+The project is licensed under the MIT License.
+
+This project is licensed under the MIT License. See [LICENSE](https://github.com/Alex-GF/space-node-client/blob/main/LICENSE) for details.
+
+:::warning
+This SDK is part of **ongoing research** in pricing-driven devops.
+It is still in an early stage and not intended for production use.
+:::
+
