@@ -30,7 +30,12 @@ This separation improves **security** and **clarity** in large-scale deployments
 
 SPACE defines three roles:
 
-- **EVALUATOR** → Can only evaluate features and retrieve allowed services.  
+- **EVALUATOR** → Can only evaluate features and retrieve allowed services.
+
+:::warning **Important**
+An evaluator **cannot** log into the SPACE UI.
+::: 
+
 - **MANAGER** → Can manage contracts and pricings, in addition to evaluator permissions.  
 - **ADMIN** → Full access, including user management and deletion.  
 
