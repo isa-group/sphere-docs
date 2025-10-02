@@ -1,0 +1,87 @@
+---
+custom_edit_url: null
+---
+
+# 🗑️ Delete Contract
+
+Contracts in **SPACE** represent the agreements between your SaaS and its end users.  
+
+While most contracts remain active until their billing period ends or are renewed automatically, there are situations where you may need to **terminate a contract manually** — for example, when a payment fails.
+
+## ⚙️ How to Terminate a Contract
+
+Contract termination can only be performed **programmatically via the SPACE API**.  
+The endpoint for this operation is:
+
+```http
+DELETE /api/v1/contracts/{userId}
+```
+
+Where `userId` is the identifier of the end user whose contract you want to terminate.
+
+---
+
+## 0. Prerequisites
+
+-	🔑 A valid `ADMIN` API key.
+-	🆔 The userId of the contract owner.
+
+## 1. Simplified Request
+
+```http
+DELETE /api/v1/contracts/<userId> HTTP/1.1
+Host: localhost:5403
+Accept: application/json
+x-api-key: <your_api_key>
+```
+
+## 2. Using curl
+
+```bash
+curl -X DELETE \
+  -H 'x-api-key: <your_api_key>' \
+  http://localhost:5403/api/v1/contracts/<userId>
+```
+
+---
+
+## ✅ Example Response
+
+If the termination succeeds, SPACE will confirm the deletion of the contract and return the contract’s final state before being removed:
+
+```json
+{
+  "id": "68908c121570b332f02d05d9",
+  "userContact": {
+    "userId": "72ee0357-e34b-4d8f-9e0f-b710391cb298",
+    "username": "petclinicuser01"
+  },
+  "billingPeriod": {
+    "startDate": "2025-08-04T10:31:46.010Z",
+    "endDate": "<current-date>",
+    "autoRenew": true,
+    "renewalDays": 365
+  },
+  "contractedServices": {
+    "petclinic": "2025-3-26"
+  },
+  "subscriptionPlans": {
+    "petclinic": "GOLD"
+  }
+}
+```
+
+---
+
+## 🔄 What Happens After Termination?
+
+- 🚫 The contract is removed from SPACE.
+- ❌ The user immediately loses access to all features defined by that contract.
+- 🔐 Any pricing tokens (pricingToken) previously issued for this user become invalid.
+
+:::warning Important
+Once a contract is terminated, it cannot be restored.
+To re-enable the user, you must create a new contract via the API.
+:::
+
+Given the impact of permanently removing a contract, deletion is not always the best option. For example, if the SaaS offers a free subscription —i.e., a combination of plans and add-ons at no cost— it is often considered best practice to **novate the contract to this free subscription** rather than deleting it.
