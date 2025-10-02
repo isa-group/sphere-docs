@@ -3,6 +3,9 @@ sidebar_position: 1
 custom_edit_url: null
 ---
 
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
 # 🌌 What is SPACE?
 
 **Subscription and Pricing Access Control Engine (SPACE)** is a pricing-driven self-adaptation solution. 🚀 This means that its primary objective is to enable services to dynamically adjust their behavior based on the pricing model and contractual agreements of each user. In practice, this ensures that users can only access the features included in their subscription and are restricted according to the usage limits defined in their contracts.
@@ -30,12 +33,12 @@ Experience has shown that embedding subscription state logic directly into the m
 
 | ✅ Advantages                                                                      | ⚠️ Potential Disadvantages                                                                |
 | ---------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
-| Decouples subscription management from the managed system’s technology stack       | Introduce network latency                                                               |
-| Provides centralized role-based permissions management                             | Requires integration of SPACE’s subscription module into the authentication workflow    |
-| Improves feature evaluation performance through caching mechanisms                 | Learning curve for teams adopting SPACE’s configuration and workflows                   |
-| Eliminates the need for developers to implement and maintain subscription logic    |                                                                                         |
-| Supports management of multiple services and instances simultaneously              |                                                                                         |
-| Offers a dedicated UI for managing pricing versions and permissions                |                                                                                         |
+| **Decouples** subscription management from the managed system’s technology stack       | Introduce network latency                                                               |
+| Provides **centralized role-based permissions** management                             | Requires integration of SPACE’s subscription module into the authentication workflow    |
+| **Improves feature evaluation performance** through caching mechanisms                 | Learning curve for teams adopting SPACE’s configuration and workflows                   |
+| **Eliminates** the need for developers to implement and maintain subscription logic    |                                                                                         |
+| Supports management of **multiple services** and instances simultaneously              |                                                                                         |
+| Offers a **dedicated UI** for managing pricing versions and permissions                |                                                                                         |
 
 :::
 
@@ -61,6 +64,79 @@ Before diving into the details of SPACE, it’s important to remember the follow
 
 - **Subscription State:** The current status of a user’s subscription, including the active plan, add-ons, and usage levels. SPACE keeps this synchronized to ensure consistent access control.
 :::
+
+## 🌐 SaaS Providers with Multiple Services
+
+One of the key advantages of **SPACE** over traditional subscription management solutions is its ability to support **pooled subscriptions** —that is, a single subscription that spans across multiple services.  
+
+Why does this matter?  
+- SaaS providers often start with a single service and progressively add new features as add-ons or higher-tier plans.  
+- Over time, to reduce cognitive overload for users, providers may **split features into separate services**, each with its own pricing model.  
+- With SPACE, you don’t need to manage these subscriptions separately —they can all live under one unified subscription context.  
+
+This flexibility is powered by the [iSubscription model](../core-concepts/iSubscription.md), which allows a single subscription to include multiple services, each with its own plan and optional add-ons.
+
+Here’s a simplified view of the iSubscription metamodel:
+
+```mermaid
+classDiagram
+    Subscription "1" -- "1..*" Service : includes
+    Service *-- "0..1" Plan
+    Service *-- "0..*" AddOn
+```
+<Tabs defaultValue="single-service">
+  <TabItem value="single-service" label="Single Service Subscription">
+
+For example, Overleaf is a cloud LaTeX editor.
+A user might subscribe to the Standard plan and also purchase the AI Assist add-on:
+
+```mermaid
+classDiagram
+    class Sub["<u>Single: Subscription</u>"]
+    class Overleaf["<u>Overleaf: Service</u>"]
+
+    class Plan["<u>Standard: Plan</u>"]
+    class AddOn["<u>AI Assist: AddOn</u>"]
+
+    Sub -- Overleaf
+    Overleaf -- Plan
+    Overleaf -- AddOn
+```
+
+  </TabItem>
+  <TabItem value="multi-service" label="Multiple Service Subscription" default>
+
+Now consider Cake.com, which offers multiple products:
+
+- **Plaky:** project management
+- **Pumble:** team communication
+- **Clockify:** time tracking
+
+With SPACE, a single subscription can include plans for each of these services simultaneously:
+
+```mermaid
+---
+title:  A subscription with Plaky FREE, Pumble PRO and Clockify STANDARD
+---
+classDiagram
+    class Sub["<u>Multi: Subscription</u>"]
+    class Plaky["<u>Plaky: Service</u>"]
+    class Pumble["<u>Pumble: Service</u>"]
+    class Clockify["<u>Clockify: Service</u>"]
+        
+    class PlakyPlan["<u>Plaky FREE: Plan</u>"]
+    class PumblePlan["<u>Pumble PRO: Plan</u>"]
+    class ClockifyPlan["<u>Clockify STANDARD: Plan</u>"]
+        
+    Sub -- Plaky
+    Plaky -- PlakyPlan
+    Sub -- Pumble
+    Pumble -- PumblePlan
+    Clockify -- ClockifyPlan
+    Sub -- Clockify
+```
+  </TabItem>
+</Tabs>
 
 ## 🏛️ Architecture
 
