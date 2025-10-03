@@ -12,12 +12,12 @@ const currentVersion = "2.0.1";
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
-  title: "Pricing4SaaS",
+  title: "SPHERE",
   tagline: "A new way to manage your SaaS pricing",
   favicon: "img/favicon.ico",
 
   // Set the production url of your site here
-  url: "https://pricing4saas.vercel.app",
+  url: "https://sphere-docs.vercel.app",
   // Set the /<baseUrl>/ pathname under which your site is served
   // For GitHub pages deployment, it is often '/<projectName>/'
   baseUrl: "/",
@@ -25,7 +25,7 @@ const config = {
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
   organizationName: "isa-group", // Usually your GitHub org/user name.
-  projectName: "Pricing4SaaS", // Usually your repo name.
+  projectName: "SPHERE", // Usually your repo name.
 
   onBrokenLinks: "throw",
   onBrokenMarkdownLinks: "warn",
@@ -40,7 +40,8 @@ const config = {
 
   customFields: {
     currentVersion: currentVersion,
-    spaceOasUrl: "https://raw.githubusercontent.com/Alex-GF/space/refs/heads/main/api/docs/space-api-docs.yaml"
+    spaceOasUrl: "https://raw.githubusercontent.com/Alex-GF/space/refs/heads/main/api/docs/space-api-docs.yaml",
+    githubUrl: "https://github.com/Alex-GF/sphere"
   },
 
   themes: ["@docusaurus/theme-mermaid"],
@@ -99,9 +100,9 @@ const config = {
       // Replace with your project's social card
       image: "img/docusaurus-social-card.jpg",
       navbar: {
-        title: "Pricing4SaaS",
+        title: "SPHERE",
         logo: {
-          alt: "Pricing4SaaS Logo",
+          alt: "SPHERE Logo",
           src: "img/logo.png",
         },
         items: [
@@ -186,7 +187,7 @@ const config = {
             items: [
               {
                 label: "Docs",
-                href: "https://github.com/isa-group/Pricing4SaaS-docs",
+                href: "https://github.com/isa-group/sphere-docs",
               },
             ],
           },

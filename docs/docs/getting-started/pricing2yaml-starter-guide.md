@@ -394,7 +394,7 @@ With `features` and `usageLimits` now modeled, we can begin defining the specifi
 for each feature and usage limit within each plan.
 
 Define the `price` field for every plan. If you want to offer some kind of discount annually, refer to
-`billing` in the [Pricing2Yaml 2.1](../../api/pricing-description-languages/Pricing2Yaml/pricing2yaml-v21-specification.mdx) documentation:
+`billing` in the [Pricing2Yaml 2.1](../../api/pricing-description-languages/Pricing2Yaml/versions/pricing2yaml-v21-specification.mdx) documentation:
 
 ```yaml
 plans:

@@ -1,0 +1,46 @@
+import { VersionTable } from "@site/src/components/common";
+
+:::danger
+**DEPRECATED**: Syntax required by this field is deprecated in this version. We recommend using Pricing2Yaml v3.0 or later. In this version evaluations use `planContext` instead of `pricingContext`; and `userContext` instead of `subscriptionContext`.
+:::
+
+A boolean expression defining the conditions under which the feature is enabled. This expression can reference other features and usage limits using the `planContext` and `userContext` objects.
+Respectively, the `planContext` will be an object with the following structure:
+```typescript
+{
+  features: {
+    <feature-name>: boolean | string,
+    ...
+  },
+  usageLimits: {
+    <limit-name>: number | boolean,
+    ...
+  }
+}
+```
+
+while the `userContext` will have the following structure:
+
+```typescript
+{
+  <usage-level-name>: number,
+  ...
+}
+```
+
+With this in mind, the `expression` field can be used to define the conditions under which a feature is enabled.
+
+For example, if we have a feature `feature1` that should only be enabled if the user has not exceeded the usage limit `usageLimit1`, the expression would be:
+
+```yaml
+feature1:
+  description: Pets description
+  valueType: BOOLEAN
+  defaultValue: true
+  expression: userContext['usageLimit1'] < planContext['usageLimits']['usageLimit1']
+  ...
+```
+
+**Libraries support**
+
+<VersionTable name="features.<name>.expression" libraries={[true, true]} />

@@ -1,0 +1,218 @@
+---
+sidebar_position: 10
+custom_edit_url: null
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# 🔄 Manage Contract Novations
+
+In **SPACE**, a *novation* represents a change in an existing contract’s terms without creating a new contract from scratch (refer to [What is SPACE?](../introduction.mdx) for more information).  
+Whenever a novation is performed, the previous state of the contract is stored in its **history**, preserving a full record of its lifecycle.
+
+Novations allow you to:
+
+- Update **plans or add-ons** of a contract. In other words, upgrade or downgrade the subscription.
+- Change the **billing period**.
+- Update the **user contact information**.
+- Reset or increment **usage levels**.
+- Propagate novations automatically when a **service** or **pricing** changes.
+
+---
+
+## 📖 Example Scenario
+
+Suppose a customer subscribed to the **GOLD plan** of **PetClinic** with the **pet adoption centre add-on**. Later they decide to:
+
+- Upgrade to the **PLATINUM plan**.
+- Keep their pet adoption centre add-on.
+- Update their contact email.
+
+Rather than creating a new contract, SPACE allows you to **novate the existing one**, maintaining traceability through its `history`.
+
+---
+
+## 🧾 Types of Novations
+
+There are five types of novations that can be performed with SPACE:
+
+1. **Subscription Novation** – Change the subscribed plan and/or add-ons.  
+   Endpoint: `PUT /contracts/{userId}`
+
+2. **Billing Novation** – Update billing period fields (e.g., renewal policy, renewal days).  
+   Endpoint: `PUT /contracts/{userId}/billingPeriod`
+
+3. **User Contact Novation** – Modify subscriber data such as `username`, `email`, or `phone`.  
+   Endpoint: `PUT /contracts/{userId}/userContact`
+
+4. **Usage Levels Novation** – Increment or reset usage limits tracked in the contract.  
+   Endpoint: `PUT /contracts/{userId}/usageLevels`
+
+5. **Automatic Novations** – Triggered when services or pricings are archived/deleted. 
+   - Archiving a pricing: `PUT /services/{serviceName}/pricings/{pricingVersion}?availability=archived`  
+   - Deleting a pricing: `DELETE /services/{serviceName}/pricings/{pricingVersion}`  
+   - Deleting a service: `DELETE /services/{serviceName}`  
+
+:::info
+These operations are the **only actions that trigger automatic contract novations**.  
+Whenever one of them is executed, SPACE will attempt to reassign affected users to the defined fallback subscription or, if none is specified, to the default cheapest plan.
+:::
+
+---
+
+## 0. Prerequisites
+
+- A valid **API key** with at least the `MANAGER` role.  
+- The **userId** of the contract to be novated.  
+- Knowledge of the new values (plan, billing, add-ons, etc.).
+
+---
+
+## 1. Composition Novation
+
+Use this to **upgrade/downgrade plans** or modify add-ons.
+
+```http
+PUT /api/v1/contracts/{userId} HTTP/1.1
+Host: localhost:5403
+Accept: application/json
+Content-Type: application/json
+x-api-key: <your_api_key>
+
+{
+  "subscriptionPlans": {
+    "petclinic": "PLATINUM"
+  },
+  "subscriptionAddOns": {
+    "petclinic": {
+      "petAdoptionCentre": 1
+    }
+  }
+}
+```
+<Tabs defaultValue="curl">
+  <TabItem value="curl" label="▶️ CURL">
+```bash
+curl -X PUT -H 'x-api-key: <your_api_key>' \
+  http://localhost:5403/api/v1/contracts/01c36d29-0d6a-4b41-83e9-8c6d9310c508 \
+  --json '{
+    "subscriptionPlans": { "petclinic": "PLATINUM," },
+    "subscriptionAddOns": { "petclinic": { "petAdoptionCentre": 1 } }
+  }'
+```
+  </TabItem>
+  <TabItem value="space-node-client" label="💻 SPACE Node Client">
+```js
+const userId = "01c36d29-0d6a-4b41-83e9-8c6d9310c508"; // The userId of the contract to be novated
+const newSubscription = {
+  contractedServices: {
+    petclinic: "2025-10-02"
+  },
+  subscriptionPlans: {
+    petclinic: "PLATINUM"
+  },
+  subscriptionAddOns: {
+    petclinic: {
+      petAdoptionCentre: 1
+    }
+  }
+};
+
+spaceClient.contracts.updateContractSubscription(userId, newSubscription);
+```
+  </TabItem>
+</Tabs>
+
+## 2. Billing Novation
+
+Change billing attributes like `autoRenew` or `renewalDays`.
+
+```http
+PUT /api/v1/contracts/{userId}/billingPeriod
+{
+  "autoRenew": false,
+  "renewalDays": 30
+}
+```
+
+## 3. User Contact Novation
+
+Update subscriber contact data
+
+```http
+PUT /api/v1/contracts/{userId}/userContact
+{
+  "email": "new.mail@domain.com",
+  "phone": "+34 666 777 888"
+}
+```
+
+## 4. Usage Levels Novation
+
+Increment consumption or reset limits.
+
+### Increment Usage
+
+This example increments the `maxPets` usage level by 10 units.
+
+```http
+PUT /api/v1/contracts/{userId}/usageLevels
+{
+  "petclinic": {
+    "extraPet": 10
+  }
+}
+```
+
+### Reset Usage
+
+This action will reset the values of all **RENEWABLE usage levels to zero**.
+
+```http
+PUT /api/v1/contracts/{userId}/usageLevels?reset=true
+```
+
+## 5. Automatic Novations
+
+Novations are also triggered by **service and pricing operations**:
+
+- **Archive Pricing**: Migrates users to a fallback subscription.
+
+```http
+PUT /api/v1/services/petclinic/pricings/2025?availability=archived
+{
+  "subscriptionPlan": "BASIC",
+  "subscriptionAddOns": { "petAdoptionCentre": 1 }
+}
+```
+
+:::info
+In the previous example, the fallback subscription is the one assigned to all users whose contracts reference the pricing version being archived.
+:::
+
+- **Delete Pricing:** Migrates users to the latest pricing version.
+- **Delete Service:** Removes the service and novates contracts accordingly.
+
+## ✅ Example Response
+
+Every novation returns the updated contract, with a new entry added to its `history`:
+
+```json
+{
+  "userContact": { "userId": "01c36d29-0d6a-4b41-83e9-8c6d9310c508", "username": "zoomuser01" },
+  "billingPeriod": { "autoRenew": false, "renewalDays": 30 },
+  "subscriptionPlans": { "petclinic": "PLATINUM" },
+  "subscriptionAddOns": { "petclinic": { "petAdoptionCentre": 1 } },
+  "usageLevels": { "petclinic": { "maxPets": { "consumed": 0 } } },
+  "history": [
+    { "startDate": "2025-06-01T12:28:19.010Z", "endDate": "2025-10-02T15:32:11.010Z", "contractedServices": { "petclinic": "2025-03-18" }, "subscriptionPlans": { "petclinic": "GOLD" }, "subscriptionAddOns": { "petclinic": { "petAdoptionCentre": 1 } } }
+  ]
+}
+```
+
+:::info Notes
+- All novations are **non-destructive**: SPACE preserves the full contract lifecycle in history.
+- Automatic novations ensure consistency when a pricing or service changes.
+- Usage novations support both **incremental updates** and **resets**.
+:::

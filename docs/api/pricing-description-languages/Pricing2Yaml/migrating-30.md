@@ -1,5 +1,5 @@
 ---
-sidebar_position: 2
+sidebar_position: 3
 title: Migrating to Pricing2Yaml 3.0
 custom_edit_url: null
 ---
@@ -97,7 +97,7 @@ usageLimits:
 ```
 
 :::info
-The `period` field is a map containing two fields: `value` and `unit`. The `value` field is an integer representing the period value, while the `unit` field is a string representing the period unit. Possible values for the `unit` field are: `SEC`, `MIN`, `HOUR`, `DAY`, `MONTH`, and `YEAR`. (you can find more info [here](./pricing2yaml-v30-specification.mdx))
+The `period` field is a map containing two fields: `value` and `unit`. The `value` field is an integer representing the period value, while the `unit` field is a string representing the period unit. Possible values for the `unit` field are: `SEC`, `MIN`, `HOUR`, `DAY`, `MONTH`, and `YEAR`. (you can find more info [here](./versions/pricing2yaml-v30-specification.mdx))
 :::
 
 - `NON_RENEWABLE` usage limits have been enriched with a new field: `trackable`. It allows to indicate whether the usage of a feature linked to a "NON_RENEWABLE" usage limit must be tracked within the user’s subscription. If true, the system records usage to ensure the limit is not exceeded during feature evaluations. Here is an example that overwrites the default value:

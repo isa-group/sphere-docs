@@ -1,0 +1,47 @@
+import { VersionTable } from "@site/src/components/common";
+
+A boolean expression defining the conditions under which the feature is enabled. This expression can reference other features and usage limits using the `pricingContext` and `subscriptionContext` objects.
+
+Respectively, the `pricingContext` will be an object with the following structure:
+```typescript
+{
+  features: {
+    <feature-name>: boolean | string,
+    ...
+  },
+  usageLimits: {
+    <limit-name>: number | boolean,
+    ...
+  }
+}
+```
+
+while the `subscriptionContext` will have the following structure:
+
+```typescript
+{
+  <usage-level-name>: number,
+  ...
+}
+```
+
+With this in mind, the `expression` field can be used to define the conditions under which a feature is enabled.
+
+:::info
+As the `pricingContext` utilized within the expression repressents as a map the current configuration of a user, you should be aware of using either `features` or `usageLimits` to access the atribute you want to evaluate. The `features` key will have the `value` or `defaultValue` of the feature with the given key, while `usageLimits` will return the equivalent of a declared usage limit.
+:::
+
+For example, if we have a feature `feature1` that should only be enabled if the user has not exceeded the usage limit `usageLimit1`, the expression would be:
+
+```yaml
+feature1:
+  description: Pets description
+  valueType: BOOLEAN
+  defaultValue: true
+  expression: subscriptionContext['usageLimit1'] < pricingContext['usageLimits']['usageLimit1']
+  ...
+```
+
+**Libraries support**
+
+<VersionTable name="features.<name>.expression" libraries={[true, true]} />

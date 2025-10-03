@@ -1,5 +1,5 @@
 ---
-sidebar_position: 10
+sidebar_position: 2
 custom_edit_url: null
 ---
 
@@ -8,7 +8,7 @@ custom_edit_url: null
 
 ## Use defensive pricing techniques
 
-When it comes to modelling in `Pricing2Yaml` you are going to have several `NUMERIC`
+When it comes to modeling in `Pricing2Yaml` you are going to have several `NUMERIC`
 usage limits linked to `BOOLEAN` features. You should be carefull when setting
 their `defaultValue` as it can affect the feature evaluation.
 
@@ -20,10 +20,10 @@ their `defaultValue` as it can affect the feature evaluation.
 - An **usage limit** is **disabled** if its `defaultValue` is `0`
 :::
 
-**TLDR**:
+Please be aware of the following rules:
 
 - If a usage limit is linked to only **one feature** both should be enabled or disabled.
-- An usage limit linked to multiple feature does not follow this rule.
+- An usage limit linked to multiple features does not follow this rule.
 
 ### Example
 
@@ -83,7 +83,7 @@ usageLimits:
 
 :::warning Feature and usage limit inconsistencies
 
-When it comes to modelling the following inconsistencies can happen:
+When it comes to modeling the following inconsistencies can happen:
 
 - A feature is enabled and its linked usage limit is disabled
 - A feature is disabled and its linked usage limit is disabled
@@ -124,7 +124,7 @@ usageLimits:
 
 :::
 
-### A story about bad modelling
+### A story about bad modeling
 
 The business ACME has a SaaS and they are planning to release an extra feature that enable users
 to store files in the cloud. They have stablished the following usage restrictions:
@@ -144,7 +144,7 @@ features:
     valueType: BOOLEAN
     // highlight-next-line
     defaultValue: false
-    expression: userContext['currStorage'] < planContext['usageLimits']['dataStorageLimit']
+    expression: subscriptionContext['currStorage'] < pricingContext['usageLimits']['dataStorageLimit']
 usageLimits:
   fileStorageLimit:
     valueType: NUMERIC
@@ -171,7 +171,7 @@ plans:
         value: 200
 ```
 
-As explained in the [Pricing2Yaml syntax](pricing2yaml-v21-specification.mdx) section
+As explained in the [Pricing2Yaml syntax](./versions/pricing2yaml-v21-specification.mdx) section
 all plans will inherit global features and usage limits `defaultValue` resulting in the
 following interpreted values when parsing the config file:
 
@@ -196,7 +196,7 @@ features:
     valueType: BOOLEAN
     // highlight-next-line
     defaultValue: true
-    expression: userContext['currStorage'] < planContext['usageLimits']['dataStorageLimit']
+    expression: subscriptionContext['currStorage'] < pricingContext['usageLimits']['dataStorageLimit']
 usageLimits:
   fileStorageLimit:
     valueType: NUMERIC
@@ -236,7 +236,7 @@ features:
     valueType: BOOLEAN
     // highlight-next-line
     defaultValue: true
-    expression: userContext['currStorage'] < planContext['usageLimits']['dataStorageLimit']
+    expression: subscriptionContext['currStorage'] < pricingContext['usageLimits']['dataStorageLimit']
 usageLimits:
   fileStorageLimit:
     valueType: NUMERIC
@@ -280,7 +280,7 @@ features:
     valueType: BOOLEAN
     // highlight-next-line
     defaultValue: false
-    expression: userContext['currStorage'] < planContext['usageLimits']['dataStorageLimit']
+    expression: subscriptionContext['currStorage'] < pricingContext['usageLimits']['dataStorageLimit']
 usageLimits:
   fileStorageLimit:
     valueType: NUMERIC
@@ -339,7 +339,7 @@ Here are some SaaS providers using this technique:
 Good practice:
 
 ```yaml
-syntaxVersion: '2.1'
+syntaxVersion: '3.0'
 saasName: Databox
 url: https://web.archive.org/web/20250304080336/https://databox.com/pricing
 tags:
@@ -348,58 +348,86 @@ tags:
 - Account management & security
 features:
   dataSources:
+    ...
     tag: Data Collection
   dataSyncFrequency:
+    ...
     tag: Data Collection
   historicalData:
+    ...
     tag: Data Collection
   warehouseDataStorage:
+    ...
     tag: Data Collection
   databoxIntegrations:
+    ...
     tag: Connect any Data Source
   thirdPartyIntegrations:
+    ...
     tag: Connect any Data Source
-    integrationType: MARKETPLACE
   pushCustomDataToAPI:
+    ...
     tag: Connect any Data Source
   customApiIntegrations:
+    ...
     tag: Connect any Data Source
   sqlIntegrations:
+    ...
     tag: Connect any Data Source
   spreadsheetsIntegration:
+    ...
     tag: Connect any Data Source
   userManagement:
+    ...
     type: Account management & security
   twoFactorAuthentication:
+    ...
     tag: Account management & security
   singleSignOn:
+    ...
     tag: Account management & security
   advancedSecurityManagement:
+    ...
     tag: Account management & security
+  ...
 ```
 
 Bad practice
 
 ```yaml
-syntaxVersion: '2.1'
+syntaxVersion: '3.0'
 saasName: Databox
 url: https://web.archive.org/web/20250304080336/https://databox.com/pricing
 features:
   dataSources:
+    ...
   dataSyncFrequency:
+    ...
   historicalData:
+    ...
   warehouseDataStorage:
+    ...
   databoxIntegrations:
+    ...
   thirdPartyIntegrations:
+    ...
   pushCustomDataToAPI:
+    ...
   customApiIntegrations:
+    ...
   sqlIntegrations:
+    ...
   spreadsheetsIntegration:
+    ...
   userManagement:
+    ...
   twoFactorAuthentication:
+    ...
   singleSignOn:
+    ...
   advancedSecurityManagement:
-   ## ..
+    ...
+  ...
 ```
 
 ## Use usage limits naming conventions
@@ -571,7 +599,7 @@ plans:
         value: Advanced
 ```
 
-## Avoid modelling trials
+## Avoid modeling trials
 
 You might be tempted to model trial features or demos but in reality
 those features are not granting users permanent access. In practice
@@ -639,7 +667,7 @@ plans:
     features: null
 ```
 
-## Avoid modelling recommended usage limits
+## Avoid modeling recommended usage limits
 
 Saas providers instead of restricting a feature for a particular plan, they make
 a suggestion for the ideal usage limit. These recommended users limit must not

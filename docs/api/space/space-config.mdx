@@ -1,0 +1,170 @@
+---
+sidebar_position: 4
+title: ⚙️ Configuration
+custom_edit_url: null
+---
+
+# ⚙️ Configuring SPACE
+
+To launch **SPACE**, you need to provide a set of **environment variables**.  
+These variables define how the server, the client, and the supporting services (MongoDB, Redis) are configured.
+
+Depending on your setup (local, Docker, or Kubernetes), the way to provide these variables changes — but the variables themselves remain the same.
+
+---
+
+## 🌐 Server Environment Variables
+
+These variables configure the **SPACE server**:
+
+| Variable            | Required | Default Value                                         | Description                                             |
+| ------------------- | -------- | ----------------------------------------------------- | ------------------------------------------------------- |
+| `BASE_URL_PATH`     | ❌       | `/api/v1`                                             | Base URL path for the API                               |
+| `DATABASE_NAME`     | ❌       | `space_db`                                            | MongoDB database name _(ignored if `MONGO_URI` is set)_ |
+| `DATABASE_USERNAME` | ❌       | `mongoUser`                                           | MongoDB username _(ignored if `MONGO_URI` is set)_      |
+| `DATABASE_PASSWORD` | ❌       | `mongoPassword`                                       | MongoDB password _(ignored if `MONGO_URI` is set)_      |
+| `MONGO_URI`         | ❌       | `mongodb://${dbCredentials}localhost:27017/${dbName}` | Full MongoDB connection string. `dbCredentials` correspond to the formatted version of DATABASE_USERNAME and DATABASE_PASSWORD, and dbName corresponds to DATABASE_NAME |
+| `REDIS_URL`         | ✅       | —                                                     | Redis URL for caching                                   |
+| `JWT_SECRET`        | ✅       | —                                                     | Secret key for JWT generation. It can be any random string.                           |
+| `JWT_SALT`          | ✅       | —                                                     | Salt for JWT hashing. It can be any random string.                                    |
+| `JWT_EXPIRATION`    | ❌       | `1h`                                                  | JWT expiration (e.g., `1d`, `2h`)                       |
+| `ADMIN_USER`        | ❌       | `admin`                                               | Default admin username                                  |
+| `ADMIN_PASSWORD`    | ❌       | `space4all`                                           | Default admin password                                  |
+
+---
+
+## 🖥️ Client Environment Variables
+
+These variables configure the **SPACE client**:
+
+| Variable                   | Required       | Description                                            |
+| -------------------------- | -------------- | ------------------------------------------------------ |
+| `VITE_ENVIRONMENT`         | ✅             | `development` or `production`                          |
+| `VITE_SPACE_BASE_URL`      | ✅             | Base URL of the SPACE server. For example: http://space-instance:5403/api/v1 |
+| `VITE_SPACE_ADMIN_API_KEY` | ⚠️ Only in dev | API key for admin access (only works in `development`) |
+
+---
+
+## 🚀 How to Provide Environment Variables
+
+The way to configure SPACE depends on the technology you use.  
+Select your setup below:
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+<Tabs defaultValue="docker" values={[
+  {label: '🐳 Docker (default)', value: 'docker'},
+  {label: '💻 Local Development', value: 'local'},
+  {label: '☸️ Kubernetes', value: 'kubernetes'},
+]}>
+
+<TabItem value="docker">
+
+### 🐳 Docker Setup
+
+When using Docker, SPACE already ships with a minimal set of default environment variables.  
+You can override them or add new ones in **`docker-compose.yml`**:
+
+- **Server variables** → under the `environment` section of the `space-server` service
+- **Client variables** → under the `environment` section of the `space-client` service
+- **MongoDB & Redis** → also configurable under their respective services, using the standard variables from their public images
+
+💡 Example:
+
+```yaml
+services:
+  ...
+  space-server:
+    ...
+    environment:
+      ENVIRONMENT: production
+      MONGO_URI: mongodb://user:password@mongodb:27017/space_db
+      REDIS_URL: redis://redis:6379
+      JWT_SECRET: test_secret
+      JWT_SALT: mySalt
+      JWT_EXPIRATION: 1d
+  space-client:
+    ...
+    environment:
+      VITE_ENVIRONMENT: production
+      VITE_SPACE_BASE_URL: http://localhost:5403/api/v1
+  ...
+```
+
+</TabItem>
+
+<TabItem value="local">
+
+### 💻 Local Development
+
+If you run SPACE locally without Docker/Kubernetes:
+
+- Create a `.env` file inside `/api` → server variables
+- Create a `.env` file inside `/frontend` → client variables
+
+💡 Example of `/api/.env`:
+
+```env
+ENVIRONMENT=development
+# ---------- CACHE CONFIGURATION (Redis) ----------
+
+REDIS_URL=redis://localhost:6379
+
+# ---------- JWT CONFIGURATION ----------
+
+JWT_SECRET=test_secret
+JWT_SALT=mySalt
+JWT_EXPIRATION=1d
+
+# ---------- DEFAULT USER CONFIGURATION ----------
+
+ADMIN_USER=admin
+ADMIN_PASSWORD=adminPassword
+```
+
+💡 Example of `/frontend/.env`:
+
+```env
+VITE_ENVIRONMENT="development"
+VITE_SPACE_BASE_URL=http://localhost:3000/api/v1
+VITE_SPACE_ADMIN_API_KEY=9cedd24632167a021667df44a26362dfb778c1566c3d4564e132cb58770d8c67
+# ⬆️ (Only in development) API key for admin access
+```
+
+</TabItem>
+
+<TabItem value="kubernetes">
+
+### ☸️ Kubernetes Setup
+
+When using Kubernetes, default environment variables are already defined in:
+
+- **Server** → `k8s/config/server-config.yml`
+- **Client** → `k8s/config/client-config.yml`
+
+You can edit these files to add/override variables.
+
+💡 Example `k8s/config/server-config.yml`:
+
+```yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: server-config
+data:
+  ENVIRONMENT: production
+  JWT_EXPIRATION: 1d
+  JWT_SALT: mySalt
+  JWT_SECRET: test_secret
+  MONGO_URI: mongodb://user:password@mongodb-service:27017/space_db
+  REDIS_URL: redis://redis-service:6379
+```
+
+:::info MongoDB & Redis Configuration
+MongoDB and Redis can also be configured via their manifests in `k8s/config`, using the variables defined in their official images.
+:::
+
+</TabItem>
+
+</Tabs>

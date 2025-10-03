@@ -1,0 +1,297 @@
+---
+sidebar_position: 1
+custom_edit_url: null
+---
+
+import { VersionTable } from "@site/src/components/common";
+import SaaSName from "./common/_saasName.mdx";
+import Currency from "./common/_currency.mdx";
+import Features from "./common/_features.mdx";
+import FeaturesDescription from "./common/_features_description.mdx";
+import FeaturesType from "./common/_features_type.mdx";
+import FeaturesValueType from "./common/_features_valuetype.mdx";
+import FeaturesDefaultValue from "./common/_features_defaultValue.mdx";
+import FeaturesExpression from "./common/_features_expression.mdx";
+import FeaturesServerExpression from "./common/_features_serverExpression.mdx";
+import FeaturesAutomationType from "./common/_features_automationType.mdx";
+import FeaturesDocUrl from "./common/_features_docUrl.mdx";
+import FeaturesIngrationType from "./common/_features_integrationType.mdx";
+import FeaturesPricingUrls from "./common/_features_pricingUrls.mdx";
+import UsageLimits from "./common/_usage_limits.mdx";
+import UsageLimitsDescription from "./common/_usage_limits_description.mdx";
+import UsageLimitsType from "./v3.0/_usage_limits_type.mdx";
+import UsageLimitsPeriod from "./v3.0/_usageLimits_period.mdx";
+import UsageLimitsTrackable from "./v3.0/_usageLimits_trackable.mdx";
+import UsageLimitsValueType from "./common/_usage_limits_valueType.mdx";
+import UsageLimitsDefaultValue from "./common/_usage_limits_defaultValue.mdx";
+import UsageLimitsUnit from "./common/_usage_limits_unit.mdx";
+import UsageLimitsLinkedFeatures from "./common/_usage_limits_linkedFeatures.mdx";
+import Plans from "./common/_plans.mdx";
+import PlansDescription from "./common/_plans_description.mdx";
+import Price from "./v2.0/_price.mdx";
+import PlansUnit from "./common/_plans_unit.mdx";
+import PlansFeatures from "./common/_plans_features.mdx";
+import PlansFeaturesValue from "./common/_plans_features_value.mdx";
+import PlansUsageLimits from "./common/_plans_usageLimits.mdx";
+import PlansUsageLimitsValue from "./common/_plans_usageLimits_value.mdx";
+import AddOns from "./common/_addOns.mdx";
+import AddOnsDescription from "./common/_addOns_description.mdx";
+import AddOnsAvailableFor from "./common/_addOns_availableFor.mdx";
+import AddOnsUnit from "./common/_addOns_unit.mdx";
+import AddOnsFeatures from "./common/_addOns_features.mdx";
+import AddOnsFeaturesValue from "./common/_addOns_features_value.mdx";
+import AddOnsUsageLimits from "./common/_addOns_usageLimits.mdx";
+import AddOnsUsageLimitsValue from "./common/_addOns_usageLimits_value.mdx";
+import AddOnsUsageLimitsExtensions from "./common/_addOns_usageLimitsExtensions.mdx";
+import AddOnsUsageLimitsExtensionsValue from "./common/_addOns_usageLimitsExtensions_value.mdx";
+import AddOnsUsageLimitsSubscriptionContraints from "./v3.0/_addons_subscriptionConstraints.mdx";
+import AddOnsDependsOn from "./v1.1/_addons_dependsOn.mdx";
+import CreatedAt from "./v1.1/_createdAt.mdx";
+import Starts from "./v1.1/_starts.mdx";
+import Ends from "./v1.1/_ends.mdx";
+import URL from "./v2.0/_url.mdx";
+import Billing from "./v2.0/_billing.mdx";
+import Tags from "./v2.0/_tags.mdx";
+import FeaturesTag from "./v2.0/_features_tag.mdx";
+import AddOnsExcludes from "./v2.0/_excludes.mdx";
+import Variables from "./v2.0/_variables.mdx";
+import FeaturesRender from "./v2.0/_features_render.mdx";
+import UsageLimitsRender from "./v2.0/_usageLimits_render.mdx";
+import PlansPrivate from "./v2.0/_plans_private.mdx";
+import AddOnsPrivate from "./v2.0/_addons_private.mdx";
+import Version from "./v2.1/_version.mdx";
+import SyntaxVersion from "./v3.0/_syntax_version_30.mdx";
+
+# Version 3.0
+
+:::info
+We use [YAML type](https://yaml.org/type/) abbreviations to describe the supported types of fields.
+
+The YAML snippets demonstrating the Pricing2Yaml specification are intentionally incomplete.
+Certain fields have been omitted for clarity and explanation purposes.
+
+:::
+
+## `syntaxVersion`
+
+<SyntaxVersion />
+
+## `saasName`
+
+<SaaSName />
+
+## `version`
+
+<Version />
+
+## `createdAt`
+
+<CreatedAt />
+
+## `url`
+
+<URL />
+
+## `tags`
+
+<Tags />
+
+## `currency`
+
+<Currency />
+
+## `billing`
+
+<Billing />
+
+## `variables`
+
+<Variables />
+
+## `features`
+
+<Features />
+
+## `features.<name>.description`
+
+<FeaturesDescription />
+
+## `features.<name>.tag`
+
+<FeaturesTag />
+
+## `features.<name>.type`
+
+<FeaturesType />
+
+## `features.<name>.valueType`
+
+<FeaturesValueType />
+
+## `features.<name>.defaultValue`
+
+<FeaturesDefaultValue />
+
+## `features.<name>.expression`
+
+<FeaturesExpression />
+
+## `features.<name>.serverExpression`
+
+<FeaturesServerExpression />
+
+## `features.<name>.automationType`
+
+<FeaturesAutomationType />
+
+## `features.<name>.docUrl`
+
+<FeaturesDocUrl />
+
+## `features.<name>.integrationType`
+
+<FeaturesIngrationType />
+
+## `features.<name>.pricingUrls`
+
+<FeaturesPricingUrls />
+
+## `features.<name>.render`
+
+<FeaturesRender />
+
+## `usageLimits`
+
+<UsageLimits />
+
+## `usageLimits.<name>.description`
+
+<UsageLimitsDescription />
+
+## `usageLimits.<name>.type`
+
+<UsageLimitsType />
+
+## `usageLimits.<name>.period`
+
+<UsageLimitsPeriod />
+
+## `usageLimits.<name>.trackable`
+
+<UsageLimitsTrackable />
+
+## `usageLimits.<name>.valueType`
+
+<UsageLimitsValueType />
+
+## `usageLimits.<name>.defaultValue`
+
+<UsageLimitsDefaultValue />
+
+## `usageLimits.<name>.unit`
+
+<UsageLimitsUnit />
+
+## `usageLimits.<name>.linkedFeatures`
+
+<UsageLimitsLinkedFeatures />
+
+## `usageLimits.<name>.render`
+
+<UsageLimitsRender />
+
+## `plans`
+
+<Plans />
+
+## `plans.<name>.description`
+
+<PlansDescription />
+
+## `plans.<name>.private`
+
+<PlansPrivate />
+
+## `plans.<name>.price`
+
+<Price subscription="plan" />
+
+## `plans.<name>.unit`
+
+<PlansUnit />
+
+## `plans.<name>.features`
+
+<PlansFeatures />
+
+## `plans.<name>.features.<name>.value`
+
+<PlansFeaturesValue />
+
+## `plans.<name>.usageLimits`
+
+<PlansUsageLimits />
+
+## `plans.<name>.usageLimits.<name>.value`
+
+<PlansUsageLimitsValue />
+
+## `addOns`
+
+<AddOns />
+
+## `addOns.<name>.description`
+
+<AddOnsDescription />
+
+## `addOns.<name>.availableFor`
+
+<AddOnsAvailableFor />
+
+## `addOns.<name>.private`
+
+<AddOnsPrivate />
+
+## `addOns.<name>.dependsOn`
+
+<AddOnsDependsOn />
+
+## `addOns.<name>.excludes`
+
+<AddOnsExcludes />
+
+## `addOns.<name>.price`
+
+<Price />
+
+## `addOns.<name>.unit`
+
+<AddOnsUnit />
+
+## `addOns.<name>.features`
+
+<AddOnsFeatures />
+
+## `addOns.<name>.features.<name>.value`
+
+<AddOnsFeaturesValue />
+
+## `addOns.<name>.usageLimits`
+
+<AddOnsUsageLimits />
+
+## `addOns.<name>.usageLimits.<name>.value`
+
+<AddOnsUsageLimitsValue />
+
+## `addOns.<name>.usageLimitsExtensions`
+
+<AddOnsUsageLimitsExtensions />
+
+## `addOns.<name>.usageLimitsExtensions.<name>.value`
+
+<AddOnsUsageLimitsExtensionsValue />
+
+## `addOns.<name>.subscriptionConstraints`
+
+<AddOnsUsageLimitsSubscriptionContraints />
