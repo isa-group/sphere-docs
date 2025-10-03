@@ -197,7 +197,7 @@ export function InjectTokenFromServer() {
     - `<ErrorFallback>` — Rendered on errors (invalid id, expired token, etc).  
 
 :::warning
-The `feature-id` is a string in the format `saasName-featureName`, always in lowercase.
+The `feature-id` is a string in the format `saasName-featureName`, where saasname is always lowercase.
 For example, to reference the **pets feature from PetClinic**, the resulting feature-id would be: `petclinic-pets`.
 :::
 
@@ -307,6 +307,6 @@ It is still in an early stage and not intended for production use.
 - Always include a dash (`-`).  
 - Match exactly the keys present in the Pricing Token payload.  
 
-The format is built internally as: `saasName-featureName`, all in lowercase.
+The format is built internally as: `saasName-featureName`, where saasname is always lowercase.
 
 For example, if you want to instantiate the feature `pets` from the SaaS **PetClinic**, the feature id would be: `petclinic-pets`.
