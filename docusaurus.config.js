@@ -17,7 +17,7 @@ const config = {
   favicon: "img/favicon.ico",
 
   // Set the production url of your site here
-  url: "https://pricing4saas.vercel.app",
+  url: "https://sphere-docs.vercel.app",
   // Set the /<baseUrl>/ pathname under which your site is served
   // For GitHub pages deployment, it is often '/<projectName>/'
   baseUrl: "/",
@@ -187,7 +187,7 @@ const config = {
             items: [
               {
                 label: "Docs",
-                href: "https://github.com/isa-group/Pricing4SaaS-docs",
+                href: "https://github.com/isa-group/sphere-docs",
               },
             ],
           },
