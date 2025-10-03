@@ -207,6 +207,15 @@ For example, to reference the **pets feature from PetClinic**, the resulting fea
 
 `SpaceClient` is instantiated by `SpaceProvider`.  
 
+**Attributes:**
+
+- **httpUrl**: `string` — Configured base URL of the SPACE instance.
+  👉 Example: `http://localhost:5403/api/v1`
+- **wsUrl**: `string` — Configured WebSocket URL of the SPACE instance.
+  👉 Example: `ws://localhost:5403/api/v1/events`
+- **apiKey**: `string` — Configured API key for authentication.
+  👉 Example: `6a0f4f1093c1e95616efd61b69b15f90f1b25953a4201961995b8a89035aac72`
+
 **Methods:**
 
 - `on(event, callback)` — Listen to SPACE events.  
