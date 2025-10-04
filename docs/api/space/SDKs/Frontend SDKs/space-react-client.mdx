@@ -178,10 +178,13 @@ export function InjectTokenFromServer() {
 ### Hooks
 
 - **`useSpaceClient(): SpaceClient`**  
-  Access the connected SPACE client. Throws if not available.  
+  Returns the connected `SpaceClient` instance. Throws if not available.
 
-- **`usePricingToken(): TokenService`**  
-  Manage Pricing Tokens in context. Available even if live connection is disabled.  
+- **`useTokenService(): TokenService`**  
+  Returns the `TokenService` instance that is managing the lifecycle of pricing tokens. Available even if live connection is disabled.
+
+- **`usePricingTokenPayload(): Record<string, any> | null`**  
+  Returns the parsed payload of the current pricing token, or `null` if none is set or invalid. Could be useful to maintain the UI in sync with pricing token.
 
 ---
 
@@ -215,6 +218,8 @@ For example, to reference the **pets feature from PetClinic**, the resulting fea
   👉 Example: `ws://localhost:5403/api/v1/events`
 - **apiKey**: `string` — Configured API key for authentication.
   👉 Example: `6a0f4f1093c1e95616efd61b69b15f90f1b25953a4201961995b8a89035aac72`
+- **token**: `TokenService` — Instance of the Token Service being employed. could be useful when working in `allowConnectionWithSpace: true` mode to not need the `useTokenService` hook.
+
 
 **Methods:**
 
@@ -247,13 +252,17 @@ All events (except `synchronized` and `error`) include the following object:
 
 **Methods:**
 
-- `updatePricingToken(token)` — Validates & stores a pricing token.  
-- `getPricingToken()` — Return parsed token payload.  
-- `evaluateFeature(featureId)` — Returns `true | false | null`.  
+- `update(token: string): void` — Validates & stores a pricing token.  
+- `getPayload(): Record<string, any> | null` — Return parsed token payload.  
+- `getKey(key: string): any | null` — Search the key within the token payload and returns its value.  
+- `evaluateFeature(featureId: string): boolean | null` — Returns `true | false | null`.  
+- `subscribe(listener: () => void): () => void` — Subscribe to token changes. *Returns an unsubscribe function*.
 
 Token expectations:  
 - `exp: number` — UNIX expiration.  
 - `features: Record<string, { eval: boolean; limit?: number | null; used?: number | null }>`  
+- `pricingContext: Record<string, {features: Record<string, string|boolean>, usageLimits: Record<string, number|boolean>}> | null` — Optional object containing the pricingContext considered for evaluation. **It represents the configuration** the user has access to.
+- `subscriptionContext: Record<string, number> | null` — Optional object containing the subscriptionContext considered for evaluation.
 
 ---
 
