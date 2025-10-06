@@ -24,7 +24,7 @@ This file **must follow the [Pricing2Yaml specification](../../pricing-descripti
 ![Add Service dialog](../../../static/img/space/user-guides/add-new-service-dialog.png)
 
 :::tip
-Alternatively, you can **upload your pricing to SPHERE** and use the link of the desired pricing version to instantiate the service. See [this guide](../../sphere/user-guides/upload-pricing.md) for more details.
+Alternatively, you can **upload your pricing to SPHERE** and use the link of the desired pricing version to instantiate the service. See [this guide](../../sphere/introduction.md) for more details.
 :::
 
 ---

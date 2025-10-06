@@ -20,6 +20,7 @@ These variables configure the **SPACE server**:
 | Variable            | Required | Default Value                                         | Description                                             |
 | ------------------- | -------- | ----------------------------------------------------- | ------------------------------------------------------- |
 | `BASE_URL_PATH`     | ❌       | `/api/v1`                                             | Base URL path for the API                               |
+| `ALLOWED_ORIGINS`   | ❌       | `*`                                                   | Semicolon-separated string of allowed origins for CORS  |
 | `DATABASE_NAME`     | ❌       | `space_db`                                            | MongoDB database name _(ignored if `MONGO_URI` is set)_ |
 | `DATABASE_USERNAME` | ❌       | `mongoUser`                                           | MongoDB username _(ignored if `MONGO_URI` is set)_      |
 | `DATABASE_PASSWORD` | ❌       | `mongoPassword`                                       | MongoDB password _(ignored if `MONGO_URI` is set)_      |
@@ -79,6 +80,7 @@ services:
     ...
     environment:
       ENVIRONMENT: production
+      ALLOWED_ORIGINS: http://localhost:3000
       MONGO_URI: mongodb://user:password@mongodb:27017/space_db
       REDIS_URL: redis://redis:6379
       JWT_SECRET: test_secret

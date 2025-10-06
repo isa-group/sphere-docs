@@ -178,10 +178,13 @@ export function InjectTokenFromServer() {
 ### Hooks
 
 - **`useSpaceClient(): SpaceClient`**  
-  Access the connected SPACE client. Throws if not available.  
+  Returns the connected `SpaceClient` instance. Throws if not available.
 
-- **`usePricingToken(): TokenService`**  
-  Manage Pricing Tokens in context. Available even if live connection is disabled.  
+- **`useTokenService(): TokenService`**  
+  Returns the `TokenService` instance that is managing the lifecycle of pricing tokens. Available even if live connection is disabled.
+
+- **`usePricingTokenPayload(): Record<string, any> | null`**  
+  Returns the parsed payload of the current pricing token, or `null` if none is set or invalid. Could be useful to maintain the UI in sync with pricing token.
 
 ---
 
@@ -197,7 +200,7 @@ export function InjectTokenFromServer() {
     - `<ErrorFallback>` — Rendered on errors (invalid id, expired token, etc).  
 
 :::warning
-The `feature-id` is a string in the format `saasName-featureName`, always in lowercase.
+The `feature-id` is a string in the format `saasName-featureName`, where saasname is always lowercase.
 For example, to reference the **pets feature from PetClinic**, the resulting feature-id would be: `petclinic-pets`.
 :::
 
@@ -206,6 +209,17 @@ For example, to reference the **pets feature from PetClinic**, the resulting fea
 ### Client API
 
 `SpaceClient` is instantiated by `SpaceProvider`.  
+
+**Attributes:**
+
+- **httpUrl**: `string` — Configured base URL of the SPACE instance.
+  👉 Example: `http://localhost:5403/api/v1`
+- **wsUrl**: `string` — Configured WebSocket URL of the SPACE instance.
+  👉 Example: `ws://localhost:5403/api/v1/events`
+- **apiKey**: `string` — Configured API key for authentication.
+  👉 Example: `6a0f4f1093c1e95616efd61b69b15f90f1b25953a4201961995b8a89035aac72`
+- **token**: `TokenService` — Instance of the Token Service being employed. could be useful when working in `allowConnectionWithSpace: true` mode to not need the `useTokenService` hook.
+
 
 **Methods:**
 
@@ -238,13 +252,17 @@ All events (except `synchronized` and `error`) include the following object:
 
 **Methods:**
 
-- `updatePricingToken(token)` — Validates & stores a pricing token.  
-- `getPricingToken()` — Return parsed token payload.  
-- `evaluateFeature(featureId)` — Returns `true | false | null`.  
+- `update(token: string): void` — Validates & stores a pricing token.  
+- `getPayload(): Record<string, any> | null` — Return parsed token payload.  
+- `getKey(key: string): any | null` — Search the key within the token payload and returns its value.  
+- `evaluateFeature(featureId: string): boolean | null` — Returns `true | false | null`.  
+- `subscribe(listener: () => void): () => void` — Subscribe to token changes. *Returns an unsubscribe function*.
 
 Token expectations:  
 - `exp: number` — UNIX expiration.  
 - `features: Record<string, { eval: boolean; limit?: number | null; used?: number | null }>`  
+- `pricingContext: Record<string, {features: Record<string, string|boolean>, usageLimits: Record<string, number|boolean>}> | null` — Optional object containing the pricingContext considered for evaluation. **It represents the configuration** the user has access to.
+- `subscriptionContext: Record<string, number> | null` — Optional object containing the subscriptionContext considered for evaluation.
 
 ---
 
@@ -298,6 +316,6 @@ It is still in an early stage and not intended for production use.
 - Always include a dash (`-`).  
 - Match exactly the keys present in the Pricing Token payload.  
 
-The format is built internally as: `saasName-featureName`, all in lowercase.
+The format is built internally as: `saasName-featureName`, where saasname is always lowercase.
 
 For example, if you want to instantiate the feature `pets` from the SaaS **PetClinic**, the feature id would be: `petclinic-pets`.
