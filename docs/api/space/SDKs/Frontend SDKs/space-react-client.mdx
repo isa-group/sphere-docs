@@ -23,7 +23,7 @@ This SDK is intended for research and experimentation. For production usage, see
 ## ⚠️ Important Note
 
 - **Feature evaluation is always based on the Pricing Token.**  
-  `space-react-client` does not call SPACE directly to check features; instead, it uses the Pricing Token stored in the browser’s `localStorage`.  
+  `space-react-client` does not call SPACE directly to check features; instead, it uses the evaluation results stored in the Pricing-Token loaded in `TokenService`.
   (See [SPACE communication protocol](../../introduction.mdx) for more details on how pricing tokens work.)
 
 ---
@@ -84,7 +84,7 @@ This means you can still evaluate features from a token, but **event listeners (
 import { useEffect } from 'react';
 import { useSpaceClient } from 'space-react-client';
 
-export function TokenBootstrapper() {
+export function App() {
   const spaceClient = useSpaceClient();
 
   useEffect(() => {
@@ -108,16 +108,16 @@ export function TokenBootstrapper() {
 ```tsx
 import { Feature, On, Default, Loading, ErrorFallback } from 'space-react-client';
 
-export function MeetingButton() {
+export function OnlineVisitsButton() {
   return (
-    <Feature id="zoom-meetings">
+    <Feature id="petclinic-visits">
       <On>
         {/* Rendered when feature is enabled */}
-        <button>Start meeting</button>
+        <button>Start online visit</button>
       </On>
       <Default>
         {/* Rendered when feature is disabled */}
-        <button disabled>Upgrade to enable meetings</button>
+        <button disabled>Upgrade to enable online visits</button>
       </Default>
       <Loading>
         {/* Rendered while evaluating */}
@@ -125,7 +125,7 @@ export function MeetingButton() {
       </Loading>
       <ErrorFallback>
         {/* Rendered on error */}
-        <span>Could not verify your feature access.</span>
+        <span>Could not verify your access permission to online visits.</span>
       </ErrorFallback>
     </Feature>
   );
