@@ -30,7 +30,7 @@ function SphereHero() {
 
           <div className={styles.actions}>
             <Link
-              to={`/docs/${siteConfig.customFields.currentVersion}/docs/introduction`}
+              to={`/docs/${siteConfig.customFields.currentVersion}/docs/Introduction`}
               className={styles.primaryButton}
             >
               Get Started
