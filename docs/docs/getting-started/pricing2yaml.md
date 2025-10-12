@@ -1,4 +1,9 @@
-# 📝 Pricing2Yaml syntax starter guide
+---
+sidebar_position: 1
+custom_edit_url: null
+---
+
+# 📝 Pricing2Yaml
 
 In this tutorial, we'll model a portion of GitHub Pricing step by step to help you become familiar with the
 **Pricing2Yaml** syntax.
