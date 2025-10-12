@@ -145,7 +145,7 @@ const config = {
             items: [
               {
                 label: "Getting Started",
-                to: `/docs/${currentVersion}/docs/introduction`,
+                to: `/docs/${currentVersion}/docs/Introduction`,
               },
               {
                 label: "Developer Guide",
