@@ -8,7 +8,7 @@ import TabItem from "@theme/TabItem";
 
 # ➕ Create a Pricing Version
 
-One of SPACE’s most powerful features is its ability to act as a **Pricing Version Control System (PVCS)**.  
+One of SPACE's most powerful features is its ability to act as a **Pricing Version Control System (PVCS)**.
 
 This means you can **easily track changes, activate or archive pricings, and evolve your SaaS offerings** without losing historical data.
 
@@ -175,7 +175,7 @@ Select the service you want to update (in this example, **PetClinic**).
 
 Click on the **service card** to open its details.
 
-Here you’ll find the list of existing pricing versions for that service.
+Here you'll find the list of existing pricing versions for that service.
 
 ![Add pricing version button](../../../static/img/space/user-guides/add-pricing-version.png)
 
@@ -186,7 +186,8 @@ Click the **⋮ (three-dot menu)** at the top-right corner and select **Add Vers
 A dialog will appear asking you to upload a **Pricing2Yaml** file.
 
 :::tip
-Alternatively, you can **upload your pricing to SPHERE** and use the link of the desired pricing version to instantiate the service. See [this guide](../../sphere/introduction.md) for more details.
+Alternatively, you can **upload your pricing to SPHERE** and use the link of the desired pricing
+version to instantiate the service. See [this guide](../../sphere/user-guides/pricing-card/03_files-and-versions.mdx) for more details.
 :::
 
 ![Add version dialog](../../../static/img/space/user-guides/add-new-version-dialog.png)
@@ -195,7 +196,7 @@ Alternatively, you can **upload your pricing to SPHERE** and use the link of the
 
 The pricing you upload must follow these rules in order to be added to the service:
 
-- The `saasName` field must match your service’s name exactly.
+- The `saasName` field must match your service's name exactly.
 - The `version` field must be unique compared to existing versions.
 
 If your **Pricing2Yaml** file (no matter whether it has been provided as a link) contains a different `saasName` than the current service, SPACE will reject it with an error.
@@ -208,4 +209,4 @@ Click **Upload** to finish.
 ---
 
 SPACE will create the new pricing version and automatically link it to your service.  
-You’ll see it appear in the **versions list** inside the service details page.
+You'll see it appear in the **versions list** inside the service details page.

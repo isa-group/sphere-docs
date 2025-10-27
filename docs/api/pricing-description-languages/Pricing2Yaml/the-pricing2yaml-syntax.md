@@ -353,7 +353,7 @@ This example highlights the expressive power of **Pricing2Yaml**:
 4. **Add-ons** extend the pricing dynamically, enabling more flexible business models.  
 
 :::warning
-Using a lot of add-ons in a pricing can generate a massive configuration space, which can be difficult to manage, especially if no pricing-driven self-adaptation solutions are employed. It is recommended to use them wisely and only when necessary. See [pricing design tutorial](../../../docs/tutorials/pricing-design.md) for more information.
+Using a lot of add-ons in a pricing can generate a massive configuration space, which can be difficult to manage, especially if no pricing-driven self-adaptation solutions are employed. It is recommended to use them wisely and only when necessary. See [pricing design tutorial](../../../docs/tutorials/pricing-design.mdx) for more information.
 :::
 
 In summary, the PetClinic example shows how SaaS pricings can be described in a **concise, structured, and machine-processable way**, while remaining human-readable.
