@@ -1,0 +1,1163 @@
+---
+sidebar_position: 1
+custom_edit_url: null
+---
+
+import PricingStructureSelectedCCSIM from '../../static/img/pricing-design/ccsim-pricing-structure-selected.png';
+import PricingWithoutUsageLimits from '../../static/img/pricing-design/ccsim-pricing-no-usage-limits-set.png';
+import PricingWithoutPricesCCSIM from '../../static/img/pricing-design/ccsim-pricing-without-prices.png';
+import FinalPricingCCSIM from '../../static/img/pricing-design/ccsim-pricing-final.png';
+
+# 📖 Tutorial: Pricing Design
+
+In this tutorial, we are going to design a pricing model from scratch using the CCSIM [^1] case study as an example.
+CCSIM is a platform designed to help businesses optimize their Computing Continuum architecture. It provides powerful simulation tools that deliver accurate predictions and insights, enabling you to make informed decisions about your Computing Continuum infrastructure. With CCSIM, you can design, test, and refine your Computing Continuum setup in a risk-free environment before deployment [^2].
+
+You can follow along with the tutorial in the Pricing2Yaml editor.
+
+:::warning Familiarize with Pricing2Yaml
+The reader should be familiarized with Pricing2Yaml syntax before reading this tutorial
+:::
+
+:::warning Do your market research
+Conduct a market research before designing the pricing, remember that you are competing in a
+market where the attention of the users is shared between other SaaS.
+
+You can start by answering these questions:
+
+- Who needs you product?
+- Is your SaaS aimed at consumers (B2C), businesses (B2B), or both?
+- Are there different user segments you should consider targeting?
+:::
+
+
+## 1. Identify your features
+
+The first step is that you **distinguish** all the **features** of your SaaS and highlight any depenencies between them
+if necessary.
+
+In our running example here is the full list of our features:
+
+- **IoT Environment Simulation**: Enables the simulation of customized IoT environments within a cloud continuum infrastructure.
+- **QoS Tests**: Provides mechanisms for measuring performance metrics such as latency and response time.
+- **Log Extraction**: Offers access to raw logs generated from simulations.
+- **Basic Log Filtering**: Allows basic filtering by keywords within the logs.
+- **Email Support**: Provides technical assistance via email.
+- **SLA Uptime**: Guarantees a specific level of serviceavailability.
+- **CI/CD Integration**: Facilitates integration of CCSIM simulations into Continuous Integration/Continuous Deployment pipelines, automating testing and deployment processes.
+- **Advanced Log Filtering**: Offers sophisticated techniques for filtering and analyzing logs, aiding in-depth data
+interpretation.
+- **Mobile Simulation & UI Tests**: Allows CCSIM simulations to support mobile devices, including UI testing and
+validation of performance and design in mobile applications.
+
+Map every feature of your list into the `features` key value map of your Pricing2Yaml file. For now, assume that all features are boolean and disabled by default. We’ll update their default values later when we define the pricing structure. I strongly
+recommend that you add a brief description for each feature to help users understand what offers:
+
+```yaml
+saasName: Pricing design tutorial with CCSIM
+syntaxVersion: "3.0"
+version: "2025"
+createdAt: 2025-10-23
+currency: EUR
+hasAnnualPayment: false
+features:
+  iotEnvironmentSimulation:
+    description: Enables the simulation of customized IoT environments within a cloud continuum infrastructure
+    valueType: BOOLEAN
+    defaultValue: false
+    type: DOMAIN
+  qosTests:
+    description: Provides mechanisms for measuring performance metrics such as latency and response time
+    valueType: BOOLEAN
+    defaultValue: false
+    type: DOMAIN
+  logExtraction:
+    description: Offers access to raw logs generated from simulations
+    valueType: BOOLEAN
+    defaultValue: false
+    type: DOMAIN
+  basicLogFiltering:
+    description: Allows basic filtering by keywords within the logs
+    valueType: BOOLEAN
+    defaultValue: false
+    type: DOMAIN
+  emailSupport:
+    description: Provides technical assistance via email
+    valueType: BOOLEAN
+    defaultValue: false
+    type: DOMAIN
+  slaUptime:
+    description: Guarantees a specific level of service availability
+    valueType: BOOLEAN
+    defaultValue: false
+    type: DOMAIN
+  ci/cdIntegration:
+    description: Facilitates integration of CCSIM simulations into
+      Continuous Integration/Continuous Deployment pipelines, automating testing and
+      deployment processes
+    valueType: BOOLEAN
+    defaultValue: false
+    type: DOMAIN
+  advancedLogFiltering:
+    description: Offers sophisticated techniques for filtering and analyzing logs,
+      aiding in-depth data interpretation.
+    valueType: BOOLEAN
+    defaultValue: false
+    type: DOMAIN
+  mobileSimulationAndUITests:
+    description:  Allows CCSIM simulations to support mobile devices, including UI
+      testing and validation of performance and design in mobile applications.
+    valueType: BOOLEAN
+    defaultValue: false
+    type: DOMAIN
+```
+
+Once you have a complete list of your software’s features, you need to identify the ones that directly address the primary 
+problem you are trying to solve (aka *essential features*). In our case, CCSIM is a cloud continuum simulator, so the feature *IoT Environment Simulation* is the core foundation of the SaaS.
+
+:::info Concept: Essential features
+Essential features are core functionalities offered by the SaaS that must be available across all pricing plans. These features
+usually have usage limits to encourage users to upgrade their subscription.
+:::
+
+Since *IoT Environment Simulation* is an essential feature change the `defaultValue` to `true`:
+
+```yaml
+features:
+  iotEnvironmentSimulation:
+    description: Enables the simulation of customized IoT environments within a cloud continuum infrastructure
+    valueType: BOOLEAN
+    // highlight-next-line
+    defaultValue: true
+    type: DOMAIN
+```
+
+## 2. Define pricing structure
+
+To structure your pricing, you should follow these steps:
+
+1. Determine your *key features*
+2. Define usage limits for your features
+3. Select a pricing structure (plans, add-ons, plans and add-ons)
+4. Distribute all the features across your selected pricing structure
+5. Assign values to usage limits
+
+
+### 2.1. Determine your key features
+
+You have previously determine essential features that must be available in the lifespan of the 
+SaaS. But again, you will need to go back and review all your features to figure out which ones are
+*key features*.
+
+:::info Concept: Key features
+*Key features* are features that offer significant perceived value to users and are most likely to
+encourage them to upgrade their subscription.
+:::
+
+Since CCSIM SaaS aims for individual with limited computing resources and enterprises
+who want to test their infrastructures we can identify the the following
+*key features*:
+
+- **Advanced log filtering**, this feature is highly valuable for enteprise clients
+who require detailed analysis of simulation results
+- **CI/CD Integration**: essential for individuals and enterprises conducting multiple deployments
+daily or seeking to improve their workflow automation
+- **Mobile Simulation & UI Tests**: that is not so important for all the customer profiles but
+crucial to others
+
+
+### 2.2. Define usage limits for your features
+
+:::warning
+Skip this step if you don't need usage limits in your pricing
+:::
+
+If you have several features, you will probably want to set usage limits to them. This way,
+clients may choose to upgrade their subscription to have more resouces, capacity... In other words, you will
+introduce usage limits to turn a normal features into *key features*. 
+
+In our CCSIM example given that *IoT Environment Simulation* is the most important feature we decided
+to define some usage limits to it:
+
+- **Simulations per Month**: Caps the number of simulations a user can run monthly.
+- **Projects**: Limits the number of projects that can be managed simultaneously.
+- **CPU Resources**: Defines the maximum CPU resources allocated per simulation.
+- **RAM Allocation**: Specifies the maximum memory allocated per simulation.
+- **Parallel Simulations**: Limits the number of simulations that can run concurrently.
+
+Using this approach, **IoT Environment Simulation** becomes a *key feature* that encourage
+users to move to higher subscription tiers.
+
+```yaml
+usageLimits:
+  maxSimulation:
+    description: number of simulations
+    type: RENEWABLE
+    valueType: NUMERIC
+    defaultValue: 1
+    unit: simulation
+    period:
+      value: 1
+      unit: MONTH
+    linkedFeatures:
+      - iotEnvironmentSimulation
+  maxProjects:
+    description: number of projects that can be managed simultaneously.
+    type: NON_RENEWABLE
+    valueType: NUMERIC
+    defaultValue: 1
+    unit: simulation
+    trackable: true
+    linkedFeatures:
+      - iotEnvironmentSimulation
+  cpuResources:
+    description: maximum CPU resources allocated per simulation
+    type: NON_RENEWABLE
+    valueType: NUMERIC
+    defaultValue: 1
+    unit: vCPU/simulation
+    linkedFeatures:
+      - iotEnvironmentSimulation
+  ramAllocation:
+    description: Specifies the maximum memory allocated per simulation
+    type: NON_RENEWABLE
+    valueType: NUMERIC
+    defaultValue: 1
+    unit: GB/simulation
+    linkedFeatures:
+      - iotEnvironmentSimulation
+  maxParallelSimulations:
+    description: Limits the number of simulations that can run concurrently
+    type: NON_RENEWABLE
+    valueType: NUMERIC
+    defaultValue: 1
+    linkedFeatures:
+      - iotEnvironmentSimulation
+```
+
+We will also introduce an additional usage limit to *Mobile Simulation & UI Tests* feature
+to restrict the number of mobile apps that can be simulated in CCSIM
+per project, as this feature requires significant computational resources:
+
+- **Mobile Apps per Project**, cap the number of mobile apps that can be used per project.
+
+```yaml
+  usageLimits:
+    maxMobileAppsPerProject:
+      description:  cap the number of mobile apps that can be used per project
+      type: NON_RENEWABLE
+      valueType: NUMERIC
+      defaultValue: 1
+      linkedFeatures:
+      -  mobileSimulationAndUITests
+```
+
+### 2.3. Select a pricing structure
+
+At this moment you have choose a structure that target the core customer of your SaaS you have 
+several possibilites:
+
+- Create a pricing that includes **only plans**: This is the most common type of pricing structure.
+Features are distributed across multiple user segments, with each tier including the features
+of the previous plan plus additional key features at a higher price.
+- Create a pricing that includes **only add-ons**: This structure is particullarly useful
+for large companies with a lot of products or features. Add-ons allow you to target specialized
+customers who are seeking specific solutions to their problems. 
+several products in your company and you want extra granularity to .
+- Create a pricing that combines both **plans and add-ons**: This is another common pricing structure,
+where plans serve as the primary pricing structure and add-ons act as a secondary model. Add-ons typically
+expand the features of the plans by increasing usage limits or unlocking new functionalities.
+- Create **separate pricings** for each distinct **product**: Large companies often use this model to
+sell multiple products (for instance, Salesforce), especially when each product
+covers different feature areas (Do not use this pattern unless you know what you are doing).
+
+:::tip
+A good rule of thumb is to distribute features into plans and use add-ons as needed, based on your user segments.
+:::
+
+:::tip
+If you have a plan that includes many essential features consider structuring them around 
+add-ons (for example, Okta) or to divide your *essential features* across diferrent pricings (for example, Salesforce)
+:::
+
+For the CCSIM simulator, our target audience includes individuals as well as small, medium, and large enterprises.
+Therefore, we will offer three plans: *BASIC*, *PRO*, and *ENTERPRISE*:
+
+- **BASIC** plan: aimed at users that need small-scale simulations with limited resources
+- **PRO** plan: enhanced resources and features, making it suitable for larger projects and businesses that are growing
+- **ENTERPRISE** plan: aimed at large organizations with complex simulation needs
+
+We will complement the base plan with the following add-ons:
+- **Mobile Simulation & UI Tests**: for those users that need to simulate mobile devices and mobile applications
+
+**Current pricing**
+
+<figure style={{textAlign: "center"}}>
+    <img src={PricingStructureSelectedCCSIM} />
+    <figcaption style={{fontStyle: "italic"}}>CCSIM pricing structure selected</figcaption>
+</figure>
+
+---
+
+```yaml
+saasName: Pricing design tutorial with CCSIM
+syntaxVersion: "3.0"
+version: "2025"
+createdAt: 2025-10-23
+currency: EUR
+hasAnnualPayment: false
+features:
+  iotEnvironmentSimulation:
+    description: Enables the simulation of customized IoT environments within a cloud continuum infrastructure
+    valueType: BOOLEAN
+    defaultValue: true
+    type: DOMAIN
+  qosTests:
+    description: Provides mechanisms for measuring performance metrics such as latency and response time
+    valueType: BOOLEAN
+    defaultValue: false
+    type: DOMAIN
+  logExtraction:
+    description: Offers access to raw logs generated from simulations
+    valueType: BOOLEAN
+    defaultValue: false
+    type: DOMAIN
+  basicLogFiltering:
+    description: Allows basic filtering by keywords within the logs
+    valueType: BOOLEAN
+    defaultValue: false
+    type: DOMAIN
+  emailSupport:
+    description: Provides technical assistance via email
+    valueType: BOOLEAN
+    defaultValue: false
+    type: DOMAIN
+  slaUptime:
+    description: Guarantees a specific level of service availability
+    valueType: BOOLEAN
+    defaultValue: false
+    type: DOMAIN
+  ci/cdIntegration:
+    description: Facilitates integration of CCSIM simulations into
+      Continuous Integration/Continuous Deployment pipelines, automating testing and
+      deployment processes
+    valueType: BOOLEAN
+    defaultValue: false
+    type: DOMAIN
+  advancedLogFiltering:
+    description: Offers sophisticated techniques for filtering and analyzing logs,
+      aiding in-depth data interpretation.
+    valueType: BOOLEAN
+    defaultValue: false
+    type: DOMAIN
+  mobileSimulationAndUITests:
+    description:  Allows CCSIM simulations to support mobile devices, including UI
+      testing and validation of performance and design in mobile applications.
+    valueType: BOOLEAN
+    defaultValue: false
+    type: DOMAIN
+usageLimits:
+  maxSimulation:
+    description: number of simulations
+    type: RENEWABLE
+    valueType: NUMERIC
+    defaultValue: 0
+    unit: simulation
+    period:
+      value: 1
+      unit: MONTH
+    linkedFeatures:
+      - iotEnvironmentSimulation
+  maxProjects:
+    description: number of projects that can be managed simultaneously.
+    type: NON_RENEWABLE
+    valueType: NUMERIC
+    defaultValue: 0
+    unit: simulation
+    trackable: true
+    linkedFeatures:
+      - iotEnvironmentSimulation
+  cpuResources:
+    description: maximum CPU resources allocated per simulation
+    type: NON_RENEWABLE
+    valueType: NUMERIC
+    defaultValue: 0
+    unit: vCPU/simulation
+    linkedFeatures:
+      - iotEnvironmentSimulation
+  ramAllocation:
+    description: Specifies the maximum memory allocated per simulation
+    type: NON_RENEWABLE
+    valueType: NUMERIC
+    defaultValue: 0
+    unit: GB/simulation
+    linkedFeatures:
+      - iotEnvironmentSimulation
+  maxParallelSimulations:
+    description: Limits the number of simulations that can run concurrently
+    type: NON_RENEWABLE
+    valueType: NUMERIC
+    defaultValue: 0
+    linkedFeatures:
+      - iotEnvironmentSimulation
+plans:
+  BASIC:
+    price: 0.0
+    features: null
+  PRO:
+    price: 0.0
+    features: null
+    usageLimits: null
+  ENTERPRISE:
+    price: 0.0
+    features: null
+    usageLimits: null
+addOns:
+  mobileSimulationsAndTests:
+    price: 0.0
+    features:
+      mobileSimulationAndUITests:
+        value: true
+```
+
+
+### 2.4. Distribute all the features across your selected pricing structure
+
+Once you have selected the pricing structure for your pricing you will have to distribute the features across
+all the plans and add-ons. Start distributing key features and then proceed with the rest.
+
+:::info Distribution heuristic
+
+ If the selected pricing structure contains plans, each higher-tier plan must include at least all the features
+ of its immediately lower-tier plan, plus at least one new **key feature**, which ensures that upgrading to a higher
+ plan provides additional value to the customer. Furthermore, increasing some usage limits associated with a
+ key feature can also enhance the value provided [^1].
+ 
+ If none of these is possible or desirable, the pricing structure should shift towards including only add-ons,
+ which allows each group of features to be independent [^1].
+:::
+
+In our CCSIM example, we include **CI/CD integration** key feature in the *PRO* plan to distinguish it from the *BASIC* plan, making it
+better suited for larger projects and growing businesses that require greater workflow automation. Then, we include **Advanced log filtering**
+key feature in the *ENTERPRISE* plan to those users that needs in-depth analysis of complex simulations.
+
+```yaml
+plans:
+  BASIC:
+    price: 0.0
+    features: null
+  PRO:
+    price: 0.0
+    features:
+      ci/cdIntegration:
+        value: true
+  ENTERPRISE:
+    price: 0.0
+    features:
+      ci/cdIntegration:
+        value: true
+      advancedLogFiltering:
+        value: true
+```
+
+Lastly, we offer the **Mobile Simulation & UI Tests** key feature as a standalone add-on, targeting
+organizations or individuals who require mobile device simulations.
+
+```yaml
+addOns:
+  mobileSimulationsAndTests:
+    price: 0.0
+    features:
+      mobileSimulationAndUITests:
+        value: true
+```
+
+After assigning the key features, the remaining features should be distributed, ensuring that each plan
+provides balanced value to users.
+
+For example, in the case of CCSIM, features like **Log Filtering** or **QoS Tests** should be included in all plans because they are basic
+simulator functionalities. While not strictly essential, leaving them out would prevent users from having a complete experience.
+**Email support** feature will be provided to all plans, as it's important to assist users whenever they encounter issues with the simulator.
+Limiting support only to higher-tier plans would be inappropriate and unfair for *BASIC* plan users.
+
+```yaml
+features:
+  qosTests:
+    description: Provides mechanisms for measuring performance metrics such as latency and response time
+    valueType: BOOLEAN
+    // highlight-next-line
+    defaultValue: true
+    type: DOMAIN
+  logExtraction:
+    description: Offers access to raw logs generated from simulations
+    valueType: BOOLEAN
+    // highlight-next-line
+    defaultValue: true
+    type: DOMAIN
+  emailSupport:
+    description: Provides technical assistance via email
+    valueType: BOOLEAN
+    // highlight-next-line
+    defaultValue: true
+    type: DOMAIN
+```
+
+Since we also need to include the platform availability in our pricing so our
+customers are aware of it, please update the **SLA Uptime** section to reflect the
+uptime levels our platform will offer.
+
+For CCSIM, we will guarantee the following availability levels for each plan:
+
+- **BASIC**: 90% uptime
+- **PRO**: 95% uptime
+- **ENTERPRISE**: 99.99% uptime
+
+```yaml
+features:
+  // highlight-start
+  slaUptime:
+    valueType: TEXT
+    defaultValue: 90.0%
+    type: DOMAIN
+  // highlight-end
+plans:
+  BASIC:
+    price: 0.0
+    features: null
+  PRO:
+    price: 0.0
+    features:
+      // highlight-start
+      slaUptime:
+        value: 99.5%
+      // highlight-end
+  ENTERPRISE:
+    price: 0.0
+    features:
+      // highlight-start
+      slaUptime:
+        value: 99.9%
+      // highlight-end
+```
+
+Finally, we will enable the **Basic Log Filtering** feature only for the PRO plan and up, as this plan needs to differentiate from
+the **BASIC** plan.
+
+```yaml
+plans:
+  BASIC:
+    price: 0.0
+    features: null
+  PRO:
+    price: 0.0
+    features:
+      ci/cdIntegration:
+        value: true
+      // highlight-start
+      basicLogFiltering:
+        value: true
+      // highlight-end
+
+  ENTERPRISE:
+    price: 0.0
+    features:
+      ci/cdIntegration:
+        value: true
+      advancedLogFiltering:
+        value: true
+      // highlight-start
+      basicLogFiltering:
+        value: true
+      // highlight-end
+```
+
+**Current pricing**:
+
+<figure style={{textAlign: "center"}}>
+    <img src={PricingWithoutUsageLimits} />
+    <figcaption style={{fontStyle: "italic"}}>CCSIM pricing without usage limits set</figcaption>
+</figure>
+
+---
+
+```yaml
+saasName: Pricing design tutorial with CCSIM
+syntaxVersion: "3.0"
+version: "2025"
+createdAt: 2025-10-23
+currency: EUR
+hasAnnualPayment: false
+features:
+  iotEnvironmentSimulation:
+    description: Enables the simulation of customized IoT environments within a cloud continuum infrastructure
+    valueType: BOOLEAN
+    defaultValue: true
+    type: DOMAIN
+  qosTests:
+    description: Provides mechanisms for measuring performance metrics such as latency and response time
+    valueType: BOOLEAN
+    defaultValue: true
+    type: DOMAIN
+  logExtraction:
+    description: Offers access to raw logs generated from simulations
+    valueType: BOOLEAN
+    defaultValue: true
+    type: DOMAIN
+  basicLogFiltering:
+    description: Allows basic filtering by keywords within the logs
+    valueType: BOOLEAN
+    defaultValue: false
+    type: DOMAIN
+  emailSupport:
+    description: Provides technical assistance via email
+    valueType: BOOLEAN
+    defaultValue: true
+    type: DOMAIN
+  slaUptime:
+    description: Guarantees a specific level of service availability
+    valueType: TEXT
+    defaultValue: 90.0%
+    type: DOMAIN
+  ci/cdIntegration:
+    description: Facilitates integration of CCSIM simulations into
+      Continuous Integration/Continuous Deployment pipelines, automating testing and
+      deployment processes
+    valueType: BOOLEAN
+    defaultValue: false
+    type: DOMAIN
+  advancedLogFiltering:
+    description: Offers sophisticated techniques for filtering and analyzing logs,
+      aiding in-depth data interpretation.
+    valueType: BOOLEAN
+    defaultValue: false
+    type: DOMAIN
+  mobileSimulationAndUITests:
+    description:  Allows CCSIM simulations to support mobile devices, including UI
+      testing and validation of performance and design in mobile applications.
+    valueType: BOOLEAN
+    defaultValue: false
+    type: DOMAIN
+usageLimits:
+  maxSimulation:
+    description: number of simulations
+    type: RENEWABLE
+    valueType: NUMERIC
+    defaultValue: 0
+    unit: simulation
+    period:
+      value: 1
+      unit: MONTH
+    linkedFeatures:
+      - iotEnvironmentSimulation
+  maxProjects:
+    description: number of projects that can be managed simultaneously.
+    type: NON_RENEWABLE
+    valueType: NUMERIC
+    defaultValue: 0
+    unit: simulation
+    trackable: true
+    linkedFeatures:
+      - iotEnvironmentSimulation
+  cpuResources:
+    description: maximum CPU resources allocated per simulation
+    type: NON_RENEWABLE
+    valueType: NUMERIC
+    defaultValue: 0
+    unit: vCPU/simulation
+    linkedFeatures:
+      - iotEnvironmentSimulation
+  ramAllocation:
+    description: Specifies the maximum memory allocated per simulation
+    type: NON_RENEWABLE
+    valueType: NUMERIC
+    defaultValue: 0
+    unit: GB/simulation
+    linkedFeatures:
+      - iotEnvironmentSimulation
+  maxParallelSimulations:
+    description: Limits the number of simulations that can run concurrently
+    type: NON_RENEWABLE
+    valueType: NUMERIC
+    defaultValue: 0
+    linkedFeatures:
+      - iotEnvironmentSimulation
+plans:
+  BASIC:
+    price: 0.0
+    features: null
+  PRO:
+    price: 0.0
+    features:
+      ci/cdIntegration:
+        value: true
+      basicLogFiltering:
+        value: true
+      slaUptime:
+        value: 99.5%
+  ENTERPRISE:
+    price: 0.0
+    features:
+      ci/cdIntegration:
+        value: true
+      advancedLogFiltering:
+        value: true
+      basicLogFiltering:
+        value: true
+      slaUptime:
+        value: 99.9%
+addOns:
+  mobileSimulationsAndTests:
+    price: 0.0
+    features:
+      mobileSimulationAndUITests:
+        value: true
+```
+
+### 2.5. Assign values to usage limits
+
+The last step in structuring a pricing is to set the usage limit values according to the expected software
+usage for each user segment. Assigning appropriate usage limits requires that the person defining these values
+understands how users behave based on their usage patterns backed up by data.
+
+Setting usage limits depends on several factors:
+- External services restrictions (External APIs, hosting provider restrictions)
+- Performance of your SaaS
+- Market trends
+- SaaS OpEx and SaaS gross profit margin
+- etc...
+
+:::info
+In general, the more information you have, the more confidently you can determine appropriate values for those limits.
+:::
+
+In the CCSIM example, **Simulations per Month** has been estimated that 15, 25, and 40 simulations per month for the usage 
+are the optimal values for each plan.
+**Projects**  usage limit also be restricted to help balance the platform's operating costs with 
+10, 30 and 50 for each plan.
+
+```yaml
+usageLimits:
+  maxSimulation:
+    defaultValue: 15
+    unit: simulation/month
+  maxProjects:
+    defaultValue: 10
+    unit: project
+plans:
+  BASIC:
+    price: 0.0
+    features: null
+    usageLimits: null
+  PRO:
+    price: 0.0
+    usageLimits:
+      maxSimulation:
+        value: 25
+      maxProjects:
+        value: 30
+  ENTERPRISE:
+    price: 0.0
+    usageLimits:
+      maxSimulation:
+        value: 40
+      maxProjects:
+        value: 50
+```
+
+Regarding **CPU Resources**, the allocation will be as follows: 96 vCPUs for *BASIC* plan, 
+128 vCPUs for *PRO* plan and 192 vCPUs for *ENTERPRISE* plan.
+The same applies to **RAM Allocation**, which will be set at 192 GB, 512 GB, and 768 GB, respectively.
+The previous values were calculated based on AWS EC2 instance limitations and the hardware
+requirements of the SaaS.
+
+```yaml
+usageLimits:
+  cpuResources:
+    defaultValue: 96
+    unit: vCPU
+  ramAllocation:
+    defaultValue: 192
+    unit: GB
+plans:
+  BASIC:
+    usageLimits: null
+  PRO:
+    usageLimits:
+      cpuResources:
+        value: 128
+      ramAllocation:
+        value: 512
+  ENTERPRISE:
+    usageLimits:
+      cpuResources:
+        value: 192
+      ramAllocation:
+        value: 768
+```
+
+Finally, the **Parallel Simulations** usage limit will be set to 3 only for the *ENTERPRISE* plan,
+as this user segment requires more resources for their use cases.
+
+```yaml
+plans:
+ ENTERPRISE:
+    usageLimits:
+      maxParallelSimulations:
+        value: 3
+```
+
+**Current pricing**:
+
+<figure style={{textAlign: "center"}}>
+    <img src={PricingWithoutPricesCCSIM} />
+    <figcaption style={{fontStyle: "italic"}}>CCSIM pricing without prices</figcaption>
+</figure>
+
+---
+
+```yaml
+saasName: Pricing design tutorial with CCSIM
+syntaxVersion: "3.0"
+version: "2025"
+createdAt: 2025-10-23
+currency: EUR
+hasAnnualPayment: false
+features:
+  iotEnvironmentSimulation:
+    description: Enables the simulation of customized IoT environments within a cloud continuum infrastructure
+    valueType: BOOLEAN
+    defaultValue: true
+    type: DOMAIN
+  qosTests:
+    description: Provides mechanisms for measuring performance metrics such as latency and response time
+    valueType: BOOLEAN
+    defaultValue: true
+    type: DOMAIN
+  logExtraction:
+    description: Offers access to raw logs generated from simulations
+    valueType: BOOLEAN
+    defaultValue: true
+    type: DOMAIN
+  basicLogFiltering:
+    description: Allows basic filtering by keywords within the logs
+    valueType: BOOLEAN
+    defaultValue: false
+    type: DOMAIN
+  emailSupport:
+    description: Provides technical assistance via email
+    valueType: BOOLEAN
+    defaultValue: true
+    type: DOMAIN
+  slaUptime:
+    description: Guarantees a specific level of service availability
+    valueType: TEXT
+    defaultValue: 90.0%
+    type: DOMAIN
+  ci/cdIntegration:
+    description: Facilitates integration of CCSIM simulations into
+      Continuous Integration/Continuous Deployment pipelines, automating testing and
+      deployment processes
+    valueType: BOOLEAN
+    defaultValue: false
+    type: DOMAIN
+  advancedLogFiltering:
+    description: Offers sophisticated techniques for filtering and analyzing logs,
+      aiding in-depth data interpretation.
+    valueType: BOOLEAN
+    defaultValue: false
+    type: DOMAIN
+  mobileSimulationAndUITests:
+    description:  Allows CCSIM simulations to support mobile devices, including UI
+      testing and validation of performance and design in mobile applications.
+    valueType: BOOLEAN
+    defaultValue: false
+    type: DOMAIN
+usageLimits:
+  maxSimulation:
+    description: number of simulations
+    type: RENEWABLE
+    valueType: NUMERIC
+    defaultValue: 15
+    unit: simulation
+    period:
+      value: 1
+      unit: MONTH
+    linkedFeatures:
+      - iotEnvironmentSimulation
+  maxProjects:
+    description: number of projects that can be managed simultaneously.
+    type: NON_RENEWABLE
+    valueType: NUMERIC
+    defaultValue: 10
+    unit: simulation
+    trackable: true
+    linkedFeatures:
+      - iotEnvironmentSimulation
+  cpuResources:
+    description: maximum CPU resources allocated per simulation
+    type: NON_RENEWABLE
+    valueType: NUMERIC
+    defaultValue: 96
+    unit: vCPU/simulation
+    linkedFeatures:
+      - iotEnvironmentSimulation
+  ramAllocation:
+    description: Specifies the maximum memory allocated per simulation
+    type: NON_RENEWABLE
+    valueType: NUMERIC
+    defaultValue: 192
+    unit: GB/simulation
+    linkedFeatures:
+      - iotEnvironmentSimulation
+  maxParallelSimulations:
+    description: Limits the number of simulations that can run concurrently
+    type: NON_RENEWABLE
+    valueType: NUMERIC
+    defaultValue: 0
+    linkedFeatures:
+      - iotEnvironmentSimulation
+plans:
+  BASIC:
+    price: 0.0
+    features: null
+    usageLimits: null
+  PRO:
+    price: 0.0
+    features:
+      ci/cdIntegration:
+        value: true
+      basicLogFiltering:
+        value: true
+      slaUptime:
+        value: 99.5%
+    usageLimits:
+      maxSimulation:
+        value: 25
+      maxProjects:
+        value: 30
+      cpuResources:
+        value: 128
+      ramAllocation:
+        value: 512
+  ENTERPRISE:
+    price: 0.0
+    features:
+      ci/cdIntegration:
+        value: true
+      advancedLogFiltering:
+        value: true
+      basicLogFiltering:
+        value: true
+      slaUptime:
+        value: 99.9%
+    usageLimits:
+      maxSimulation:
+        value: 40
+      maxProjects:
+        value: 50
+      cpuResources:
+        value: 192
+      ramAllocation:
+        value: 768
+      maxParallelSimulations:
+        value: 3
+addOns:
+  mobileSimulationsAndTests:
+    price: 0.0
+    features:
+      mobileSimulationAndUITests:
+        value: true
+```
+
+## 3. Set pricings for your pricing
+
+
+After creating the structure of the pricing, the final part of the process involves setting prices to plans/add-ons.
+To do so, a pricing strategy that aligns with the domain expert understanding of the market and strategic objectives
+must be selected.
+
+Common strategies include:
+- **Demand-driven pricing scheme**: sets prices based on the provider's understanding of customer-perceived values.
+- **Penetration pricing scheme**: involves setting low prices to capture market share among price-sensitive customers
+- **Skimming pricing scheme**: targets less price-sensitive customers with initially high prices that are gradually reduced
+- **Derivative-follower pricing scheme**: adjusts prices based on sales outcomes using trial and error to pinpoint the optimal price.
+
+:::tip
+Findings suggest that penetration and skimming strategies generally outperform the derivative-follower approach. However,
+when data on customer-perceived values is available, the demand-driven approach proves to be the most effective.
+:::
+
+To finalize the pricing of CCSIM, we will calculate the operational expenditure (OpEx)
+required to support a user who fully utilizes each plan, ensuring the platform remains sustainable in the long term.
+We will apply a demand-driven pricing approach to adjust base costs, adding a profit margin at the final price.
+
+
+**Final result**
+
+<figure style={{textAlign: "center"}}>
+    <img src={FinalPricingCCSIM} />
+    <figcaption style={{fontStyle: "italic"}}>CCSIM pricing result</figcaption>
+</figure>
+
+---
+
+```yaml
+saasName: Pricing design tutorial with CCSIM
+syntaxVersion: "3.0"
+version: "2025"
+createdAt: 2025-10-23
+currency: EUR
+hasAnnualPayment: false
+features:
+  iotEnvironmentSimulation:
+    description: Enables the simulation of customized IoT environments within a cloud continuum infrastructure
+    valueType: BOOLEAN
+    defaultValue: true
+    type: DOMAIN
+  qosTests:
+    description: Provides mechanisms for measuring performance metrics such as latency and response time
+    valueType: BOOLEAN
+    defaultValue: true
+    type: DOMAIN
+  logExtraction:
+    description: Offers access to raw logs generated from simulations
+    valueType: BOOLEAN
+    defaultValue: true
+    type: DOMAIN
+  basicLogFiltering:
+    description: Allows basic filtering by keywords within the logs
+    valueType: BOOLEAN
+    defaultValue: false
+    type: DOMAIN
+  emailSupport:
+    description: Provides technical assistance via email
+    valueType: BOOLEAN
+    defaultValue: true
+    type: DOMAIN
+  slaUptime:
+    description: Guarantees a specific level of service availability
+    valueType: TEXT
+    defaultValue: 90.0%
+    type: DOMAIN
+  ci/cdIntegration:
+    description: Facilitates integration of CCSIM simulations into
+      Continuous Integration/Continuous Deployment pipelines, automating testing and
+      deployment processes
+    valueType: BOOLEAN
+    defaultValue: false
+    type: DOMAIN
+  advancedLogFiltering:
+    description: Offers sophisticated techniques for filtering and analyzing logs,
+      aiding in-depth data interpretation.
+    valueType: BOOLEAN
+    defaultValue: false
+    type: DOMAIN
+  mobileSimulationAndUITests:
+    description:  Allows CCSIM simulations to support mobile devices, including UI
+      testing and validation of performance and design in mobile applications.
+    valueType: BOOLEAN
+    defaultValue: false
+    type: DOMAIN
+usageLimits:
+  maxSimulation:
+    description: number of simulations
+    type: RENEWABLE
+    valueType: NUMERIC
+    defaultValue: 15
+    unit: simulation
+    period:
+      value: 1
+      unit: MONTH
+    linkedFeatures:
+      - iotEnvironmentSimulation
+  maxProjects:
+    description: number of projects that can be managed simultaneously.
+    type: NON_RENEWABLE
+    valueType: NUMERIC
+    defaultValue: 10
+    unit: simulation
+    trackable: true
+    linkedFeatures:
+      - iotEnvironmentSimulation
+  cpuResources:
+    description: maximum CPU resources allocated per simulation
+    type: NON_RENEWABLE
+    valueType: NUMERIC
+    defaultValue: 96
+    unit: vCPU/simulation
+    linkedFeatures:
+      - iotEnvironmentSimulation
+  ramAllocation:
+    description: Specifies the maximum memory allocated per simulation
+    type: NON_RENEWABLE
+    valueType: NUMERIC
+    defaultValue: 192
+    unit: GB/simulation
+    linkedFeatures:
+      - iotEnvironmentSimulation
+  maxParallelSimulations:
+    description: Limits the number of simulations that can run concurrently
+    type: NON_RENEWABLE
+    valueType: NUMERIC
+    defaultValue: 0
+    linkedFeatures:
+      - iotEnvironmentSimulation
+plans:
+  BASIC:
+    price: 99
+    unit: user/month
+    features: null
+    usageLimits: null
+  PRO:
+    price: 239
+    unit: user/month
+    features:
+      ci/cdIntegration:
+        value: true
+      basicLogFiltering:
+        value: true
+      slaUptime:
+        value: 99.5%
+    usageLimits:
+      maxSimulation:
+        value: 25
+      maxProjects:
+        value: 30
+      cpuResources:
+        value: 128
+      ramAllocation:
+        value: 512
+  ENTERPRISE:
+    price: 469
+    unit: user/month
+    features:
+      ci/cdIntegration:
+        value: true
+      advancedLogFiltering:
+        value: true
+      basicLogFiltering:
+        value: true
+      slaUptime:
+        value: 99.9%
+    usageLimits:
+      maxSimulation:
+        value: 40
+      maxProjects:
+        value: 50
+      cpuResources:
+        value: 192
+      ramAllocation:
+        value: 768
+      maxParallelSimulations:
+        value: 3
+addOns:
+  mobileSimulationsAndTests:
+    price: 49
+    unit: user/month
+    features:
+      mobileSimulationAndUITests:
+        value: true
+```
+
+[^1]: García-Fernández, A., Laso, S., Parejo, J.A., Berrocal, J., Ruiz-Cortés, A., Murillo, J.M. (2026). Towards Effective SaaS Pricing Design: A Case Study of CCSIM. In: Kallel, S., et al. Service-Oriented Computing – ICSOC 2024 Workshops. ICSOC 2024. Lecture Notes in Computer Science, vol 15833. Springer, Singapore. https://doi.org/10.1007/978-981-96-7238-7_13
+[^2]: Computing Continuum Simulator (CCSIM): https://github.com/slasom/ComputingContinuumSimulator-SoftwareX
