@@ -1,31 +1,31 @@
 ---
-sidebar_position: 1
+sidebar_position: 2
 custom_edit_url: null
 ---
 
-import PricingStructureSelectedCCSIM from '../../static/img/pricing-design/ccsim-pricing-structure-selected.png';
-import PricingWithoutUsageLimits from '../../static/img/pricing-design/ccsim-pricing-no-usage-limits-set.png';
-import PricingWithoutPricesCCSIM from '../../static/img/pricing-design/ccsim-pricing-without-prices.png';
-import FinalPricingCCSIM from '../../static/img/pricing-design/ccsim-pricing-final.png';
+import PricingStructureSelectedCCSIM from '../static/img/pricing-design/ccsim-pricing-structure-selected.png';
+import PricingWithoutUsageLimits from '../static/img/pricing-design/ccsim-pricing-no-usage-limits-set.png';
+import PricingWithoutPricesCCSIM from '../static/img/pricing-design/ccsim-pricing-without-prices.png';
+import FinalPricingCCSIM from '../static/img/pricing-design/ccsim-pricing-final.png';
 
-# 📖 Tutorial: Pricing Design
+# 🎨 Creating a pricing from scratch
 
 In this tutorial, we are going to design a pricing model from scratch using the CCSIM [^1] case study as an example.
 CCSIM is a platform designed to help businesses optimize their Computing Continuum architecture. It provides powerful simulation tools that deliver accurate predictions and insights, enabling you to make informed decisions about your Computing Continuum infrastructure. With CCSIM, you can design, test, and refine your Computing Continuum setup in a risk-free environment before deployment [^2].
 
 You can follow along with the tutorial in the Pricing2Yaml editor.
 
-:::warning Familiarize with Pricing2Yaml
-The reader should be familiarized with Pricing2Yaml syntax before reading this tutorial
+:::info Use of Pricing2Yaml in examples
+Throughout this tutorial, you will encounter examples written in **Pricing2Yaml**, the syntax used in the SPHERE ecosystem to represent pricing information. These snippets are intended as your first introduction to the language. A deeper explanation will be provided in the [next tutorial](./pricing2yaml.md), which assumes you already have a pricing defined.
 :::
 
 :::warning Do your market research
-Conduct a market research before designing the pricing, remember that you are competing in a
-market where the attention of the users is shared between other SaaS.
+**Conduct market research before designing your pricing.** Remember that you are competing 
+in a landscape where user attention is divided among many other SaaS.
 
 You can start by answering these questions:
 
-- Who needs you product?
+- Who needs your product?
 - Is your SaaS aimed at consumers (B2C), businesses (B2B), or both?
 - Are there different user segments you should consider targeting?
 :::
@@ -1160,4 +1160,6 @@ addOns:
 ```
 
 [^1]: García-Fernández, A., Laso, S., Parejo, J.A., Berrocal, J., Ruiz-Cortés, A., Murillo, J.M. (2026). Towards Effective SaaS Pricing Design: A Case Study of CCSIM. In: Kallel, S., et al. Service-Oriented Computing – ICSOC 2024 Workshops. ICSOC 2024. Lecture Notes in Computer Science, vol 15833. Springer, Singapore. https://doi.org/10.1007/978-981-96-7238-7_13
-[^2]: Computing Continuum Simulator (CCSIM): https://github.com/slasom/ComputingContinuumSimulator-SoftwareX
+[^2]: Computing Continuum Simulator (CCSIM): http://ccsim.spilab.es
+
+      **Repository:** https://github.com/slasom/ComputingContinuumSimulator-SoftwareX
