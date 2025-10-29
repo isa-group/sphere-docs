@@ -1,9 +1,9 @@
 ---
-sidebar_position: 1
+sidebar_position: 3
 custom_edit_url: null
 ---
 
-# 📝 Pricing2Yaml
+# 🔄 Turn your pricing into iPricing
 
 In this tutorial, we'll model a portion of GitHub Pricing step by step to help you become familiar with the
 **Pricing2Yaml** syntax.
@@ -31,18 +31,18 @@ In this page we can see two different views of the same pricing
 
 This type of view gives a quick snapshot of the main features of the SaaS, making it easier to avoid overwhelming your clients with too much detail. Check out the GitHub pricing breakdown:
 
-![Github pricing overview](../../static/img/gh-pricing-stack-view.png)
+![Github pricing overview](../static/img/gh-pricing-stack-view.png)
 
 ### Detailed pricing
 
 This type of view breaks down all the features available to end users. Features are arranged in a **matrix**, where the
 **X-axis** represents the available plans and the **Y-axis** lists the features. Each cell in the matrix indicates whether a feature is included in a given plan or specifies any restrictions on its usage.
 
-![Pricing Matrix explanation](../../static/img/pricing-detailed-view.jpg)
+![Pricing Matrix explanation](../static/img/pricing-detailed-view.jpg)
 
 Take a look at Github pricing matrix:
 
-![Detailed Github pricing](../../static/img/gh-detailed-pricing-matrix.png)
+![Detailed Github pricing](../static/img/gh-detailed-pricing-matrix.png)
 
 ## Describing the pricing
 
@@ -52,7 +52,7 @@ The detailed pricing **matrix** is usually the most **informative**, so we’ll 
 In 99.9% of cases, all pricing information is found on the main pricing page. However, in some situations, you may need to explore other pages or sections of the provider's site to uncover additional details.
 :::
 
-The first step in modeling a pricing is to review the [Pricing2Yaml Syntax](../../api/pricing-description-languages/Pricing2Yaml/the-pricing2yaml-syntax.md) and choose a specific version to follow. In this tutorial, I’ll be using version `2.1`.
+The first step in modeling a pricing is to review the [Pricing2Yaml Syntax](../api/pricing-description-languages/Pricing2Yaml/the-pricing2yaml-syntax.md) and choose a specific version to follow. In this tutorial, I’ll be using version `2.1`.
 
 Next, we’ll begin by filling in the required pricing metadata, i.e, `syntaxVersion`, `saasName`, `createdAt` and `currency`.
 
@@ -68,7 +68,7 @@ Pay attention to the use of [currency codes](https://en.wikipedia.org/wiki/ISO_4
 Now that we’ve completed the required metadata, we can begin modeling the **basic building blocks** of the pricing. A pricing consists of `features`, `usageLimits`, `plans` and `addOns`. Let's break down the pricing matrix to
 identify these parts:
 
-![Github pricing breakdown](../../static/img/gh-detailed-pricing-matrix-breakdown.png)
+![Github pricing breakdown](../static/img/gh-detailed-pricing-matrix-breakdown.png)
 
 We can model these elements in the pricing using the `features`, `usageLimits`, and `plans` mappings. Each of these fields accepts a map where the **key** represents the **name** of the corresponding feature, usage limit, or plan, and the **value** is another **map** that holds the **attributes** for that feature, usage limit, or plan:
 
@@ -399,7 +399,7 @@ With `features` and `usageLimits` now modeled, we can begin defining the specifi
 for each feature and usage limit within each plan.
 
 Define the `price` field for every plan. If you want to offer some kind of discount annually, refer to
-`billing` in the [Pricing2Yaml 2.1](../../api/pricing-description-languages/Pricing2Yaml/versions/pricing2yaml-v21-specification.mdx) documentation:
+`billing` in the [Pricing2Yaml 2.1](../api/pricing-description-languages/Pricing2Yaml/versions/pricing2yaml-v21-specification.mdx) documentation:
 
 ```yaml
 plans:
