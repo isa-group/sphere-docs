@@ -145,6 +145,7 @@ The SPACE server will run on port `3000` with this default configuration.
 ### 0. Prerequisites
 
 - To have access to a kubernetes cluster wherein SPACE will be deployed
+- MODIFY the docker-compose.yml file located in the root directory of the repository. You must change the arg `VITE_SPACE_BASE_URL` \(used to build the `space-client` service\) from `http://localhost:5403/api/v1` to `http://localhost/api/v1`
 
 ## 1. Run SPACE using kubernetes
 
