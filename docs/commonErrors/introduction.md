@@ -5,26 +5,18 @@ custom_edit_url: null
 
 # Introduction
 
-This section provides some solutions to common errors that occur while working with the Pricing4SaaS suite within a SaaS. For now, there are not known errors in the versions of the libraries supported by this documentation. If you are facing any issues, please refer to either [Pricing4Java](https://github.com/isa-group/Pricing4Java) or [Pricing4React](https://github.com/isa-group/Pricing4React) GitHub repository.
+This section provides some solutions to common errors that a developer may encounter when working with the SPHERE tool suite. 
 
-## How do I express an unlimited amount in usage limits?
+If you can't find the problem you are facing here, please consider opening an issue in the corresponding GitHub repository for further assistance. Please find below the list of repositories where you can open issues:
 
-In yaml you can use the keywork `.inf` of the [YAML specification](https://yaml.org/type/float.html) to express an unlimited amount of something. See Canonical and Examples section to see the usage and the syntax definition.
+- [SPACE Engine](https://github.com/isa-group/space) - for issues related to the SPACE tool.
+- [React SPACE SDK](https://github.com/Alex-GF/space-react-client) - for issues related to the React SDK for SPACE.
+- [Node SPACE SDK](https://github.com/Alex-GF/space-node-client) - for issues related to the Node SDK for SPACE.
+- [Java SPACE SDK](https://github.com/Alex-GF/space-java-client) - for issues related to the Java SDK for SPACE.
+- [SPHERE](https://github.com/isa-group/sphere) - for issues related to the SPHERE platform.
+- [Pricing2Yaml](https://github.com/isa-group/pricing2yaml) - for issues related to the Pricing2Yaml syntax.
+- [Other Issues](https://github.com/Alex-GF/fis-25-26) - for general inquiries.
 
-This keyword is very usefull in Pricing2Yaml specification if you want to model an usage limit that in some tier
-of your plan is _Unlimited_.
-
-Example:
-
-```yaml
-usageLimits:
-  todoNotesLimit:
-    valueType: NUMERIC
-    defaultValue: 10
-plans:
-  FREE:
-    usageLimits: null
-  STANDARD:
-    usageLimits:
-      todoNotesLimit: .inf
-```
+:::warning
+The last repository is not translated to english. You'll find all the instructions to open an issue in **spanish**.
+:::
