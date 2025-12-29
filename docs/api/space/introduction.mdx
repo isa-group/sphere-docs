@@ -165,7 +165,7 @@ Regarding its architecture (see image above), SPACE exposes four interfaces:
 
 **SPACE** uses **JSON Web Tokens (JWTs)** to transmit the results of pricing features evaluations from the server to the client. Along with the evaluation results, these tokens also encode both subscription and pricing information for the requesting user.
 
-On the client side, SPACE expects the JWT to be stored in the browser’s local storage as a `String` under the key `pricingToken`. **Therefore, SPACE's client SDKs rely on this token to resolve feature access and enforce usage limits.**
+On the client side, SPACE expects the JWT to be accessible, since its client SDKs depend on it to resolve feature access and enforce usage limits. Depending on the client, the strategy to deliver and update these tokens may vary. Some of them may require the token to be in the localStorage, and some others may save the current state of the JWT internally.
 
 ![SPACE Communication Strategy](../../static/img/space/communication.png)
 
