@@ -29,7 +29,7 @@ The word _novate_ means to replace an old obligation with a new one [^1]. In the
 
 ## 🧩 Overview
 
-Like other SPHERE pricing-driven self-adaptation solutions, SPACE leverages [iPricings](../core-concepts/iPricing.md) to orchestrate both contracts and variability. Its distinctive contribution lies in the fact that, unlike previous approaches, SPACE does not require the host application—i.e., the service integrating the solution—to embed a dedicated subscription management module. This represents a major architectural shift: **SPACE can be scaled and deployed independently from managed service(s).** Consequently, the host application only needs to interact with SPACE through its **REST API** to query the current subscription state of a user, evaluate feature toggles, and enforce access control.
+Like other solutions from the SPHERE suite, SPACE leverages [iPricings](../core-concepts/iPricing.md) to manage variability. Its distinctive contribution lies in the fact that, unlike previous approaches, SPACE does not require the host application—i.e., the service integrating the solution—to embed a dedicated subscription management module. This represents a major architectural shift: **SPACE can be scaled and deployed independently from managed service(s).** Consequently, the host application only needs to interact with SPACE through its **REST API** to query the current subscription state of a user, evaluate feature toggles, and enforce access control.
 
 :::info 🤔 Why externalizing subscription state?
 
@@ -85,8 +85,8 @@ Here’s a simplified view of the iSubscription metamodel:
 ```mermaid
 classDiagram
     Subscription "1" -- "1..*" Service : includes
-    Service *-- "0..1" Plan
-    Service *-- "0..*" AddOn
+    Service *-- "0..1" ContractedPlan
+    Service *-- "0..*" ContractedAddOn
 ```
 <Tabs defaultValue="single-service">
   <TabItem value="single-service" label="Single Service Subscription">
@@ -165,7 +165,11 @@ Regarding its architecture (see image above), SPACE exposes four interfaces:
 
 **SPACE** uses **JSON Web Tokens (JWTs)** to transmit the results of pricing features evaluations from the server to the client. Along with the evaluation results, these tokens also encode both subscription and pricing information for the requesting user.
 
-On the client side, SPACE expects the JWT to be stored in the browser’s local storage as a `String` under the key `pricingToken`. **Therefore, SPACE's client SDKs rely on this token to resolve feature access and enforce usage limits.**
+On the client side, the SPACE SDKs expect the JWT to be provided in a header named Pricing-Token. The client application should intercept incoming requests, extract the token from this header, and store it locally so it can be used to resolve feature access and enforce usage limits.
+
+:::info
+Optionally, SPACE SDKs can also stablish a direct connection with the SPACE instance to retrieve the token directly from it. Nonetheless, this approach is only recommended for applications that do not have a backend, such as static websites or mobile apps.
+:::
 
 ![SPACE Communication Strategy](../../static/img/space/communication.png)
 
@@ -180,10 +184,6 @@ Although technically possible, exposing a SPACE instance directly to the interne
 ### 🔑 Token Structure
 
 A typical pricing token has the following structure:
-
-**SPACE** relies on JSON Web Tokens (JWT) to send from the server side the evaluation results of different pricing features for the user that makes the request. In order to be used by SPACE clients, the JWT must be stored as a `String` in the local storage of the browser, with the name `pricingToken`. 
-
-The body of such token must have the following structure:
 
 ```
 {
@@ -220,20 +220,20 @@ The body of such token must have the following structure:
     - `used`: Current `usage level` for the feature (e.g., 3 predictions made). This field can be `null` if not applicable (e.g. because the feature is not linked to a usage limit).
     - `limit`: Maximum allowed usage for the feature (e.g., 10 predictions). Usually the value of the usage limit linked to the feature in the user's configuration.
       - If `used` and `limit` are set to null, the feature is considered unlimited (not bound by usage restrictions).
-  - `subscriptionContext`: Optional object holding user-specific usage levels.
-  - `pricingContext`: Optional object holding user's configuration details.
+  - `subscriptionContext`: : Optional object containing the subscription context used during the evaluation.
+  - `pricingContext`:  Optional object containing the pricing context used during the evaluation.
 
 Both `subscriptionContext` and `pricingContext` are intended for client-side rendering of pricing information. If absent, they default to empty objects.
 
 :::info 🔄 Token Lifecycle
-You don’t need to handle JWT generation manually. SPACE automatically issues pricing tokens when requested.
+You don’t need to handle JWT generation manually. SPACE exposes an endpoint to issue pricing tokens when requested.
 :::
 
 :::warning Client-Side Token Handling
 All SPACE SDKs are designed with a server-issued token workflow:
 
 - **Server-side SDKs** provide methods to generate pricing tokens securely.
-- **Client-side SDKs** only offer methods to retrieve and update the token from local storage, and to evaluate feature access (e.g., rendering or hiding UI components).
+- **Client-side SDKs** only offer methods to retrieve and update locally stored token, and to evaluate feature access (e.g., rendering or hiding UI components).
 
 **Generating tokens on the client side is strongly discouraged**, as it would require embedding sensitive information (e.g., secret keys) into the client application. This creates a security risk, since such keys could be extracted and misused.
 
@@ -260,7 +260,7 @@ This project is licensed under the MIT License. See [LICENSE](https://github.com
 
 ### DISCLAIMER
 
-This tool is part of ongoing research by the [ISA group](https://github.com/isa-group) in pricing-driven development and operation of SaaS. It is in a **very early stage** and is not intended for production use. The ISA group does not accept responsibility for any issues or damages that may arise from its use in real-world environments
+This tool is part of ongoing research by the [ISA group](https://github.com/isa-group) in pricing-driven development and operation of SaaS. It is in an **early stage** and is not intended for production use. The ISA group does not accept responsibility for any issues or damages that may arise from its use in real-world environments
 
 [^1]:
     Hollenbeck, S. 2025-02-17. Novation Agreement Process: Step-by-Step Guide

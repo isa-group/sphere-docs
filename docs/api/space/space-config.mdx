@@ -167,6 +167,10 @@ data:
 MongoDB and Redis can also be configured via their manifests in `k8s/config`, using the variables defined in their official images.
 :::
 
+:::warning
+Since SPACE **images are not yet published on Docker Hub**, they must be built locally. When doing so, remember to configure the ALLOWED_HOST environment variable for the space-server service in the Docker Compose configuration, as well as the VITE_SPACE_BASE_URL environment variable for the space-client.
+:::
+
 </TabItem>
 
 </Tabs>
