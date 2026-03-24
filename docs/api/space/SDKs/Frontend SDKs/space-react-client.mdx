@@ -168,10 +168,14 @@ export function InjectTokenFromServer() {
 
   - **Props:**  
     - `config: SpaceConfiguration`  
-      - `url: string` — SPACE instance URL  
+      - `url: string` — Base URL of the SPACE instance (for example, http://localhost:5403). If SPACE is served under a sub-path, include the prefix as part of the URL (for example, http://localhost:5403/myspace).
       - `apiKey: string` — Authentication key emitted by SPACE
       - `allowConnectionWithSpace: boolean` — If `false`, event listeners take no effect (default: `true`)
     - `children: React.ReactNode`  
+
+:::warning
+You do not need to set `/api/v1` in the `url` field, as the client will automatically append it for API calls. WebSocket connection will be also managed by the client.
+:::
 
 ---
 
