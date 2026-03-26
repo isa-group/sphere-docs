@@ -19,7 +19,7 @@ Each SPACE user automatically receives a **unique API key** when their account i
 3. Locate the user account you want to use for authentication.  
 4. Copy the corresponding **API key** and use it in your service or SDK configuration.
 
-![Access Control Screen](../../../static/img/space/user-guides/access-control.png)
+![Access Control Screen](../../../static/img/space/user-guides/api-keys.png)
 
 ---
 
