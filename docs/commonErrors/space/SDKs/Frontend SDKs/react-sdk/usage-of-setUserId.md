@@ -1,10 +1,13 @@
 ---
 title: Choosing between `setUserId` and `token.update`
-sidebar_position: 1
 custom_edit_url: null
 ---
 
-## Should I use `setUserId`, `token.update`, or both when integrating SPACE in the frontend?
+### Question
+
+Should I use `setUserId`, `token.update`, or both when integrating SPACE in the frontend?
+
+### Answer
 
 Short answer: **these are two alternative integration strategies, not complementary mechanisms**. In a production-ready architecture, you should **choose one**. In most cases, the backend-driven approach based on `token.update` is the recommended option.
 

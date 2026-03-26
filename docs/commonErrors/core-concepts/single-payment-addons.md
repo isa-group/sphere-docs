@@ -1,10 +1,13 @@
 ---
 title: Non-renewable Add-ons
-sidebar_position: 1
 custom_edit_url: null
 ---
 
-## Can I include an add-on that does not require renewal after purchase?
+### Question
+
+Can I include an add-on that does not require renewal after purchase?
+
+### Answer
 
 **One-time payments are currently not supported by the iPricing metamodel**, and there are no plans to incorporate this capability in the near future. This decision is **deliberate** and is grounded in the **subscription-based** revenue strategy that underpins most Software as a Service offerings and represents the prevailing industry standard. 
 

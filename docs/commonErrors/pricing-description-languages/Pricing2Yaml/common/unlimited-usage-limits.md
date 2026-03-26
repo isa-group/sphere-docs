@@ -1,10 +1,13 @@
 ---
 title: Unlimited amount in usage limits
-sidebar_position: 1
 custom_edit_url: null
 ---
 
-## How do I express an unlimited amount in usage limits?
+### Question 
+
+How do I express an unlimited amount in usage limits?
+
+### Answer
 
 In yaml you can use the keywork `.inf` of the [YAML specification](https://yaml.org/type/float.html) to express an unlimited amount of something. See Canonical and Examples section to see the usage and the syntax definition.
 
