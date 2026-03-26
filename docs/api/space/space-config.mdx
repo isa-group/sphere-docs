@@ -19,7 +19,7 @@ These variables configure the **SPACE server**:
 
 | Variable            | Required | Default Value                                         | Description                                             |
 | ------------------- | -------- | ----------------------------------------------------- | ------------------------------------------------------- |
-| `BASE_URL_PATH`     | ❌       | `/api/v1`                                             | Base URL path for the API                               |
+| `BASE_URL_PATH`     | ❌       | `/`                                                   | Base URL path for the API. `/api/v1` is automatically appended after the base path |
 | `ALLOWED_ORIGINS`   | ❌       | `*`                                                   | Semicolon-separated string of allowed origins for CORS  |
 | `DATABASE_NAME`     | ❌       | `space_db`                                            | MongoDB database name _(ignored if `MONGO_URI` is set)_ |
 | `DATABASE_USERNAME` | ❌       | `mongoUser`                                           | MongoDB username _(ignored if `MONGO_URI` is set)_      |
@@ -54,13 +54,69 @@ Select your setup below:
 import Tabs from "@theme/Tabs";
 import TabItem from "@theme/TabItem";
 
-<Tabs defaultValue="docker" values={[
-  {label: '🐳 Docker (default)', value: 'docker'},
+<Tabs defaultValue="docker-1.2.0" values={[
+  {label: '🐳 Docker (>=SPACE@1.2.0)', value: 'docker-1.2.0'},
+  {label: '🐳 Docker (<SPACE@1.2.0)', value: 'docker-1.0.0'},
   {label: '💻 Local Development', value: 'local'},
   {label: '☸️ Kubernetes', value: 'kubernetes'},
 ]}>
 
-<TabItem value="docker">
+<TabItem value="docker-1.2.0">
+
+### 🐳 Docker Setup
+
+:::warning
+This documentation applies to SPACE version 1.2.0 and later. If you're using an older version, please refer to the previous Docker setup instructions.
+:::
+
+1. Locate the `.env.template` file in the root of the repository  
+2. Create a `.env` file based on it:
+
+```sh
+cp .env.template .env
+```
+
+3. Adjust the variables according to your setup  
+
+### 📦 Environment Variables
+
+All variables follow the standard `.env` format:
+
+KEY=value
+
+:::important
+All environment variables **not defined** in the `.env` will be set to their default, so only instanciate those you want to override.
+:::
+
+| Variable | Default Value | Description |
+| :--- | :--- | :--- |
+| BASE_PATH | /space | Base URL path |
+| ADMIN_USER | admin | Default admin username |
+| ADMIN_PASSWORD | space4all | Default admin password |
+| ALLOWED_ORIGINS | `http://localhost:3000;https://myapp.com` | CORS origins (semicolon-separated) |
+| DATABASE_NAME | space_db | Database name (ignored if MONGO_URI is set) |
+| DATABASE_ROOT_USERNAME | root | MongoDB root user |
+| DATABASE_ROOT_PASSWORD | 4dm1n | MongoDB root password |
+| DATABASE_USERNAME | mongoUser | Application DB user (ignored if MONGO_URI is set) |
+| DATABASE_PASSWORD | mongoPassword | Application DB password (ignored if MONGO_URI is set) |
+| MONGO_URI | mongodb://user:pass@mongodb:27017/db | Full MongoDB URI |
+| REDIS_URL | redis://redis:6379 | Redis connection |
+| JWT_SECRET | my_secret | JWT signing secret |
+| JWT_SALT | random_salt | JWT hashing salt |
+| JWT_EXPIRATION | 1h | Token lifetime (1h, 1d, etc.) |
+| ENVIRONMENT | production | Frontend environment |
+| SPACE_HOST | `http://localhost:5403` | Public API URL |
+
+:::important Important Notes
+- Do not define environment variables inside docker-compose.yml anymore  
+- The `.env` file is now the single source of truth for configuration  
+- Server and client variables remain unchanged; only the injection mechanism differs  
+- Override sensitive values (e.g., JWT_SECRET, database credentials) in production  
+:::
+
+</TabItem>
+
+<TabItem value="docker-1.0.0">
 
 ### 🐳 Docker Setup
 
@@ -165,6 +221,10 @@ data:
 
 :::info MongoDB & Redis Configuration
 MongoDB and Redis can also be configured via their manifests in `k8s/config`, using the variables defined in their official images.
+:::
+
+:::warning
+Since SPACE **images are not yet published on Docker Hub**, they must be built locally. When doing so, remember to configure the ALLOWED_HOST environment variable for the space-server service in the Docker Compose configuration, as well as the VITE_SPACE_BASE_URL environment variable for the space-client.
 :::
 
 </TabItem>

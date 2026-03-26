@@ -1,0 +1,606 @@
+---
+title: "Java"
+---
+
+# ☕ Space Java Client
+
+Java client library for [Space](https://github.com/isa-group/space), a pricing-driven self-adaptation platform for SaaS applications.
+
+[![Maven Central](https://img.shields.io/maven-central/v/io.github.isa-group/space-java-client.svg)](https://search.maven.org/artifact/io.github.isa-group/space-java-client)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+## Table of Contents
+
+- [🎁 What You Get](#-what-you-get)
+- [✅ Requirements](#-requirements)
+- [📦 Installation](#-installation)
+- [⚙️ SetUp](#️-setup)
+- [📚 API Overview](#-api-overview)
+  - [SpaceClientFactory](#spaceclientfactory)
+  - [SpaceClient](#spaceclient)
+  - [ContractModule](#contractmodule)
+  - [FeatureModule](#featuremodule)
+  - [CacheModule](#cachemodule)
+- [📊 Data Models](#-data-models)
+- [💾 Caching](#-caching)
+- [🔌 WebSocket Events](#-websocket-events)
+- [⚠️ Error Handling](#️-error-handling)
+- [✨ Best Practices](#-best-practices)
+- [Publishing to Maven Central](#publishing-to-maven-central)
+- [🤝 Contributing](#-contributing)
+- [📄 Disclaimer & License](#-disclaimer--license)
+
+## 🎁 What You Get
+
+- Simple API to connect to Space.
+- Contract lifecycle operations.
+- Feature evaluation with optional expected consumption.
+- Revert operation for optimistic usage updates.
+- Pricing token generation.
+- Built-in in-memory cache and Redis cache support.
+- WebSocket events for real-time pricing updates.
+
+## ✅ Requirements
+
+- Java 21+
+- Maven 3.6+
+
+## 📦 Installation
+
+Add this dependency to your `pom.xml`:
+
+```xml
+<dependency>
+  <groupId>io.github.isa-group</groupId>
+  <artifactId>space-java-client</artifactId>
+  <version>{version}</version>
+</dependency>
+```
+
+## ⚙️ SetUp
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+<Tabs defaultValue="spring" values={[
+  {label: '🌱 Spring', value: 'spring'},
+  {label: '☕ Java Vanilla', value: 'java'},
+]}>
+<TabItem value="spring">
+## Quick Start in 5 Minutes (Spring)
+
+### 1. Configure properties
+
+Go to `application.properties` or `application.yml` and add:
+
+```properties
+space.client.url=http://localhost:3000
+space.client.api-key=your-api-key
+space.client.timeout=10000
+```
+
+### 2. Register Space client configuration
+
+```java
+import io.github.isagroup.spaceclient.spring.SpaceClientAutoConfiguration;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
+
+@Configuration
+@Import(SpaceClientAutoConfiguration.class)
+public class SpaceConfig {
+}
+```
+
+### 3. Inject and use SpaceClient in a service
+
+```java
+import io.github.isagroup.spaceclient.SpaceClient;
+import io.github.isagroup.spaceclient.types.FeatureEvaluationResult;
+import org.springframework.stereotype.Service;
+
+@Service
+public class PricingService {
+
+  private final SpaceClient spaceClient;
+
+  public PricingService(SpaceClient spaceClient) {
+    this.spaceClient = spaceClient;
+  }
+
+  public boolean canUseExport(String userId) {
+    FeatureEvaluationResult result = spaceClient.features.evaluate(userId, "billing-export");
+    return result.getError() == null && result.getEval();
+  }
+}
+```
+
+## Configuration (Spring)
+
+`SpaceClientAutoConfiguration` reads:
+
+- `space.client.url`
+- `space.client.api-key`
+- `space.client.timeout` (default `10000`)
+
+Because Spring resolves environment sources, you can also set:
+
+- `SPACE_CLIENT_URL`
+- `SPACE_CLIENT_API_KEY`
+
+Example with `application.yml`:
+
+```yaml
+space:
+  client:
+    url: http://localhost:3000
+    api-key: your-api-key
+    timeout: 10000
+```
+
+Minimal config class:
+
+```java
+import io.github.isagroup.spaceclient.spring.SpaceClientAutoConfiguration;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
+
+@Configuration
+@Import(SpaceClientAutoConfiguration.class)
+public class SpaceConfig {
+}
+```
+</TabItem>
+
+<TabItem value="java">
+## Quick Start in 5 Minutes (Java Vanilla)
+
+```java
+import io.github.isagroup.spaceclient.SpaceClient;
+import io.github.isagroup.spaceclient.SpaceClientFactory;
+import io.github.isagroup.spaceclient.types.FeatureEvaluationResult;
+
+public class Main {
+  public static void main(String[] args) {
+    SpaceClient client = SpaceClientFactory.connect(
+        "http://localhost:3000",
+        "your-api-key",
+        10_000
+    );
+
+    boolean healthy = client.isConnectedToSpace();
+    System.out.println("Connected: " + healthy);
+
+    FeatureEvaluationResult result = client.features.evaluate("user-123", "serviceA-featureX");
+    if (result.getError() != null) {
+      System.err.println("Evaluation error: " + result.getError().getMessage());
+    } else {
+      System.out.println("Feature enabled: " + result.getEval());
+    }
+
+    String pricingToken = client.features.generateUserPricingToken("user-123");
+    System.out.println("Pricing token: " + pricingToken);
+
+    client.close();
+  }
+}
+```
+
+## Configuration (Java Vanilla)
+
+You can connect using either convenience factory methods or `SpaceConnectionOptions`.
+
+### Option A: simple connection
+
+```java
+SpaceClient client = SpaceClientFactory.connect("http://localhost:3000", "your-api-key");
+```
+
+### Option B: custom timeout
+
+```java
+SpaceClient client = SpaceClientFactory.connect("http://localhost:3000", "your-api-key", 15000);
+```
+
+### Option C: full options object
+
+```java
+import io.github.isagroup.spaceclient.types.SpaceConnectionOptions;
+
+SpaceConnectionOptions options = new SpaceConnectionOptions(
+    "http://localhost:3000",
+    "your-api-key",
+    15000
+);
+
+SpaceClient client = SpaceClientFactory.connect(options);
+```
+
+`SpaceClientFactory.connect(...)` validation rules:
+
+- URL is required and must start with `http://` or `https://`.
+- API key is required.
+- Timeout must be a positive number.
+
+</TabItem>
+</Tabs>
+
+## 📚 API Overview
+
+### SpaceClientFactory
+
+Factory utility for safe construction and input validation.
+
+| Method | Description |
+|---|---|
+| `connect(SpaceConnectionOptions options)` | Creates client with full options and validates required inputs. |
+| `connect(String url, String apiKey)` | Convenience overload, default timeout (`5000`). |
+| `connect(String url, String apiKey, int timeout)` | Convenience overload with custom timeout. |
+
+### SpaceClient
+
+Main entry point. Exposes modules as public fields:
+
+- `contracts` (`ContractModule`)
+- `features` (`FeatureModule`)
+- `cache` (`CacheModule`)
+
+Core methods:
+
+| Method | Returns | Details |
+|---|---|---|
+| `isConnectedToSpace()` | `boolean` | HTTP health check against `/healthcheck`. |
+| `on(String event, Consumer<Object> callback)` | `void` | Registers event callback for supported event names. |
+| `removeListener(String event)` | `void` | Removes one callback by event name. |
+| `removeAllListeners()` | `void` | Removes all event callbacks. |
+| `connect()` | `void` | Connects/reconnects WebSocket namespace if disconnected. |
+| `disconnect()` | `void` | Disconnects WebSocket namespace and clears socket handlers. |
+| `close()` | `void` | Closes sockets, cache provider, and HTTP resources. |
+
+Getters:
+
+- `getHttpUrl()`
+- `getApiKey()`
+- `getTimeout()`
+- `getObjectMapper()`
+
+### ContractModule
+
+Contract operations available at `spaceClient.contracts`.
+
+| Method | Returns | Details |
+|---|---|---|
+| `getContract(String userId)` | `Contract` | Reads from cache first when enabled; returns `null` on error. |
+| `addContract(ContractToCreate contractToCreate)` | `Contract` | Creates contract and invalidates/refreshes user cache; `null` on error. |
+| `updateContractSubscription(String userId, Subscription newSubscription)` | `Contract` | Updates one user subscription; updates cache when enabled. |
+| `updateContractSubscriptionByGroupId(String groupId, Subscription newSubscription)` | `List<Contract>` | Batch update by group ID; invalidates cache for each updated user. |
+| `updateContractUsageLevels(String userId, String serviceName, Map<String, Number> usageLevelsNovations)` | `Contract` | Updates usage levels for a user and service. |
+| `removeContract(String userId)` | `void` | Deletes contract and invalidates user cache if enabled. |
+
+Usage example:
+
+```java
+import io.github.isagroup.spaceclient.types.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+UserContact userContact = new UserContact("user-123", "john_doe");
+userContact.setEmail("john@example.com");
+
+ContractToCreate.BillingPeriodToCreate billing =
+    new ContractToCreate.BillingPeriodToCreate(true, 30);
+
+Map<String, String> contractedServices = Map.of("serviceA", "pricing/v1");
+Map<String, String> subscriptionPlans = Map.of("serviceA", "basic");
+Map<String, Map<String, Integer>> addOns = new HashMap<>();
+
+ContractToCreate toCreate = new ContractToCreate(
+    userContact,
+    billing,
+    contractedServices,
+    "group-1",
+    subscriptionPlans,
+    addOns
+);
+
+Contract created = client.contracts.addContract(toCreate);
+Contract current = client.contracts.getContract("user-123");
+
+Subscription subscription = new Subscription(
+    contractedServices,
+    Map.of("serviceA", "premium"),
+    addOns
+);
+
+Contract updatedSingle = client.contracts.updateContractSubscription("user-123", subscription);
+List<Contract> updatedGroup = client.contracts.updateContractSubscriptionByGroupId("group-1", subscription);
+
+Map<String, Number> usagePatch = Map.of("requests", 120, "storage", 2048);
+Contract usageUpdated = client.contracts.updateContractUsageLevels("user-123", "serviceA", usagePatch);
+
+client.contracts.removeContract("user-123");
+```
+
+### FeatureModule
+
+Feature operations available at `spaceClient.features`.
+
+| Method | Returns | Details |
+|---|---|---|
+| `evaluate(String userId, String featureId)` | `FeatureEvaluationResult` | Read-only evaluation. Cache can be used. |
+| `evaluate(String userId, String featureId, Map<String, Number> expectedConsumption)` | `FeatureEvaluationResult` | Evaluation with consumption payload. |
+| `evaluate(String userId, String featureId, Map<String, Number> expectedConsumption, boolean details, boolean server)` | `FeatureEvaluationResult` | Full control over query flags. |
+| `revertEvaluation(String userId, String featureId)` | `boolean` | Reverts evaluation update (latest behavior). |
+| `revertEvaluation(String userId, String featureId, boolean revertToLatest)` | `boolean` | Revert strategy control (`latest=true/false`). |
+| `generateUserPricingToken(String userId)` | `String` | Returns token or `null` on failure. |
+
+Feature example:
+
+```java
+import io.github.isagroup.spaceclient.types.FeatureEvaluationResult;
+import java.util.HashMap;
+import java.util.Map;
+
+FeatureEvaluationResult readOnly = client.features.evaluate("user-123", "serviceA-featureX");
+if (readOnly.getError() == null && readOnly.getEval()) {
+  System.out.println("Read-only evaluation enabled");
+}
+
+Map<String, Number> expectedConsumption = new HashMap<>();
+expectedConsumption.put("requests", 10);
+expectedConsumption.put("storage", 1024);
+
+FeatureEvaluationResult withConsumption = client.features.evaluate(
+    "user-123",
+    "serviceA-featureX",
+    expectedConsumption,
+    true,
+    false
+);
+
+boolean reverted = client.features.revertEvaluation("user-123", "serviceA-featureX", true);
+String pricingToken = client.features.generateUserPricingToken("user-123");
+```
+
+### CacheModule
+
+Cache module is exposed as `spaceClient.cache`. It is initialized automatically if enabled in `SpaceConnectionOptions`.
+
+Common methods:
+
+| Method | Description |
+|---|---|
+| `isEnabled()` | Whether cache is active and provider initialized. |
+| `get(String key, Class<T> type)` | Read value by key. |
+| `set(String key, T value)` | Set value using default TTL from cache config. |
+| `set(String key, T value, Integer ttl)` | Set value with explicit TTL (seconds). |
+| `delete(String key)` | Delete one key. |
+| `has(String key)` | Check key presence. |
+| `clear()` | Clear all provider entries. |
+| `keys(String pattern)` | List keys by glob pattern. |
+| `invalidateUser(String userId)` | Clear common key groups for user. |
+| `close()` | Close provider resources. |
+
+Key helper methods:
+
+- `getContractKey(userId)`
+- `getFeatureKey(userId, featureName)`
+- `getSubscriptionKey(userId)`
+- `getPricingTokenKey(userId)`
+
+## 📊 Data Models
+
+### `SpaceConnectionOptions`
+
+Fields:
+
+- `url` (`String`)
+- `apiKey` (`String`)
+- `timeout` (`Integer`, default `5000`)
+- `cache` (`CacheOptions`)
+
+### `CacheOptions`
+
+Fields:
+
+- `enabled` (`boolean`)
+- `type` (`CacheType`): `BUILTIN` or `REDIS`
+- `ttl` (`Integer`, seconds, default `300`)
+- `external` (`ExternalCacheConfig`)
+
+Redis fields (`CacheOptions.RedisConfig`):
+
+- `host` (required for Redis mode)
+- `port` (default `6379`)
+- `password` (optional)
+- `db` (default `0`, valid range `0..15`)
+- `connectTimeout` (default `5000`)
+- `keyPrefix` (default `space-client:`)
+
+### `FeatureEvaluationResult`
+
+Fields:
+
+- `eval` (`boolean`)
+- `used` (`Map<String, Object>`)
+- `limit` (`Map<String, Object>`)
+- `error` (`EvaluationError`) with:
+  - `code`
+  - `message`
+
+### Contract-related models
+
+- `ContractToCreate`
+  - `userContact`
+  - `billingPeriod` (`autoRenew`, `renewalDays`)
+  - `groupId`
+  - `contractedServices`
+  - `subscriptionPlans`
+  - `subscriptionAddOns`
+- `Subscription`
+  - `contractedServices`
+  - `subscriptionPlans`
+  - `subscriptionAddOns`
+- `Contract`
+  - `userContact`, `billingPeriod`, `groupId`, `organizationId`
+  - `usageLevels`
+  - `contractedServices`, `subscriptionPlans`, `subscriptionAddOns`
+  - `history`
+- `UserContact`
+  - `userId`, `username`, `firstName`, `lastName`, `email`, `phone`
+
+## 💾 Caching
+
+The client supports two strategies.
+
+### 1) Built-in in-memory cache
+
+```java
+import io.github.isagroup.spaceclient.types.CacheOptions;
+import io.github.isagroup.spaceclient.types.CacheOptions.CacheType;
+import io.github.isagroup.spaceclient.types.SpaceConnectionOptions;
+
+CacheOptions cacheOptions = new CacheOptions(true, CacheType.BUILTIN, 300);
+
+SpaceConnectionOptions options = new SpaceConnectionOptions(
+    "http://localhost:3000",
+    "your-api-key",
+    5000,
+    cacheOptions
+);
+
+SpaceClient client = SpaceClientFactory.connect(options);
+```
+
+### 2) Redis cache
+
+```java
+import io.github.isagroup.spaceclient.types.CacheOptions;
+import io.github.isagroup.spaceclient.types.CacheOptions.CacheType;
+import io.github.isagroup.spaceclient.types.CacheOptions.ExternalCacheConfig;
+import io.github.isagroup.spaceclient.types.CacheOptions.RedisConfig;
+import io.github.isagroup.spaceclient.types.SpaceConnectionOptions;
+
+RedisConfig redis = new RedisConfig("localhost", 6379);
+redis.setPassword("your-password"); // optional
+redis.setDb(0);
+redis.setConnectTimeout(5000);
+redis.setKeyPrefix("space-client:");
+
+ExternalCacheConfig external = new ExternalCacheConfig();
+external.setRedis(redis);
+
+CacheOptions cacheOptions = new CacheOptions(true, CacheType.REDIS, 300);
+cacheOptions.setExternal(external);
+
+SpaceConnectionOptions options = new SpaceConnectionOptions(
+    "http://localhost:3000",
+    "your-api-key",
+    5000,
+    cacheOptions
+);
+
+SpaceClient client = SpaceClientFactory.connect(options);
+```
+
+Cache notes:
+
+- Contract reads use cache when enabled.
+- Read-only feature evaluations may be cached for 60 seconds.
+- Pricing tokens may be cached for 900 seconds.
+- Mutations invalidate related user keys.
+
+## 🔌 WebSocket Events
+
+Supported events:
+
+- `synchronized`
+- `pricing_created`
+- `pricing_archived`
+- `pricing_actived`
+- `service_disabled`
+- `error`
+
+Example:
+
+```java
+client.on("synchronized", data -> System.out.println("Socket connected"));
+client.on("pricing_created", data -> System.out.println("Pricing created: " + data));
+client.on("error", err -> System.err.println("Socket error: " + err));
+
+client.connect();
+
+// ...
+
+client.removeListener("pricing_created");
+client.removeAllListeners();
+client.disconnect();
+```
+
+## ⚠️ Error Handling
+
+Current behavior by module:
+
+- `SpaceClientFactory.connect(...)` throws `IllegalArgumentException` for invalid input.
+- `SpaceClient.isConnectedToSpace()` returns `false` when health check fails.
+- `ContractModule` methods return `null` on HTTP/IO failure (except `removeContract`, which logs internally).
+- `FeatureModule.evaluate(...)` returns a `FeatureEvaluationResult` with `error` populated on IO failures.
+- `FeatureModule.revertEvaluation(...)` returns `false` on failure.
+- `FeatureModule.generateUserPricingToken(...)` returns `null` on failure.
+
+Suggested defensive pattern:
+
+```java
+FeatureEvaluationResult result = client.features.evaluate(userId, featureId);
+if (result.getError() != null) {
+  // handle recoverable error
+  return;
+}
+if (!result.getEval()) {
+  // feature disabled
+  return;
+}
+// proceed
+```
+
+## ✨ Best Practices
+
+- Keep one `SpaceClient` per process/service where possible.
+- Always call `client.close()` on shutdown to release resources.
+- Use Redis cache for multi-instance deployments.
+- For deterministic behavior under network issues, always check `null` / `false` / `error` outputs.
+- Reuse connection options and avoid creating short-lived clients per request.
+
+## 🛠️ Tech Stack
+
+The project uses the following main tools and technologies:
+
+<div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', justifyContent: 'center', marginTop: '1rem' }}>
+
+![Java](https://img.shields.io/badge/-Java-007396?logo=openjdk&logoColor=white&style=for-the-badge)
+![Maven](https://img.shields.io/badge/-Maven-C71A36?logo=apachemaven&logoColor=white&style=for-the-badge)
+![OkHttp](https://img.shields.io/badge/-OkHttp-3E4348?style=for-the-badge)
+![Jackson](https://img.shields.io/badge/-Jackson-000000?style=for-the-badge)
+![Socket.IO](https://img.shields.io/badge/-Socket.IO-010101?logo=socketdotio&logoColor=white&style=for-the-badge)
+![Redis](https://img.shields.io/badge/-Redis-DC382D?logo=redis&logoColor=white&style=for-the-badge)
+![SLF4J](https://img.shields.io/badge/-SLF4J-4D4D4D?style=for-the-badge)
+![JUnit 5](https://img.shields.io/badge/-JUnit%205-25A162?logo=junit5&logoColor=white&style=for-the-badge)
+![Mockito](https://img.shields.io/badge/-Mockito-78A641?style=for-the-badge)
+![Spring](https://img.shields.io/badge/-Spring-6DB33F?logo=spring&logoColor=white&style=for-the-badge)
+
+</div>
+
+## 🤝 Contributing
+
+Contributions are welcome. Open an [issue](https://github.com/Alex-GF/space-java-client/issues) or submit a [pull request](https://github.com/Alex-GF/space-java-client/pulls).
+
+
+## 📄 Disclaimer & License
+
+This project is licensed under the MIT License. See [LICENSE](https://github.com/Alex-GF/space-java-client/blob/main/LICENSE).
+
+:::warning
+This SDK is part of **ongoing research** in pricing-driven devops.
+It is still in an early stage and not intended for production use.
+:::
