@@ -22,15 +22,11 @@ The theory behind each operation would be the same.
 
 ## 🎯 What you’ll learn
 
-:::warning 
-This list has not been updated yet to reflect the real material. Some items may be missing or outdated.
-:::
-
-- How to create and authenticate SPACE users (services, not end-users)  
-- How to register services and attach pricing models  
-- How to create, update, and manage contracts  
-- How to evaluate features and enforce usage limits in your SaaS  
-- How SPACE supports microservice communication and role separation  
+- How to create and authenticate SPACE users
+- How to create and manage organizations
+- How to register services and attach pricing models to them
+- How to create and manage contracts
+- How to evaluate features and enforce usage limits in your SaaS
 
 ## 🐕 Our running example: PetClinic
 
