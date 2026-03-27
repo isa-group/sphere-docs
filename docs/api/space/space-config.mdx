@@ -19,7 +19,6 @@ These variables configure the **SPACE server**:
 
 | Variable            | Required | Default Value                                         | Description                                             |
 | ------------------- | -------- | ----------------------------------------------------- | ------------------------------------------------------- |
-| `BASE_URL_PATH`     | ❌       | `/`                                                   | Base URL path for the API. `/api/v1` is automatically appended after the base path |
 | `ALLOWED_ORIGINS`   | ❌       | `*`                                                   | Semicolon-separated string of allowed origins for CORS  |
 | `DATABASE_NAME`     | ❌       | `space_db`                                            | MongoDB database name _(ignored if `MONGO_URI` is set)_ |
 | `DATABASE_USERNAME` | ❌       | `mongoUser`                                           | MongoDB username _(ignored if `MONGO_URI` is set)_      |
@@ -41,7 +40,7 @@ These variables configure the **SPACE client**:
 | Variable                   | Required       | Description                                            |
 | -------------------------- | -------------- | ------------------------------------------------------ |
 | `VITE_ENVIRONMENT`         | ✅             | `development` or `production`                          |
-| `VITE_SPACE_BASE_URL`      | ✅             | Base URL of the SPACE server. For example: http://space-instance:5403/api/v1 |
+| `VITE_SPACE_BASE_URL`      | ✅             | Base URL of the SPACE server. For example: http://space-instance:5403 |
 | `VITE_SPACE_ADMIN_API_KEY` | ⚠️ Only in dev | API key for admin access (only works in `development`) |
 
 ---
@@ -58,7 +57,7 @@ import TabItem from "@theme/TabItem";
   {label: '🐳 Docker (>=SPACE@1.2.0)', value: 'docker-1.2.0'},
   {label: '🐳 Docker (<SPACE@1.2.0)', value: 'docker-1.0.0'},
   {label: '💻 Local Development', value: 'local'},
-  {label: '☸️ Kubernetes', value: 'kubernetes'},
+  {label: '☸️ Kubernetes (alfa)', value: 'kubernetes'},
 ]}>
 
 <TabItem value="docker-1.2.0">

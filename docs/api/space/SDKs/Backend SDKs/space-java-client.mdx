@@ -67,11 +67,11 @@ import TabItem from "@theme/TabItem";
   {label: '☕ Java Vanilla', value: 'java'},
 ]}>
 <TabItem value="spring">
-## Quick Start in 5 Minutes (Spring)
+### Quick Start in 2 Minutes (Spring)
 
-### 1. Configure properties
+#### 1. Configure properties
 
-Go to `application.properties` or `application.yml` and add:
+Go to `application.properties`:
 
 ```properties
 space.client.url=http://localhost:3000
@@ -79,20 +79,38 @@ space.client.api-key=your-api-key
 space.client.timeout=10000
 ```
 
-### 2. Register Space client configuration
+where:
+
+- `space.client.url`: URL of your SPACE instance (e.g., `http://localhost:3000`).
+- `space.client.api-key`: API key for authentication (obtainable from SPACE dashboard). It must be an organization-level API key.
+- `space.client.timeout` (default `10000`): HTTP request timeout in milliseconds.
+
+#### 2. Scan and inject space-java-client's spring module
+
+In your main application class, add the package scan for `io.github.isagroup.spaceclient.spring`:
 
 ```java
-import io.github.isagroup.spaceclient.spring.SpaceClientAutoConfiguration;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
+package org.springframework.samples.myapp;
 
-@Configuration
-@Import(SpaceClientAutoConfiguration.class)
-public class SpaceConfig {
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.ComponentScan;
+
+@SpringBootApplication()
+@ComponentScan(basePackages = {
+    "org.springframework.samples.myapp",
+    "io.github.isagroup.spaceclient.spring"  // ← Add this
+})
+public class MyApp {
+
+	public static void main(String[] args) {
+		SpringApplication.run(MyApp.class, args);
+	}
+
 }
 ```
 
-### 3. Inject and use SpaceClient in a service
+#### 3. Inject and use SpaceClient in a service
 
 ```java
 import io.github.isagroup.spaceclient.SpaceClient;
@@ -109,51 +127,29 @@ public class PricingService {
   }
 
   public boolean canUseExport(String userId) {
-    FeatureEvaluationResult result = spaceClient.features.evaluate(userId, "billing-export");
+    FeatureEvaluationResult result = spaceClient.features.evaluate(userId, "myapp-billingExport");
     return result.getError() == null && result.getEval();
   }
 }
 ```
 
-## Configuration (Spring)
+:::warning
+The example above is provided solely as a minimal illustration of how to bootstrap the usage of `space-java-client` within a SPACE-based application. 
 
-`SpaceClientAutoConfiguration` reads:
+It assumes that a service named `myapp` is already provisioned in SPACE, along with an active contract associated with a user identified by `userId`. This user is subscribed to a specific service version in which the `billingExport` feature is explicitly governed by the pricing configuration.
 
-- `space.client.url`
-- `space.client.api-key`
-- `space.client.timeout` (default `10000`)
+As such, this example omits prerequisite steps such as service provisioning, contract creation, and feature configuration, all of which are required for correct evaluation and execution.
+:::
 
-Because Spring resolves environment sources, you can also set:
-
-- `SPACE_CLIENT_URL`
-- `SPACE_CLIENT_API_KEY`
-
-Example with `application.yml`:
-
-```yaml
-space:
-  client:
-    url: http://localhost:3000
-    api-key: your-api-key
-    timeout: 10000
-```
-
-Minimal config class:
-
-```java
-import io.github.isagroup.spaceclient.spring.SpaceClientAutoConfiguration;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
-
-@Configuration
-@Import(SpaceClientAutoConfiguration.class)
-public class SpaceConfig {
-}
-```
 </TabItem>
 
 <TabItem value="java">
-## Quick Start in 5 Minutes (Java Vanilla)
+
+:::important
+This setup can also be used to integrate SPACE within a Spring-based application. However, for production-grade scenarios, the dedicated Spring module is recommended, as it provides a higher level of abstraction, streamlined configuration, and tighter integration with the Spring ecosystem (e.g., auto-configuration and dependency injection support).
+:::
+
+### Quick Start in 2 Minutes (Java Vanilla)
 
 ```java
 import io.github.isagroup.spaceclient.SpaceClient;
@@ -171,14 +167,16 @@ public class Main {
     boolean healthy = client.isConnectedToSpace();
     System.out.println("Connected: " + healthy);
 
-    FeatureEvaluationResult result = client.features.evaluate("user-123", "serviceA-featureX");
+    String userId = "user-123";
+
+    FeatureEvaluationResult result = client.features.evaluate(userId, "serviceA-featureX");
     if (result.getError() != null) {
       System.err.println("Evaluation error: " + result.getError().getMessage());
     } else {
       System.out.println("Feature enabled: " + result.getEval());
     }
 
-    String pricingToken = client.features.generateUserPricingToken("user-123");
+    String pricingToken = client.features.generateUserPricingToken(userId);
     System.out.println("Pricing token: " + pricingToken);
 
     client.close();
@@ -186,23 +184,23 @@ public class Main {
 }
 ```
 
-## Configuration (Java Vanilla)
+### Configuration (Java Vanilla)
 
 You can connect using either convenience factory methods or `SpaceConnectionOptions`.
 
-### Option A: simple connection
+#### Option A: simple connection
 
 ```java
 SpaceClient client = SpaceClientFactory.connect("http://localhost:3000", "your-api-key");
 ```
 
-### Option B: custom timeout
+#### Option B: custom timeout
 
 ```java
 SpaceClient client = SpaceClientFactory.connect("http://localhost:3000", "your-api-key", 15000);
 ```
 
-### Option C: full options object
+#### Option C: full options object
 
 ```java
 import io.github.isagroup.spaceclient.types.SpaceConnectionOptions;
@@ -218,9 +216,9 @@ SpaceClient client = SpaceClientFactory.connect(options);
 
 `SpaceClientFactory.connect(...)` validation rules:
 
-- URL is required and must start with `http://` or `https://`.
-- API key is required.
-- Timeout must be a positive number.
+- **URL** is **required** and must start with `http://` or `https://`.
+- **API key** is **required**.
+- **Timeout** is **optional**, but must be a positive number.
 
 </TabItem>
 </Tabs>
