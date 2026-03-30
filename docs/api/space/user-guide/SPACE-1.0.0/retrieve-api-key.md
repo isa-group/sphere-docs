@@ -6,7 +6,7 @@ custom_edit_url: null
 
 To interact with **SPACE** —whether through its API or via its SDKs— you need an organization level API key. This key acts as the **authentication token** for all requests.
 
-Each organization in SPACE automatically receives an **API key** with `ALL` scope when created. Nonetheless, you can create additional API keys with specific scopes if needed. For more details on API key management, see [manage API keys](../manage-api-keys.md).
+Each organization in SPACE automatically receives an **API key** with `ALL` scope when created. Nonetheless, you can create additional API keys with specific scopes if needed. For more details on API key management, see [manage API keys](./manage-api-keys.md).
 
 ## 📥 How to Retrieve Your API Key
 

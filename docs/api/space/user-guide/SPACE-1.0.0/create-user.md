@@ -12,7 +12,7 @@ As a **quick reminder**, SPACE defines two user level roles:
 
 - 👑 **ADMIN** – Has full control over all organizations and users within SPACE. Additionally, this role provides access to the instance monitoring module, enabling the analysis of usage patterns to detect anomalous or improper behaviors.
 - 👤 **REGULAR USER** – Can potentially manage the organizations they are in. Depending on the role they have within each organization, their access can be more or less limited.
-  👉 For more details, check [manage organization](../../manage-organization.md).
+  👉 For more details, check [manage organization](./manage-organization.md).
 
 To create a new user in SPACE, follow these steps:
 
