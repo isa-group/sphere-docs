@@ -1,8 +1,9 @@
 ---
+sidebar_position: 3
 custom_edit_url: null
 ---
 
-# 🔄 Manage API Keys
+# 🔑 Retrieve API Key
 
 To interact with **SPACE** —whether through its API or via its SDKs— you need an organization level API key. This key acts as the **authentication token** for all requests.
 
@@ -18,7 +19,7 @@ Each organization in SPACE automatically receives an **API key** with `ALL` scop
 3. Then go to the **API Keys** section in the left sidebar.  
 4. In this page, you will find a list of all API keys associated with the organization.
 
-![API management Screen](../../../../static/img/space/user-guides/<1.0.0/api-keys.png)
+![API management Screen](../../../../static/img/space/user-guides/>=1.0.0/api-keys.png)
 
 5. Copy the corresponding **API key** and use it in your integration/SDK configuration.
 
