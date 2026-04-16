@@ -1,0 +1,45 @@
+import { VersionTable } from "@site/src/components/common";
+
+- **optional**
+- Field type: `map`
+
+The `variables` field provides a mechanism to introduce dynamism into the `price` field of plans and add-ons. It allows the definition of reusable values and data structures that can be referenced within price expressions, thereby enabling context-dependent and parametrized price definitions.
+
+Variables are defined as key–value pairs and can represent primitive values (for example, numbers or strings) as well as complex data structures such as objects or lists. These variables are later consumed within price expressions by prefixing their identifiers with the # symbol.
+
+All price expressions are evaluated using JavaScript semantics. As a result, variables can be combined with standard operators and functions to construct flexible pricing logic.
+
+**Basic Usage**
+
+```yaml
+variables:
+  x: 3
+plans:
+  PRO:
+    price: 9.99
+  ENTERPRISE:
+    price: "5 * #x" # 5 * 3
+```
+
+In this example, the `variables` field defines a single variable `x` with value `3`. The `ENTERPRISE` plan references this variable within its price expression. During evaluation, `#x` is replaced with `3`, producing the expression `5 * 3`, which evaluates to `15.00`.
+
+**Structured Variables**
+
+```yaml
+plans:
+  PRO:
+    price: 9.99
+  ENTERPRISE:
+    price: "5 * #priceByRegion[#region.concat('-price')]" # 5 * 3 if region is eu
+variables:
+  region: eu
+  priceByRegion:
+    eu-price: 3
+    us-price: 4
+```
+
+In this configuration, the variables field defines both a contextual parameter (`region`) and a mapping (`priceByRegion`). The price expression dynamically computes the appropriate key using `#region.concat('-price')`, which evaluates to `"eu-price"`. This key is then used to retrieve the corresponding value (`3`) from `priceByRegion`. The final computed price is therefore `15.00`.
+
+**Libraries support**
+
+<VersionTable name="variables" libraries={[false, true]} />
