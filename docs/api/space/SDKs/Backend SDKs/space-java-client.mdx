@@ -389,66 +389,1059 @@ Key helper methods:
 - `getSubscriptionKey(userId)`
 - `getPricingTokenKey(userId)`
 
-## 📊 Data Models
+## 📊 Data Models### SpaceConnectionOptions
 
-### `SpaceConnectionOptions`
+Configuration options for establishing a connection to the Space server.
 
-Fields:
+| Field | Type | Default | Required | Description |
+|-------|------|---------|----------|-------------|
+| `url` | `String` | - | Yes | The base URL of the Space server |
+| `apiKey` | `String` | - | Yes | API key for authentication |
+| `timeout` | `Integer` | `5000` | No | Connection timeout in milliseconds |
+| `cache` | `CacheOptions` | `null` | No | Cache configuration options |
 
-- `url` (`String`)
-- `apiKey` (`String`)
-- `timeout` (`Integer`, default `5000`)
-- `cache` (`CacheOptions`)
+**Example:**
 
-### `CacheOptions`
+```java
+SpaceConnectionOptions options = new SpaceConnectionOptions();
+options.setUrl("https://space.example.com");
+options.setApiKey("sk-1234567890abcdef");
+options.setTimeout(10000);
+```
 
-Fields:
+Or using the constructor:
 
-- `enabled` (`boolean`)
-- `type` (`CacheType`): `BUILTIN` or `REDIS`
-- `ttl` (`Integer`, seconds, default `300`)
-- `external` (`ExternalCacheConfig`)
+```java
+SpaceConnectionOptions options = new SpaceConnectionOptions(
+    "https://space.example.com",
+    "sk-1234567890abcdef",
+    10000
+);
+```
 
-Redis fields (`CacheOptions.RedisConfig`):
+---
 
-- `host` (required for Redis mode)
-- `port` (default `6379`)
-- `password` (optional)
-- `db` (default `0`, valid range `0..15`)
-- `connectTimeout` (default `5000`)
-- `keyPrefix` (default `space-client:`)
+### CacheOptions
 
-### `FeatureEvaluationResult`
+Cache configuration for storing feature evaluation results.
 
-Fields:
+| Field | Type | Default | Required | Description |
+|-------|------|---------|----------|-------------|
+| `enabled` | `boolean` | `false` | Yes | Enable/disable caching |
+| `type` | `CacheType` | `BUILTIN` | No | Type of cache to use |
+| `ttl` | `Integer` | `300` | No | Time-to-live in seconds (default 5 minutes) |
+| `external` | `ExternalCacheConfig` | `null` | No | External cache configuration (required when type is REDIS) |
 
-- `eval` (`boolean`)
-- `used` (`Map<String, Object>`)
-- `limit` (`Map<String, Object>`)
-- `error` (`EvaluationError`) with:
-  - `code`
-  - `message`
+**CacheType Enum**
 
-### Contract-related models
+| Value | Description |
+|-------|-------------|
+| `BUILTIN` | In-memory cache (default) |
+| `REDIS` | External Redis cache |
 
-- `ContractToCreate`
-  - `userContact`
-  - `billingPeriod` (`autoRenew`, `renewalDays`)
-  - `groupId`
-  - `contractedServices`
-  - `subscriptionPlans`
-  - `subscriptionAddOns`
-- `Subscription`
-  - `contractedServices`
-  - `subscriptionPlans`
-  - `subscriptionAddOns`
-- `Contract`
-  - `userContact`, `billingPeriod`, `groupId`, `organizationId`
-  - `usageLevels`
-  - `contractedServices`, `subscriptionPlans`, `subscriptionAddOns`
-  - `history`
-- `UserContact`
-  - `userId`, `username`, `firstName`, `lastName`, `email`, `phone`
+**ExternalCacheConfig**
+
+| Field | Type | Default | Required | Description |
+|-------|------|---------|----------|-------------|
+| `redis` | `RedisConfig` | - | Yes | Redis server configuration |
+
+**RedisConfig**
+
+| Field | Type | Default | Required | Description |
+|-------|------|---------|----------|-------------|
+| `host` | `String` | - | Yes | Redis server hostname |
+| `port` | `Integer` | `6379` | No | Redis server port |
+| `password` | `String` | `null` | No | Redis authentication password |
+| `db` | `Integer` | `0` | No | Redis database number (valid range: 0-15) |
+| `connectTimeout` | `Integer` | `5000` | No | Connection timeout in milliseconds |
+| `keyPrefix` | `String` | `"space-client:"` | No | Prefix for cache keys |
+
+**Examples:**
+
+**Basic cache with built-in memory:**
+
+```java
+CacheOptions cacheOptions = new CacheOptions();
+cacheOptions.setEnabled(true);
+cacheOptions.setType(CacheOptions.CacheType.BUILTIN);
+cacheOptions.setTtl(600); // 10 minutes
+```
+
+**Redis cache configuration:**
+
+```java
+CacheOptions.RedisConfig redisConfig = new CacheOptions.RedisConfig("redis.example.com");
+redisConfig.setPort(6379);
+redisConfig.setPassword("redis-password");
+redisConfig.setDb(2);
+redisConfig.setConnectTimeout(3000);
+redisConfig.setKeyPrefix("petclinic:");
+
+CacheOptions.ExternalCacheConfig externalConfig = new CacheOptions.ExternalCacheConfig();
+externalConfig.setRedis(redisConfig);
+
+CacheOptions cacheOptions = new CacheOptions();
+cacheOptions.setEnabled(true);
+cacheOptions.setType(CacheOptions.CacheType.REDIS);
+cacheOptions.setExternal(externalConfig);
+```
+
+---
+
+### FeatureEvaluationResult
+
+Result of evaluating a feature flag against a user context.
+
+| Field | Type | Default | Required | Description |
+|-------|------|---------|----------|-------------|
+| `eval` | `boolean` | - | Yes | Whether the feature is enabled |
+| `used` | `Map<String, Object>` | - | No | Variables used in the evaluation |
+| `limit` | `Map<String, Object>` | - | No | Limit values applied |
+| `error` | `EvaluationError` | `null` | No | Error information if evaluation failed |
+
+**EvaluationError**
+
+| Field | Type | Default | Required | Description |
+|-------|------|---------|----------|-------------|
+| `code` | `String` | - | Yes | Error code identifier |
+| `message` | `String` | - | Yes | Human-readable error message |
+
+**Examples:**
+
+**Successful evaluation:**
+
+```java
+FeatureEvaluationResult result = new FeatureEvaluationResult();
+result.setEval(true);
+result.setUsed(Map.of("userId", "user-123", "plan", "premium"));
+result.setLimit(Map.of("maxRequests", 1000));
+result.setError(null);
+```
+
+**Evaluation with error:**
+
+```java
+FeatureEvaluationResult.EvaluationError error = new FeatureEvaluationResult.EvaluationError(
+    "FEATURE_NOT_FOUND",
+    "Feature 'dark-mode' does not exist"
+);
+
+FeatureEvaluationResult result = new FeatureEvaluationResult();
+result.setEval(false);
+result.setError(error);
+```
+
+**Reading the result:**
+
+```java
+if (result.getError() != null) {
+    System.err.println("Error: " + result.getError().getCode() + " - " + result.getError().getMessage());
+} else if (result.getEval()) {
+    System.out.println("Feature is enabled!");
+    // Access used variables
+    Object userId = result.getUsed().get("userId");
+} else {
+    System.out.println("Feature is disabled");
+}
+```
+
+---
+
+### ContractToCreate
+
+Request object for creating a new contract.
+
+| Field | Type | Default | Required | Description |
+|-------|------|---------|----------|-------------|
+| `userContact` | `UserContact` | - | Yes | Contact information for the contract owner |
+| `billingPeriod` | `BillingPeriodToCreate` | - | Yes | Billing period configuration |
+| `groupId` | `String` | `null` | No | Group identifier |
+| `contractedServices` | `Map<String, String>` | - | Yes | Services contracted (service name → service ID) |
+| `subscriptionPlans` | `Map<String, String>` | - | Yes | Subscription plans (plan name → plan ID) |
+| `subscriptionAddOns` | `Map<String, Map<String, Integer>>` | - | Yes | Add-ons with quantities (service → add-on → quantity) |
+
+**BillingPeriodToCreate (nested class)**
+
+| Field | Type | Default | Required | Description |
+|-------|------|---------|----------|-------------|
+| `autoRenew` | `Boolean` | `null` | Yes | Whether the contract auto-renews |
+| `renewalDays` | `Integer` | `null` | Yes | Days before renewal to send notification |
+
+**Example:**
+
+```java
+UserContact contact = new UserContact("user-001", "jdoe", "John", "Doe", "john@example.com", "+1-555-0123");
+
+ContractToCreate.BillingPeriodToCreate billingPeriod = new ContractToCreate.BillingPeriodToCreate(
+    true,  // autoRenew
+    30     // renewalDays
+);
+
+Map<String, String> services = new HashMap<>();
+services.put("petclinic", "svc-petclinic-001");
+
+Map<String, String> plans = new HashMap<>();
+plans.put("petclinic", "plan-premium");
+
+Map<String, Map<String, Integer>> addons = new HashMap<>();
+addons.put("petclinic", Map.of("extra-users", 5, "storage-gb", 10));
+
+ContractToCreate contract = new ContractToCreate();
+contract.setUserContact(contact);
+contract.setBillingPeriod(billingPeriod);
+contract.setGroupId("group-abc");
+contract.setContractedServices(services);
+contract.setSubscriptionPlans(plans);
+contract.setSubscriptionAddOns(addons);
+```
+
+---
+
+### Contract
+
+Full contract information retrieved from the Space server.
+
+| Field | Type | Default | Required | Description |
+|-------|------|---------|----------|-------------|
+| `id` | `String` | - | No | Contract identifier |
+| `_id` | `String` | - | No | Internal MongoDB identifier |
+| `userContact` | `UserContact` | - | Yes | Contact information for the contract owner |
+| `billingPeriod` | `BillingPeriod` | - | Yes | Current billing period details |
+| `organizationId` | `String` | - | No | Organization identifier |
+| `groupId` | `String` | - | No | Group identifier |
+| `usageLevels` | `Map<String, Map<String, UsageLevel>>` | - | Yes | Usage tracking per service and feature |
+| `contractedServices` | `Map<String, String>` | - | Yes | Services contracted (service name → service ID) |
+| `subscriptionPlans` | `Map<String, String>` | - | Yes | Subscription plans (plan name → plan ID) |
+| `subscriptionAddOns` | `Map<String, Map<String, Integer>>` | - | Yes | Add-ons with quantities |
+| `history` | `List<ContractHistoryEntry>` | - | Yes | History of contract changes |
+
+**Example:**
+
+```java
+Contract contract = new Contract();
+contract.setId("contract-001");
+contract.setOrganizationId("org-petclinic");
+contract.setGroupId("group-veterinary");
+
+UserContact contact = new UserContact("user-001", "jdoe", "John", "Doe", "john@example.com", "+1-555-0123");
+contract.setUserContact(contact);
+
+BillingPeriod billingPeriod = new BillingPeriod();
+billingPeriod.setStartDate(new Date());
+billingPeriod.setAutoRenew(true);
+billingPeriod.setRenewalDays(30);
+contract.setBillingPeriod(billingPeriod);
+
+Map<String, String> services = new HashMap<>();
+services.put("petclinic", "svc-petclinic-001");
+contract.setContractedServices(services);
+
+Map<String, String> plans = new HashMap<>();
+plans.put("petclinic", "plan-premium");
+contract.setSubscriptionPlans(plans);
+
+Map<String, Map<String, Integer>> addons = new HashMap<>();
+addons.put("petclinic", Map.of("extra-users", 5));
+contract.setSubscriptionAddOns(addons);
+
+Map<String, Map<String, UsageLevel>> usageLevels = new HashMap<>();
+UsageLevel level = new UsageLevel();
+level.setConsumed(150.0);
+level.setResetTimeStamp(new Date());
+usageLevels.put("petclinic", Map.of("api-calls", level));
+contract.setUsageLevels(usageLevels);
+
+List<ContractHistoryEntry> history = new ArrayList<>();
+// ... add history entries
+contract.setHistory(history);
+```
+
+---
+
+### Subscription
+
+Request object for updating an existing subscription.
+
+| Field | Type | Default | Required | Description |
+|-------|------|---------|----------|-------------|
+| `contractedServices` | `Map<String, String>` | `new HashMap<>()` | Yes | Services contracted (service name → service ID) |
+| `subscriptionPlans` | `Map<String, String>` | `new HashMap<>()` | Yes | Subscription plans (plan name → plan ID) |
+| `subscriptionAddOns` | `Map<String, Map<String, Integer>>` | `new HashMap<>()` | Yes | Add-ons with quantities |
+
+**Example:**
+
+```java
+Subscription subscription = new Subscription();
+
+Map<String, String> services = new HashMap<>();
+services.put("petclinic", "svc-petclinic-001");
+subscription.setContractedServices(services);
+
+Map<String, String> plans = new HashMap<>();
+plans.put("petclinic", "plan-enterprise");
+subscription.setSubscriptionPlans(plans);
+
+Map<String, Map<String, Integer>> addons = new HashMap<>();
+addons.put("petclinic", Map.of("extra-users", 10, "storage-gb", 50));
+subscription.setSubscriptionAddOns(addons);
+```
+
+Or using the constructor:
+
+```java
+Subscription subscription = new Subscription(
+    Map.of("petclinic", "svc-petclinic-001"),
+    Map.of("petclinic", "plan-enterprise"),
+    Map.of("petclinic", Map.of("extra-users", 10))
+);
+```
+
+---
+
+### BillingPeriod
+
+Billing period information for a contract.
+
+| Field | Type | Default | Required | Description |
+|-------|------|---------|----------|-------------|
+| `startDate` | `Date` | - | Yes | Start date of the billing period |
+| `endDate` | `Date` | - | Yes | End date of the billing period |
+| `autoRenew` | `boolean` | `false` | Yes | Whether the contract auto-renews |
+| `renewalDays` | `int` | `0` | Yes | Days before renewal to send notification |
+
+**Example:**
+
+```java
+import java.util.Calendar;
+
+Calendar startCal = Calendar.getInstance();
+Calendar endCal = Calendar.getInstance();
+endCal.add(Calendar.MONTH, 1);
+
+BillingPeriod billingPeriod = new BillingPeriod();
+billingPeriod.setStartDate(startCal.getTime());
+billingPeriod.setEndDate(endCal.getTime());
+billingPeriod.setAutoRenew(true);
+billingPeriod.setRenewalDays(15);
+```
+
+Or using the constructor:
+
+```java
+BillingPeriod billingPeriod = new BillingPeriod(
+    new Date(),           // startDate
+    endDate,              // endDate
+    true,                 // autoRenew
+    15                    // renewalDays
+);
+```
+
+---
+
+### UserContact
+
+User contact information. Uses `@JsonInclude(JsonInclude.Include.NON_NULL)` to omit null fields during serialization.
+
+| Field | Type | Default | Required | Description |
+|-------|------|---------|----------|-------------|
+| `userId` | `String` | - | Yes | User identifier |
+| `username` | `String` | - | Yes | Username |
+| `firstName` | `String` | `""` | No | First name (defaults to empty string to satisfy SPACE validation) |
+| `lastName` | `String` | `""` | No | Last name (defaults to empty string to satisfy SPACE validation) |
+| `email` | `String` | `null` | No | Email address |
+| `phone` | `String` | `null` | No | Phone number |
+
+> **Note:** When using the constructor `UserContact(userId, username)`, `firstName` and `lastName` are automatically set to empty strings to avoid SPACE validation errors.
+
+**Examples:**
+
+**Minimal contact (recommended):**
+
+```java
+UserContact contact = new UserContact("user-001", "jdoe");
+// firstName and lastName are automatically set to ""
+```
+
+**Full contact:**
+
+```java
+UserContact contact = new UserContact(
+    "user-001",
+    "jdoe",
+    "John",
+    "Doe",
+    "john.doe@petclinic.com",
+    "+1-555-0123"
+);
+```
+
+**Using setters:**
+
+```java
+UserContact contact = new UserContact();
+contact.setUserId("user-001");
+contact.setUsername("jdoe");
+contact.setFirstName("John");
+contact.setLastName("Doe");
+contact.setEmail("john.doe@petclinic.com");
+contact.setPhone("+1-555-0123");
+```
+
+---
+
+### UsageLevel
+
+Usage tracking information for a specific feature within a service.
+
+| Field | Type | Default | Required | Description |
+|-------|------|---------|----------|-------------|
+| `resetTimeStamp` | `Date` | - | Yes | When the usage counter will reset |
+| `consumed` | `double` | `0.0` | Yes | Amount of the limit consumed |
+
+**Example:**
+
+```java
+UsageLevel usageLevel = new UsageLevel();
+usageLevel.setConsumed(750.0);
+usageLevel.setResetTimeStamp(new Date());
+```
+
+Or using the constructor:
+
+```java
+UsageLevel usageLevel = new UsageLevel(resetDate, 750.0);
+```
+
+**Checking usage against limits:**
+
+```java
+double consumed = usageLevel.getConsumed();
+double limit = 1000.0;
+double percentage = (consumed / limit) * 100;
+System.out.println("Usage: " + percentage + "%");
+```
+
+---
+
+### ContractHistoryEntry
+
+Historical record of a contract state.
+
+| Field | Type | Default | Required | Description |
+|-------|------|---------|----------|-------------|
+| `startDate` | `Date` | - | Yes | Start date of this contract version |
+| `endDate` | `Date` | - | Yes | End date of this contract version |
+| `contractedServices` | `Map<String, String>` | - | Yes | Services contracted during this period |
+| `subscriptionPlans` | `Map<String, String>` | - | Yes | Subscription plans during this period |
+| `subscriptionAddOns` | `Map<String, Map<String, Integer>>` | - | Yes | Add-ons with quantities during this period |
+
+**Example:**
+
+```java
+ContractHistoryEntry entry = new ContractHistoryEntry();
+entry.setStartDate(startDate);
+entry.setEndDate(endDate);
+
+Map<String, String> services = new HashMap<>();
+services.put("petclinic", "svc-petclinic-001");
+entry.setContractedServices(services);
+
+Map<String, String> plans = new HashMap<>();
+plans.put("petclinic", "plan-basic");
+entry.setSubscriptionPlans(plans);
+
+Map<String, Map<String, Integer>> addons = new HashMap<>();
+addons.put("petclinic", Map.of("extra-users", 2));
+entry.setSubscriptionAddOns(addons);
+```
+
+---
+
+### SpaceEvent
+
+Enum representing events that can be listened to for real-time updates.
+
+| Value | Event Name | Description |
+|-------|------------|-------------|
+| `SYNCHRONIZED` | `"synchronized"` | Data synchronization completed |
+| `PRICING_CREATED` | `"pricing_created"` | New pricing was created |
+| `PRICING_ARCHIVED` | `"pricing_archived"` | Pricing was archived |
+| `PRICING_ACTIVED` | `"pricing_actived"` | Pricing was activated |
+| `SERVICE_DISABLED` | `"service_disabled"` | A service was disabled |
+| `ERROR` | `"error"` | An error occurred |
+
+**Examples:**
+
+**Using the enum directly:**
+
+```java
+SpaceEvent event = SpaceEvent.PRICING_CREATED;
+String eventName = event.getEventName(); // "pricing_created"
+```
+
+**Converting from string:**
+
+```java
+SpaceEvent event = SpaceEvent.fromString("synchronized");
+if (event != null) {
+    System.out.println("Event: " + event.name());
+}
+```
+
+---
+
+### Quick Reference: Map Key Conventions
+
+Many types use `Map<String, String>` or `Map<String, Map<String, Integer>>`. Here are the typical key patterns:
+
+**contractedServices**
+
+```java
+Map<String, String> services = Map.of(
+    "petclinic", "svc-petclinic-001"  // serviceName → serviceId
+);
+```
+
+**subscriptionPlans**
+
+```java
+Map<String, String> plans = Map.of(
+    "petclinic", "plan-premium"  // serviceName → planId
+);
+```
+
+**subscriptionAddOns**
+
+```java
+Map<String, Map<String, Integer>> addons = Map.of(
+    "petclinic", Map.of(           // serviceName → {addOnName → quantity}
+        "extra-users", 5,
+        "storage-gb", 10
+    )
+);
+```
+
+**usageLevels**
+
+```java
+Map<String, Map<String, UsageLevel>> usageLevels = Map.of(
+    "petclinic", Map.of(           // serviceName → {featureName → UsageLevel}
+        "api-calls", new UsageLevel(resetDate, 150.0),
+        "storage", new UsageLevel(resetDate, 5.5)
+    )
+);
+```
+
+## CacheOptions
+
+Cache configuration for storing feature evaluation results.
+
+| Field | Type | Default | Required | Description |
+|-------|------|---------|----------|-------------|
+| `enabled` | `boolean` | `false` | Yes | Enable/disable caching |
+| `type` | `CacheType` | `BUILTIN` | No | Type of cache to use |
+| `ttl` | `Integer` | `300` | No | Time-to-live in seconds (default 5 minutes) |
+| `external` | `ExternalCacheConfig` | `null` | No | External cache configuration (required when type is REDIS) |
+
+### CacheType Enum
+
+| Value | Description |
+|-------|-------------|
+| `BUILTIN` | In-memory cache (default) |
+| `REDIS` | External Redis cache |
+
+### ExternalCacheConfig
+
+| Field | Type | Default | Required | Description |
+|-------|------|---------|----------|-------------|
+| `redis` | `RedisConfig` | - | Yes | Redis server configuration |
+
+### RedisConfig
+
+| Field | Type | Default | Required | Description |
+|-------|------|---------|----------|-------------|
+| `host` | `String` | - | Yes | Redis server hostname |
+| `port` | `Integer` | `6379` | No | Redis server port |
+| `password` | `String` | `null` | No | Redis authentication password |
+| `db` | `Integer` | `0` | No | Redis database number (valid range: 0-15) |
+| `connectTimeout` | `Integer` | `5000` | No | Connection timeout in milliseconds |
+| `keyPrefix` | `String` | `"space-client:"` | No | Prefix for cache keys |
+
+### Examples
+
+**Basic cache with built-in memory:**
+
+```java
+CacheOptions cacheOptions = new CacheOptions();
+cacheOptions.setEnabled(true);
+cacheOptions.setType(CacheOptions.CacheType.BUILTIN);
+cacheOptions.setTtl(600); // 10 minutes
+```
+
+**Redis cache configuration:**
+
+```java
+CacheOptions.RedisConfig redisConfig = new CacheOptions.RedisConfig("redis.example.com");
+redisConfig.setPort(6379);
+redisConfig.setPassword("redis-password");
+redisConfig.setDb(2);
+redisConfig.setConnectTimeout(3000);
+redisConfig.setKeyPrefix("petclinic:");
+
+CacheOptions.ExternalCacheConfig externalConfig = new CacheOptions.ExternalCacheConfig();
+externalConfig.setRedis(redisConfig);
+
+CacheOptions cacheOptions = new CacheOptions();
+cacheOptions.setEnabled(true);
+cacheOptions.setType(CacheOptions.CacheType.REDIS);
+cacheOptions.setExternal(externalConfig);
+```
+
+---
+
+## FeatureEvaluationResult
+
+Result of evaluating a feature flag against a user context.
+
+| Field | Type | Default | Required | Description |
+|-------|------|---------|----------|-------------|
+| `eval` | `boolean` | - | Yes | Whether the feature is enabled |
+| `used` | `Map<String, Object>` | - | No | Variables used in the evaluation |
+| `limit` | `Map<String, Object>` | - | No | Limit values applied |
+| `error` | `EvaluationError` | `null` | No | Error information if evaluation failed |
+
+### EvaluationError
+
+| Field | Type | Default | Required | Description |
+|-------|------|---------|----------|-------------|
+| `code` | `String` | - | Yes | Error code identifier |
+| `message` | `String` | - | Yes | Human-readable error message |
+
+### Examples
+
+**Successful evaluation:**
+
+```java
+FeatureEvaluationResult result = new FeatureEvaluationResult();
+result.setEval(true);
+result.setUsed(Map.of("userId", "user-123", "plan", "premium"));
+result.setLimit(Map.of("maxRequests", 1000));
+result.setError(null);
+```
+
+**Evaluation with error:**
+
+```java
+FeatureEvaluationResult.EvaluationError error = new FeatureEvaluationResult.EvaluationError(
+    "FEATURE_NOT_FOUND",
+    "Feature 'dark-mode' does not exist"
+);
+
+FeatureEvaluationResult result = new FeatureEvaluationResult();
+result.setEval(false);
+result.setError(error);
+```
+
+**Reading the result:**
+
+```java
+if (result.getError() != null) {
+    System.err.println("Error: " + result.getError().getCode() + " - " + result.getError().getMessage());
+} else if (result.getEval()) {
+    System.out.println("Feature is enabled!");
+    // Access used variables
+    Object userId = result.getUsed().get("userId");
+} else {
+    System.out.println("Feature is disabled");
+}
+```
+
+---
+
+## ContractToCreate
+
+Request object for creating a new contract.
+
+| Field | Type | Default | Required | Description |
+|-------|------|---------|----------|-------------|
+| `userContact` | `UserContact` | - | Yes | Contact information for the contract owner |
+| `billingPeriod` | `BillingPeriodToCreate` | - | Yes | Billing period configuration |
+| `groupId` | `String` | `null` | No | Group identifier |
+| `contractedServices` | `Map<String, String>` | - | Yes | Services contracted (service name → service ID) |
+| `subscriptionPlans` | `Map<String, String>` | - | Yes | Subscription plans (plan name → plan ID) |
+| `subscriptionAddOns` | `Map<String, Map<String, Integer>>` | - | Yes | Add-ons with quantities (service → add-on → quantity) |
+
+### BillingPeriodToCreate (nested class)
+
+| Field | Type | Default | Required | Description |
+|-------|------|---------|----------|-------------|
+| `autoRenew` | `Boolean` | `null` | Yes | Whether the contract auto-renews |
+| `renewalDays` | `Integer` | `null` | Yes | Days before renewal to send notification |
+
+### Example
+
+```java
+UserContact contact = new UserContact("user-001", "jdoe", "John", "Doe", "john@example.com", "+1-555-0123");
+
+ContractToCreate.BillingPeriodToCreate billingPeriod = new ContractToCreate.BillingPeriodToCreate(
+    true,  // autoRenew
+    30     // renewalDays
+);
+
+Map<String, String> services = new HashMap<>();
+services.put("petclinic", "svc-petclinic-001");
+
+Map<String, String> plans = new HashMap<>();
+plans.put("petclinic", "plan-premium");
+
+Map<String, Map<String, Integer>> addons = new HashMap<>();
+addons.put("petclinic", Map.of("extra-users", 5, "storage-gb", 10));
+
+ContractToCreate contract = new ContractToCreate();
+contract.setUserContact(contact);
+contract.setBillingPeriod(billingPeriod);
+contract.setGroupId("group-abc");
+contract.setContractedServices(services);
+contract.setSubscriptionPlans(plans);
+contract.setSubscriptionAddOns(addons);
+```
+
+---
+
+## Contract
+
+Full contract information retrieved from the Space server.
+
+| Field | Type | Default | Required | Description |
+|-------|------|---------|----------|-------------|
+| `id` | `String` | - | No | Contract identifier |
+| `_id` | `String` | - | No | Internal MongoDB identifier |
+| `userContact` | `UserContact` | - | Yes | Contact information for the contract owner |
+| `billingPeriod` | `BillingPeriod` | - | Yes | Current billing period details |
+| `organizationId` | `String` | - | No | Organization identifier |
+| `groupId` | `String` | - | No | Group identifier |
+| `usageLevels` | `Map<String, Map<String, UsageLevel>>` | - | Yes | Usage tracking per service and feature |
+| `contractedServices` | `Map<String, String>` | - | Yes | Services contracted (service name → service ID) |
+| `subscriptionPlans` | `Map<String, String>` | - | Yes | Subscription plans (plan name → plan ID) |
+| `subscriptionAddOns` | `Map<String, Map<String, Integer>>` | - | Yes | Add-ons with quantities |
+| `history` | `List<ContractHistoryEntry>` | - | Yes | History of contract changes |
+
+### Example
+
+```java
+Contract contract = new Contract();
+contract.setId("contract-001");
+contract.setOrganizationId("org-petclinic");
+contract.setGroupId("group-veterinary");
+
+UserContact contact = new UserContact("user-001", "jdoe", "John", "Doe", "john@example.com", "+1-555-0123");
+contract.setUserContact(contact);
+
+BillingPeriod billingPeriod = new BillingPeriod();
+billingPeriod.setStartDate(new Date());
+billingPeriod.setAutoRenew(true);
+billingPeriod.setRenewalDays(30);
+contract.setBillingPeriod(billingPeriod);
+
+Map<String, String> services = new HashMap<>();
+services.put("petclinic", "svc-petclinic-001");
+contract.setContractedServices(services);
+
+Map<String, String> plans = new HashMap<>();
+plans.put("petclinic", "plan-premium");
+contract.setSubscriptionPlans(plans);
+
+Map<String, Map<String, Integer>> addons = new HashMap<>();
+addons.put("petclinic", Map.of("extra-users", 5));
+contract.setSubscriptionAddOns(addons);
+
+Map<String, Map<String, UsageLevel>> usageLevels = new HashMap<>();
+UsageLevel level = new UsageLevel();
+level.setConsumed(150.0);
+level.setResetTimeStamp(new Date());
+usageLevels.put("petclinic", Map.of("api-calls", level));
+contract.setUsageLevels(usageLevels);
+
+List<ContractHistoryEntry> history = new ArrayList<>();
+// ... add history entries
+contract.setHistory(history);
+```
+
+---
+
+## Subscription
+
+Request object for updating an existing subscription.
+
+| Field | Type | Default | Required | Description |
+|-------|------|---------|----------|-------------|
+| `contractedServices` | `Map<String, String>` | `new HashMap<>()` | Yes | Services contracted (service name → service ID) |
+| `subscriptionPlans` | `Map<String, String>` | `new HashMap<>()` | Yes | Subscription plans (plan name → plan ID) |
+| `subscriptionAddOns` | `Map<String, Map<String, Integer>>` | `new HashMap<>()` | Yes | Add-ons with quantities |
+
+### Example
+
+```java
+Subscription subscription = new Subscription();
+
+Map<String, String> services = new HashMap<>();
+services.put("petclinic", "svc-petclinic-001");
+subscription.setContractedServices(services);
+
+Map<String, String> plans = new HashMap<>();
+plans.put("petclinic", "plan-enterprise");
+subscription.setSubscriptionPlans(plans);
+
+Map<String, Map<String, Integer>> addons = new HashMap<>();
+addons.put("petclinic", Map.of("extra-users", 10, "storage-gb", 50));
+subscription.setSubscriptionAddOns(addons);
+```
+
+Or using the constructor:
+
+```java
+Subscription subscription = new Subscription(
+    Map.of("petclinic", "svc-petclinic-001"),
+    Map.of("petclinic", "plan-enterprise"),
+    Map.of("petclinic", Map.of("extra-users", 10))
+);
+```
+
+---
+
+## BillingPeriod
+
+Billing period information for a contract.
+
+| Field | Type | Default | Required | Description |
+|-------|------|---------|----------|-------------|
+| `startDate` | `Date` | - | Yes | Start date of the billing period |
+| `endDate` | `Date` | - | Yes | End date of the billing period |
+| `autoRenew` | `boolean` | `false` | Yes | Whether the contract auto-renews |
+| `renewalDays` | `int` | `0` | Yes | Days before renewal to send notification |
+
+### Example
+
+```java
+import java.util.Calendar;
+
+Calendar startCal = Calendar.getInstance();
+Calendar endCal = Calendar.getInstance();
+endCal.add(Calendar.MONTH, 1);
+
+BillingPeriod billingPeriod = new BillingPeriod();
+billingPeriod.setStartDate(startCal.getTime());
+billingPeriod.setEndDate(endCal.getTime());
+billingPeriod.setAutoRenew(true);
+billingPeriod.setRenewalDays(15);
+```
+
+Or using the constructor:
+
+```java
+BillingPeriod billingPeriod = new BillingPeriod(
+    new Date(),           // startDate
+    endDate,              // endDate
+    true,                 // autoRenew
+    15                    // renewalDays
+);
+```
+
+---
+
+## UserContact
+
+User contact information. Uses `@JsonInclude(JsonInclude.Include.NON_NULL)` to omit null fields during serialization.
+
+| Field | Type | Default | Required | Description |
+|-------|------|---------|----------|-------------|
+| `userId` | `String` | - | Yes | User identifier |
+| `username` | `String` | - | Yes | Username |
+| `firstName` | `String` | `""` | No | First name (defaults to empty string to satisfy SPACE validation) |
+| `lastName` | `String` | `""` | No | Last name (defaults to empty string to satisfy SPACE validation) |
+| `email` | `String` | `null` | No | Email address |
+| `phone` | `String` | `null` | No | Phone number |
+
+> **Note:** When using the constructor `UserContact(userId, username)`, `firstName` and `lastName` are automatically set to empty strings to avoid SPACE validation errors.
+
+### Examples
+
+**Minimal contact (recommended):**
+
+```java
+UserContact contact = new UserContact("user-001", "jdoe");
+// firstName and lastName are automatically set to ""
+```
+
+**Full contact:**
+
+```java
+UserContact contact = new UserContact(
+    "user-001",
+    "jdoe",
+    "John",
+    "Doe",
+    "john.doe@petclinic.com",
+    "+1-555-0123"
+);
+```
+
+**Using setters:**
+
+```java
+UserContact contact = new UserContact();
+contact.setUserId("user-001");
+contact.setUsername("jdoe");
+contact.setFirstName("John");
+contact.setLastName("Doe");
+contact.setEmail("john.doe@petclinic.com");
+contact.setPhone("+1-555-0123");
+```
+
+---
+
+## UsageLevel
+
+Usage tracking information for a specific feature within a service.
+
+| Field | Type | Default | Required | Description |
+|-------|------|---------|----------|-------------|
+| `resetTimeStamp` | `Date` | - | Yes | When the usage counter will reset |
+| `consumed` | `double` | `0.0` | Yes | Amount of the limit consumed |
+
+### Example
+
+```java
+UsageLevel usageLevel = new UsageLevel();
+usageLevel.setConsumed(750.0);
+usageLevel.setResetTimeStamp(new Date());
+```
+
+Or using the constructor:
+
+```java
+UsageLevel usageLevel = new UsageLevel(resetDate, 750.0);
+```
+
+**Checking usage against limits:**
+
+```java
+double consumed = usageLevel.getConsumed();
+double limit = 1000.0;
+double percentage = (consumed / limit) * 100;
+System.out.println("Usage: " + percentage + "%");
+```
+
+---
+
+## ContractHistoryEntry
+
+Historical record of a contract state.
+
+| Field | Type | Default | Required | Description |
+|-------|------|---------|----------|-------------|
+| `startDate` | `Date` | - | Yes | Start date of this contract version |
+| `endDate` | `Date` | - | Yes | End date of this contract version |
+| `contractedServices` | `Map<String, String>` | - | Yes | Services contracted during this period |
+| `subscriptionPlans` | `Map<String, String>` | - | Yes | Subscription plans during this period |
+| `subscriptionAddOns` | `Map<String, Map<String, Integer>>` | - | Yes | Add-ons with quantities during this period |
+
+### Example
+
+```java
+ContractHistoryEntry entry = new ContractHistoryEntry();
+entry.setStartDate(startDate);
+entry.setEndDate(endDate);
+
+Map<String, String> services = new HashMap<>();
+services.put("petclinic", "svc-petclinic-001");
+entry.setContractedServices(services);
+
+Map<String, String> plans = new HashMap<>();
+plans.put("petclinic", "plan-basic");
+entry.setSubscriptionPlans(plans);
+
+Map<String, Map<String, Integer>> addons = new HashMap<>();
+addons.put("petclinic", Map.of("extra-users", 2));
+entry.setSubscriptionAddOns(addons);
+```
+
+---
+
+## SpaceEvent
+
+Enum representing events that can be listened to for real-time updates.
+
+| Value | Event Name | Description |
+|-------|------------|-------------|
+| `SYNCHRONIZED` | `"synchronized"` | Data synchronization completed |
+| `PRICING_CREATED` | `"pricing_created"` | New pricing was created |
+| `PRICING_ARCHIVED` | `"pricing_archived"` | Pricing was archived |
+| `PRICING_ACTIVED` | `"pricing_actived"` | Pricing was activated |
+| `SERVICE_DISABLED` | `"service_disabled"` | A service was disabled |
+| `ERROR` | `"error"` | An error occurred |
+
+### Examples
+
+**Using the enum directly:**
+
+```java
+SpaceEvent event = SpaceEvent.PRICING_CREATED;
+String eventName = event.getEventName(); // "pricing_created"
+```
+
+**Converting from string:**
+
+```java
+SpaceEvent event = SpaceEvent.fromString("synchronized");
+if (event != null) {
+    System.out.println("Event: " + event.name());
+}
+```
+
+---
+
+## Quick Reference: Map Key Conventions
+
+Many types use `Map<String, String>` or `Map<String, Map<String, Integer>>`. Here are the typical key patterns:
+
+### contractedServices
+
+```java
+Map<String, String> services = Map.of(
+    "petclinic", "svc-petclinic-001"  // serviceName → serviceId
+);
+```
+
+### subscriptionPlans
+
+```java
+Map<String, String> plans = Map.of(
+    "petclinic", "plan-premium"  // serviceName → planId
+);
+```
+
+### subscriptionAddOns
+
+```java
+Map<String, Map<String, Integer>> addons = Map.of(
+    "petclinic", Map.of(           // serviceName → {addOnName → quantity}
+        "extra-users", 5,
+        "storage-gb", 10
+    )
+);
+```
+
+### usageLevels
+
+```java
+Map<String, Map<String, UsageLevel>> usageLevels = Map.of(
+    "petclinic", Map.of(           // serviceName → {featureName → UsageLevel}
+        "api-calls", new UsageLevel(resetDate, 150.0),
+        "storage", new UsageLevel(resetDate, 5.5)
+    )
+);
+```
 
 ## 💾 Caching
 
