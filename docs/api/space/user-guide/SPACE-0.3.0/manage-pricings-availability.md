@@ -85,7 +85,7 @@ Only **archived pricings** can be deleted.
 ## 🎛️ How to Change Pricing State
 Inside the **SPACE interface**, you can change the state of a pricing version by simply **dragging its card between states**.  
 
-![Pricing lifecycle](../../../static/img/space/user-guides/pricing-lifecycle.png)
+![Pricing lifecycle](../../../../static/img/space/user-guides/<1.0.0/pricing-lifecycle.png)
 
 :::warning At least One Active Pricing Required
 Each service must always have **at least one active pricing version**.  

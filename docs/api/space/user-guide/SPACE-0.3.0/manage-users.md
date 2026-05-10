@@ -8,7 +8,7 @@ custom_edit_url: null
 
 The **Users Management** view in **SPACE** allows administrators and managers to control access by updating roles and credentials of existing accounts.
 
-![Access Control Screen](../../../static/img/space/user-guides/access-control.png)
+![Access Control Screen](../../../../static/img/space/user-guides/<1.0.0/access-control.png)
 
 From this view, you can:
 

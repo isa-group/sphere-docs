@@ -15,7 +15,7 @@ As a **quick reminder**, SPACE defines three roles:
 - 🛠️ **MANAGER** – Can perform **all operations except destructive deletions** (e.g., cannot permanently remove users or services).
 - 🔎 **EVALUATOR** – Can **only evaluate features**. This role is recommended for most components that only need to check feature access.
 
-👉 For more details, see [SPACE Role Based Access Control](../space-roles.md).
+👉 For more details, see [SPACE Role Based Access Control](../../space-roles.md).
 
 To create a new user in SPACE, follow these steps:
 
@@ -28,11 +28,11 @@ To create a new user account:
 1. Go to **Access Control** in the side panel.  
 2. Click **Add User** at the top-right corner.  
 
-![Access Control Screen](../../../static/img/space/user-guides/access-control.png)
+![Access Control Screen](../../../../static/img/space/user-guides/<1.0.0/access-control.png)
 
 A dialog will appear asking for the new user’s data.
 
-![Add user dialog](../../../static/img/space/user-guides/add-user-dialog.png)
+![Add user dialog](../../../../static/img/space/user-guides/<1.0.0/add-user-dialog.png)
 
 3. Fill in the required fields, select a role, and click **Add user**.
 

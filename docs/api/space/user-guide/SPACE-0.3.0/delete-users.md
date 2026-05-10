@@ -7,7 +7,7 @@ custom_edit_url: null
 
 As mentioned in the [Manage Users](./manage-users.md) guide, deleting a user is one of the operations available from the **Users Management** view in **SPACE**.
 
-![Access Control Screen](../../../static/img/space/user-guides/access-control.png)
+![Access Control Screen](../../../../static/img/space/user-guides/<1.0.0/access-control.png)
 
 However, there are important conditions to keep in mind before performing this action:
 

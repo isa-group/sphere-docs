@@ -155,42 +155,28 @@ addOns:
 
 Follow these steps to upload a new pricing version for an existing service in **SPACE**:
 
----
-
-### 0. Prerequisites
-
-- You must already have a service created in SPACE.  
-  
+0. You must already have a service created in SPACE.  
   👉 If not, see [Create a Service](./create-service.md) first.
 
-### 1. Open the Services Management Panel
+1. Go to the **Services Management** tab in the left sidebar.  
 
-Go to the **Services Management** tab in the left sidebar.  
+![Services Management with PetClinic](../../../../static/img/space/user-guides/>=1.0.0/services-management-with-service.png)
 
-Select the service you want to update (in this example, **PetClinic**).
+2. Select the service you want to update (in this example, **PetClinic**).
 
-![Services Management View With PetClinic](../../../static/img/space/user-guides/services-management-with-service.png)
+3. Click on the **service card** to open its details. Here you'll find the list of existing pricing versions for that service.
 
-### 2. Access the Service Details
+![Service details view](../../../../static/img/space/user-guides/>=1.0.0/service-details.png)
 
-Click on the **service card** to open its details.
+4. Click the **⋮ (three-dot menu)** at the top-right corner and select **Add Version**. A dialog will appear asking you to upload a **Pricing2Yaml** file.
 
-Here you'll find the list of existing pricing versions for that service.
-
-![Add pricing version button](../../../static/img/space/user-guides/add-pricing-version.png)
-
-### 3. Add a New Version
-
-Click the **⋮ (three-dot menu)** at the top-right corner and select **Add Version**.
-
-A dialog will appear asking you to upload a **Pricing2Yaml** file.
+![Add version dialog](../../../../static/img/space/user-guides/>=1.0.0/add-version-dialog.png)
 
 :::tip
 Alternatively, you can **upload your pricing to SPHERE** and use the link of the desired pricing
-version to instantiate the service. See [this guide](../../sphere/user-guides/pricing-card/03_files-and-versions.mdx) for more details.
+version to instantiate the service. See [this guide](../../../sphere/user-guides/pricing-card/03_files-and-versions.mdx) for more details.
 :::
 
-![Add version dialog](../../../static/img/space/user-guides/add-new-version-dialog.png)
 
 :::danger Requirements
 
@@ -202,11 +188,8 @@ The pricing you upload must follow these rules in order to be added to the servi
 If your **Pricing2Yaml** file (no matter whether it has been provided as a link) contains a different `saasName` than the current service, SPACE will reject it with an error.
 :::
 
-## 4. Confirm Upload
+5. Click **Upload** to finish.  
 
-Click **Upload** to finish.  
+SPACE will create the new pricing version and automatically link it to your service. You'll see it appear in the **versions list** inside the service details page.
 
----
-
-SPACE will create the new pricing version and automatically link it to your service.  
-You'll see it appear in the **versions list** inside the service details page.
+![Service details with new version](../../../../static/img/space/user-guides/>=1.0.0/service-details-two-versions.png)

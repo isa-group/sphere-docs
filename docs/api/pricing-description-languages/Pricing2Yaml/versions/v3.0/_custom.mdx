@@ -1,0 +1,55 @@
+import { VersionTable } from "@site/src/components/common";
+
+- **custom**
+- Field type: `any`
+
+The `custom` field is an extensibility mechanism that allows developers to enrich their iPricings with arbitrary, domain-specific information. Its primary purpose is to support use-case–specific annotations that are not covered by the core pricing syntax.
+
+**Semantics**
+
+The `custom` field accepts any valid YAML value, including:
+
+- Primitive values (for example, strings, numbers, booleans)
+- Composite structures (for example, objects, arrays, nested combinations)
+
+No constraints are imposed on its structure or content at the language level.
+
+**Processing Model**
+
+The custom field is treated as an opaque payload by Pricing2yaml parsers:
+
+- It is not subject to validation during parsing.
+- It is not interpreted by the core pricing model.
+- Its content is preserved verbatim and propagated to the resulting iPricing representation.
+
+This design ensures that any information defined within custom remains intact and available for downstream processing.
+
+**Intended Usage**
+
+The `custom` field is designed to be consumed by application-specific logic implemented outside the core Pricing2yaml infrastructure. Typical use cases include:
+
+- Attaching metadata required by a particular runtime or deployment environment
+- Defining integration-specific configuration (for example, billing providers, feature flags, or access control policies)
+- Embedding auxiliary information to support pricing-related computations not natively supported by the language
+
+:::warning
+Responsibility for interpreting and validating the contents of the custom field lies entirely with the target system or application that consumes the generated iPricing artifact.
+:::
+
+**Example**
+
+```yaml
+saasName: "ExampleSaaS"
+syntaxVersion: "3.1"
+...
+custom:
+  deployment:
+    region: "us-east-1"
+...
+features: ...
+plans: ...
+```
+
+**Libraries support**
+
+<VersionTable name="variables" libraries={[false, true]} />

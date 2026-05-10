@@ -14,7 +14,7 @@ However, if the service itself is being phased out —meaning there is no longer
 - The service will **no longer appear in the list of services** in the SPACE UI.  
 - **No new contracts** can be created for it.  
 - Existing **contracts will not be able to operate** within the service.  
-- The **service will only be accessible through the SPACE API** using the endpoints documented in the [API Reference](../space-api.mdx).  
+- The **service will only be accessible through the SPACE API** using the endpoints documented in the [API Reference](../../space-api.mdx).  
 
 This guide will walk you through the process of disabling a service.
 
@@ -26,7 +26,7 @@ Go to the **Services Management** tab in the left sidebar.
 
 Select the service you want to update (in this example, **PetClinic**).
 
-![Services Management View With PetClinic](../../../static/img/space/user-guides/services-management-with-service.png)
+![Services Management View With PetClinic](../../../../static/img/space/user-guides/<1.0.0/services-management-with-service.png)
 
 ## 2. Access the Service Details
 
@@ -34,7 +34,7 @@ Click on the **service card** to open its details.
 
 Here you’ll find the list of existing pricing versions for that service.
 
-![Disable service button](../../../static/img/space/user-guides/add-pricing-version.png)
+![Pricing Versions](../../../../static/img/space/user-guides/<1.0.0/pricing-versions.png)
 
 ## 3. Add a New Version
 
