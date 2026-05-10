@@ -253,7 +253,12 @@ const spaceClient: SpaceClient = connect({
 +       subscriptionPlans: {
 +         news: "BASIC",
 +       },
-+       subscriptionAddOns: {},
++       subscriptionAddOns: {
++         news: {
++           extraNews: 2,
++           premiumSupport: 1,
++         },
++       },
 +     });
 +   }
 + });
