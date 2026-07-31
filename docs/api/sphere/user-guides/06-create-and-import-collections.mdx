@@ -1,0 +1,49 @@
+---
+sidebar_position: 6
+---
+
+# Create and import collections
+
+Collections provide metadata, visibility, and access control for a curated set of pricings.
+
+## Create a collection manually
+
+1. Select **New → Collection**, or use the organization **Collections** tab.
+2. Confirm the destination organization.
+3. Enter the collection name and description.
+4. Select public or private visibility.
+5. Select **Select unassigned pricings** to add existing, unassigned pricings.
+6. Select **Add Collection**.
+
+![Collection creation form](/img/sphere/user-guide/create-collection.png)
+
+## Import a collection from a ZIP archive
+
+1. In the collection form, select **Upload collection**.
+2. Drop a `.zip` archive onto the upload area or select it from disk.
+3. Complete the collection metadata and select **Add Collection**.
+4. Review the import result and correct any reported invalid files before retrying them.
+
+![Collection ZIP import](/img/sphere/user-guide/collection-import.png)
+
+Each top-level directory represents a SaaS application and contains that pricing's versioned YAML files. For example:
+
+```text
+pricing-dataset.zip
+└── AcmeCRM/
+    ├── 2024.yml
+    └── 2025.yml
+```
+
+SPHERE validates individual files so an isolated invalid YAML file does not prevent valid files from being imported. A fatal import error rolls back the operation.
+
+## Manage an existing collection
+
+Open a collection from the public catalogue, your organization, or **My Collections**. Its workspace provides the following actions:
+
+- **Download** exports the collection data.
+- **Pricings** lists the contained pricings and lets you open each pricing card.
+- **Analytics** aggregates the collection's available pricing metrics.
+- **Settings** changes collection metadata and visibility, or removes the collection when you have the required permission.
+
+Use the ordering control to change the presentation order of the pricing list. Moving a pricing into or out of a collection affects the collection-level permissions that apply to it.

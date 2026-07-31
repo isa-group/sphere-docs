@@ -1,0 +1,43 @@
+---
+sidebar_position: 4
+---
+
+# Manage members, invitations, and permissions
+
+## Add and manage members
+
+1. Open the organization and select **Members**.
+2. Select **Add member**.
+3. Search for the user and select the appropriate role.
+4. Confirm the change, then review the member list.
+
+![Organization members](/img/sphere/user-guide/organization-members.png)
+
+Use the member actions to change a role or remove a member. Owners can manage all roles. Admins cannot demote another admin.
+
+## Invite collaborators
+
+1. Select the **Invitations** tab.
+2. Select **Generate invite**.
+3. Copy the resulting join link and deliver it through an appropriate channel.
+4. Revoke or replace an invitation when it is no longer needed.
+
+![Organization invitations](/img/sphere/user-guide/organization-invitations.png)
+
+## Grant permissions to a member
+
+1. Select **Permissions**.
+2. Search for and open the member.
+3. Grant the required operation at organization, collection, or pricing scope.
+4. Save and verify the member can perform only the intended operation.
+
+![Organization permissions](/img/sphere/user-guide/organization-permissions.png)
+
+Permission meaning depends on scope:
+
+- On an organization, **POST** allows creation of pricings and collections.
+- On a pricing or collection, **POST** allows creating a new version.
+- **GET**, **PUT**, and **DELETE** respectively allow viewing, editing metadata, and removal of the specified private entity.
+
+Collection permissions take precedence for pricings contained in that collection. Granting **GET** to a collection grants access to its pricings.
+
