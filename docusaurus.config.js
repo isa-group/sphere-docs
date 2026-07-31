@@ -41,6 +41,7 @@ const config = {
   customFields: {
     currentVersion: currentVersion,
     spaceOasUrl: "https://raw.githubusercontent.com/Alex-GF/space/refs/heads/main/api/docs/space-api-docs.yaml",
+    sphereOasUrl: "https://raw.githubusercontent.com/Alex-GF/SPHERE/refs/heads/main/api/docs/sphere-api-docs.yaml",
     githubUrl: "https://github.com/Alex-GF/sphere"
   },
 
