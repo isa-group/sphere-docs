@@ -1,0 +1,32 @@
+---
+sidebar_position: 2
+sidebar_label: "🔌 API reference"
+title: "SPHERE OpenAPI Specification"
+custom_edit_url: null
+---
+
+import SphereOAS from '@site/src/components/SphereOAS';
+
+# 🔌 SPHERE OpenAPI Specification
+
+The SPHERE API exposes the platform's pricing, collection, organization, membership, permission, analytics, notification, and authentication capabilities to integrations. The interactive reference below is generated from the repository's OpenAPI document.
+
+Use it to:
+
+- inspect endpoints, parameters, schemas, and authentication requirements;
+- generate clients for your preferred language;
+- compare API operations with the corresponding UI tutorial;
+- prepare requests for cURL, Postman, or another API client.
+
+## Authentication
+
+SPHERE accepts a user bearer token or an API key. User tokens are sent as `Authorization: Bearer <token>`. API integrations should normally use an `x-api-key` header and a key whose organization scope and permission level match the integration's needs.
+
+:::warning Protect credentials
+Never commit a bearer token or API key to source control, documentation screenshots, or client-side bundles. Store secrets in the deployment platform's secret manager and rotate or revoke them when a team member or integration no longer needs access.
+:::
+
+The canonical YAML file is available at [SPHERE's `sphere-api-docs.yaml` on GitHub](https://raw.githubusercontent.com/Alex-GF/SPHERE/refs/heads/main/api/docs/sphere-api-docs.yaml), and the source repository is available at [github.com/Alex-GF/SPHERE](https://github.com/Alex-GF/SPHERE).
+
+<SphereOAS />
+
