@@ -23,7 +23,7 @@ This file **must follow the [Pricing2Yaml specification](../../../pricing-descri
 
 :::tip
 Alternatively, you can **upload your pricing to SPHERE** and use the link of the desired
-pricing version to instantiate the service. See [this guide](../../../sphere/user-guides/pricing-card/03_files-and-versions.mdx) for more details.
+pricing version to instantiate the service. See the [SPHERE version-management guide](../../../sphere/user-guides/08-explore-and-version-pricings.mdx) for more details.
 :::
 
 4. Then confirm by clicking the **Upload** button. Once uploaded, a new service will be created and the corresponding pricing will be automatically linked to it.
