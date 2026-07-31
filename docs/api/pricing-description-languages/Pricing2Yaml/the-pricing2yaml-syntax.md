@@ -182,7 +182,7 @@ You can experiment with this example directly in the [online Pricing2Yaml editor
 
 ```yaml
 saasName: PetClinic
-syntaxVersion: "3.0"
+syntaxVersion: "3.1"
 version: "latest"
 createdAt: "2025-09-19"
 currency: EUR

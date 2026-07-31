@@ -339,7 +339,7 @@ Here are some SaaS providers using this technique:
 Good practice:
 
 ```yaml
-syntaxVersion: '3.0'
+syntaxVersion: '3.1'
 saasName: Databox
 url: https://web.archive.org/web/20250304080336/https://databox.com/pricing
 tags:
@@ -395,7 +395,7 @@ features:
 Bad practice
 
 ```yaml
-syntaxVersion: '3.0'
+syntaxVersion: '1'
 saasName: Databox
 url: https://web.archive.org/web/20250304080336/https://databox.com/pricing
 features:
