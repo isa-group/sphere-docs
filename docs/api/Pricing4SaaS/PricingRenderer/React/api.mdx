@@ -1,0 +1,416 @@
+---
+sidebar_position: 2
+title: API
+custom_edit_url: null
+---
+
+:::info
+Currently the pricing renderer only supports the 3.1 version of [Pricing2Yaml syntax](../../../pricing-description-languages/Pricing2Yaml/versions/pricing2yaml-v31-specification.mdx).
+:::
+
+In order to use the `PricingRenderer` component you have to provide an iPricing method input to the renderer.
+You **MUST** choose only one method to configure the `PricingRenderer` input:
+- Use `pricing` prop if you provide a **Javascript object** compatible with the [Pricing2Yaml 3.1 specification](../../../pricing-description-languages/Pricing2Yaml/versions/pricing2yaml-v31-specification.mdx).
+- Use `src` prop if you provide an **URL** (HTTP or HTTPS only) where the Pricing2Yaml is exposed.
+- Use `yaml` prop if you provide a **String** encoded in [Pricing2Yaml 3.1 specification](../../../pricing-description-languages/Pricing2Yaml/versions/pricing2yaml-v31-specification.mdx).
+
+
+## Props
+
+This section describes the available props of the `PricingRenderer` component.
+
+### loadPricing
+
+The `PricingRenderer` has a built-in loader to fetch a pricing but is quite limited. However, you
+can implement your own workflow to get a pricing. This is useful if:
+- You need a custom authentication process
+- You need to access Cloud Storage Services like: [Amazon S3](https://aws.amazon.com/es/s3/),
+[Google Cloud Storage](https://cloud.google.com/storage), [Alibaba Cloud Object Storage Service](https://www.alibabacloud.com/en/product/object-storage-service), etc...
+- You use a certain SDK to fetch your pricing
+
+:::note
+The default built-in loader has the following restrictions:
+- Permits only HTTP or HTTPS `GET` only
+- The internal `fetch` method uses `credentials: "omit"`, meaning credentials will not be sent in the request or
+included in the response.
+:::
+
+The `loadPricing` function takes one parameter `context` of type [`PricingLoaderContext`](https://github.com/javiercavlop/pricing-renderer/blob/27c6c673ed63b3044faeb25931cf73a9ee81e469/src/yaml/types.ts#L16-L22)
+and returns a promise that resolves a string or a [`IPricingLike`](https://github.com/javiercavlop/pricing-renderer/blob/27c6c673ed63b3044faeb25931cf73a9ee81e469/src/core/types.ts#L3-L18)
+object:
+```typescript
+(context: PricingLoaderContext) => Promise<string | IPricingLike>;
+```
+
+Imagine that we have the following implementation of a pricing loader function. This function implementation
+includes a `Bearer` token in the `Authentication` header to access a private resource:
+```javascript
+const customLoadPricing = async (context) => {
+  const authorizationToken = await getAccessToken();
+
+  const response = await fetch(context.url, {
+    method: "GET",
+    signal: context.signal,
+    headers: {
+      Authorization: `Bearer ${authorizationToken}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error(`Failed to load pricing: ${response.status}`);
+  }
+
+  return response.text();
+};
+```
+
+You can pass the previous `customLoadPricing` function to the `loadPricing` prop of the `PricingRenderer`:
+```jsx
+<PricingRenderer src="https://acme.cloud.com/pricings/2026.07-foo.yaml" loadPricing={customLoadPricing} />
+```
+
+### locale
+
+Configure the renderer default locale. The renderer text, dates, and prices will be
+formatted accordingly to the option chosen.
+
+Currently the renderer supports these locales:
+- `en-US` configured by default
+- `es-ES`
+
+
+:::note
+Internationalization support of the renderer can be extended. See the [i18 documentation](https://github.com/javiercavlop/pricing-renderer/blob/main/docs/i18n.md).
+:::
+
+
+```jsx
+<PricingRenderer locale="es-ES" />
+```
+
+### onAction
+
+This prop takes a [`PricingActionEvent`](https://github.com/javiercavlop/pricing-renderer/blob/27c6c673ed63b3044faeb25931cf73a9ee81e469/src/element/events.ts#L34)
+handler function.
+This function callback is triggered if you:
+- Click on `Choose X` on `Plans` section
+
+This function is defined with one parameter `event` of type [`PricingActionEvent`](https://github.com/javiercavlop/pricing-renderer/blob/27c6c673ed63b3044faeb25931cf73a9ee81e469/src/react/index.ts#L83),
+an alias of a [`CustomEvent`](https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent)
+with [`PricingActionDetail`](https://github.com/javiercavlop/pricing-renderer/blob/27c6c673ed63b3044faeb25931cf73a9ee81e469/src/element/events.ts#L19-L26) data
+attached, and must return `void`.
+
+The consumable data structure of [`PricingActionDetail`](https://github.com/javiercavlop/pricing-renderer/blob/27c6c673ed63b3044faeb25931cf73a9ee81e469/src/element/events.ts#L19-L26) is defined as:
+```ts
+interface PricingActionDetail {
+  actionId: string;
+  planId?: string;
+  href?: string;
+  selection: PricingSelection;
+  resolved: ResolvedPricing;
+  metadata?: UnknownRecord;
+}
+```
+
+:::info
+To access the [`event`](https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent) information
+access `event.detail` object.
+:::
+
+In this example, each time that the user clicks on `Choose X` plan section, the
+`handleRendererAction` handler logic will be executed.
+```jsx
+const handleRendererAction = (customEvent) =>
+  registerPlanSelected(customEvent.detail.actionId, customEvent.detail.planId)
+
+<PricingRenderer onAction={handleRendererAction} />
+```
+
+### onDiagnostic
+
+A [`PricingDiagnosticEvent`](https://github.com/javiercavlop/pricing-renderer/blob/27c6c673ed63b3044faeb25931cf73a9ee81e469/src/element/events.ts#L35) handler function.
+This function will be triggered if:
+- The pricing renderer detects an error in the Pricing2Yaml provided.
+
+This function is defined with a single parameter `event` of type [`PricingDiagnosticEvent`](https://github.com/javiercavlop/pricing-renderer/blob/27c6c673ed63b3044faeb25931cf73a9ee81e469/src/element/events.ts#L35)
+, an alias of a [`CustomEvent`](https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent) with [`PricingDiagnosticDetail[]`](https://github.com/javiercavlop/pricing-renderer/blob/27c6c673ed63b3044faeb25931cf73a9ee81e469/src/core/types.ts#L22-L28)
+data attached, and must return `void`.
+
+:::info
+In order to get the pricing diagnostics from the parameter `event` object you will have
+to access the `detail` property.
+:::
+
+The consumable data structure of [`PricingDiagnosticDetail`](https://github.com/javiercavlop/pricing-renderer/blob/27c6c673ed63b3044faeb25931cf73a9ee81e469/src/core/types.ts#L22-L28) is defined as:
+```typescript
+interface PricingDiagnostic {
+  code: string;
+  severity: DiagnosticSeverity;
+  message: string;
+  path?: string;
+  details?: UnknownRecord;
+}
+```
+
+Imagine that you have defined the following `handlePricingDiagnostics` handler function. You can
+pass that function to the `onDiagnostic` prop:
+```jsx
+const handlePricingDiagnostics = (event) =>
+  console.log(event.detail)
+
+<PricingRenderer pricing={pricing} onDiagnostic={handlePricingDiagnostics} />
+```
+
+Following the previous example, if you provide Pricing2Yaml 3.0 `pricing` object the callback function
+will be executed and the diagnostics will be logged the console:
+```json
+[
+  {
+    code: "PR_VERSION_BEST_EFFORT",
+    message: "Pricing2Yaml 3.0 is rendered using the compatible 3.1 subset.",
+    path: "syntaxVersion",
+    severity: "warning"
+  }
+]
+```
+
+### onSelectionChange
+
+A [`PricingSelectionChangeEvent`](https://github.com/javiercavlop/pricing-renderer/blob/27c6c673ed63b3044faeb25931cf73a9ee81e469/src/element/events.ts#L33)
+handler function. This function callback is triggered if you:
+- Change the billing period
+- Click `Reset` button on `Configure your pricing` section
+- Change a variable in `Configure your pricing` section
+- `Select` a plan in the `Plans` section
+- `Add` an add-on in the `Add-ons` section
+- Contract multiple times an add-on
+
+This function is defined with a single parameter event of type [`PricingSelectionChangeEvent`](https://github.com/javiercavlop/pricing-renderer/blob/27c6c673ed63b3044faeb25931cf73a9ee81e469/src/element/events.ts#L33),
+an alias of a [`CustomEvent`](https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent) with [`PricingSelectionChangeDetail`](https://github.com/javiercavlop/pricing-renderer/blob/27c6c673ed63b3044faeb25931cf73a9ee81e469/src/element/events.ts#L14-L17)
+data attached, and must return void.
+
+:::info
+To access the [`event`](https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent) information you have to
+access `event.detail` object.
+:::
+
+```jsx
+const handleRendererAction = (customEvent) =>
+  console.log(customEvent.detail)
+
+<PricingRenderer onSelectionChange={handleRendererAction} />
+```
+
+### pricing
+
+:::warning
+If you use `pricing` prop you cannot use the following props:
+- [`loadPricing`](#loadpricing)
+- [`request`](#request)
+- [`src`](#src)
+- [`yaml`](#yaml)
+:::
+
+You can pass your own **Javascript object** to the `PricingRenderer` using
+the `pricing` prop. The object must be compatible the [Pricing2Yaml 3.1 specification](../../../pricing-description-languages/Pricing2Yaml/versions/pricing2yaml-v31-specification.mdx).
+
+
+Suppose that we have the following Pricing2Yaml object in `myPricing` variable:
+```javascript
+const myPricing = {
+    syntaxVersion: "3.1",
+    saasName: "Acme Cloud",
+    features: {
+        storage: {
+            description: "Dedicated storage to save your files in the cloud.",
+            valueType: "BOOLEAN",
+            defaultValue: true,
+        },
+    },
+    usageLimits: {
+        maxStorage: {
+            description: "Included managed storage.",
+            valueType: "NUMERIC",
+            defaultValue: 5,
+            unit: "GB",
+            type: "RENEWABLE",
+            period: {
+                value: 1,
+                unit: "MONTH"
+            },
+            linkedFeatures: ["storage"],
+            trackable: true,
+        }
+    },
+    plans: {
+        free: {
+            price: 0,
+            unit: "month",
+            features: null,
+            usageLimits: {
+                maxStorage: {
+                    value: 5
+                }
+            }
+        },
+        standard: {
+            description: "For small teams.",
+            price: 15,
+            unit: "month",
+            features: null,
+            usageLimits: {
+                maxStorage: {
+                    value: 1000
+                }
+            }
+        }
+    }
+}
+```
+
+Use `myPricing` variable inside the `pricing` prop of the `PricingRenderer` to render the pricing:
+```jsx
+<PricingRenderer pricing={myPricing} />
+```
+
+### pricingPath
+
+Declares the pricing path name for the host application. The default path configured is
+`/pricing`.
+
+:::info
+Learn more about absolute path in [Section 3.3 of RFC 3986: STD 66: Uniform Resource Identifier (URI): Generic Syntax](https://www.rfc-editor.org/info/rfc3986/#section-3.3).
+:::
+
+```jsx
+<PricingRenderer pricingPath="/products/ACME/pricing" />
+```
+
+### request
+
+This prop accepts a **Javascript object** of type [`PricingRequestOptions`](https://github.com/javiercavlop/pricing-renderer/blob/27c6c673ed63b3044faeb25931cf73a9ee81e469/src/yaml/types.ts#L8-L14).
+
+#### Properties
+
+`headers` (**optional**):
+- Accepts a [`Headers`](https://developer.mozilla.org/en-US/docs/Web/API/Headers) like object
+- Accepts a function that returns a `Headers` like object
+- Accepts an async function that returns a promise containing [`Headers`](https://developer.mozilla.org/en-US/docs/Web/API/Headers)
+or [`Headers`](https://developer.mozilla.org/en-US/docs/Web/API/Headers) like object
+
+Example of a [`Headers`](https://developer.mozilla.org/en-US/docs/Web/API/Headers) like object
+```javascript
+const customHeaders = {
+  'Content-Type': 'application/json',
+  'Authorization': 'Bearer <REDACTED>'
+}
+```
+
+Example of a function that returns a [`Headers`](https://developer.mozilla.org/en-US/docs/Web/API/Headers) like object:
+```javascript
+const customHeaders = () => ({
+  'Content-Type': 'application/json',
+  'Authorization': 'Bearer <REDACTED>'
+})
+```
+
+Example of an async function that returns a promise containing `Headers` or `Headers` like object
+  ```javascript
+  const customHeaders = async () => ({
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${await refreshAccessToken()}`
+  })
+  ```
+`credentials` (**optional**): string
+
+Whether or not the browser sends credentials with the request. Accepted values are:
+  - `omit`
+  - `same-origin`
+  - `include`
+
+`timeoutMs` (**optional**): number
+
+Maximum time to wait for the download in milliseconds (Default is 15000 ms)
+
+`maxBytes` (**optional**): number
+
+Maximum number of bytes to be interpreted by the renderer (Default is 2 MiB).
+
+`fetch` (**optional**): function
+
+A fetch implementation
+
+In this example we define an object `requestOptions` with an async function in the `headers` property. This function
+gets a JWT refresh token and updates the JWT access token allowing the renderer to keep displaying the
+pricing:
+```jsx
+const requestOptions = {
+  headers: async () => ({ 'Authorization': `Bearer ${await refreshAccessToken()}`})
+}
+
+<PricingRenderer src="https://acme.cloud.com/products/acme/pricing" request={requestOptions} />
+```
+
+### src
+
+:::warning
+If you use `src` prop you cannot use the following props:
+- [`pricing`](#pricing)
+- [`yaml`](#yaml)
+:::
+
+You can provide a web [**URL**](https://www.rfc-editor.org/info/rfc3986/#section-1.1.3) (HTTP or HTTPS only) to the `PricingRenderer`
+in the `src` prop to display the pricing:
+```jsx
+<PricingRenderer src="https://acme.cloud.com/pricings/example.yml"/>
+```
+
+### theme
+
+Choose the general appearance of the pricing renderer. Supported values are:
+- `light` configured by default
+- `dark`
+- `auto`
+
+```jsx
+<PricingRenderer theme="dark" />
+```
+
+### yaml
+
+:::warning
+If you use `yaml` prop you cannot use the following props:
+- [`loadPricing`](#loadpricing)
+- [`pricing`](#pricing)
+- [`request`](#request)
+- [`src`](#src)
+:::
+
+The `PricingRenderer` accepts the prop `yaml`. This property expects a **String** encoded in the
+[Pricing2Yaml 3.1 specification](../../../pricing-description-languages/Pricing2Yaml/versions/pricing2yaml-v31-specification.mdx).
+
+```jsx
+const myPricing = `
+syntaxVersion: '3.1'
+saasName: Example Cloud
+features:
+  featureA:
+    valueType: BOOLEAN
+    defaultValue: true
+plans:
+  free:
+    price: 0
+`
+
+<PricingRenderer yaml={myPricing}/>
+```
+
+:::info
+If you use [Vite](https://vite.dev/guide/assets) you have the option to import a Pricing2Yaml
+as a **String** using `?raw` suffix in the `import` statement:
+```jsx
+import myPricing from './2026-09-example-cloud.yaml?raw'
+
+<PricingRenderer yaml={myPricing} />
+```
+:::
