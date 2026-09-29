@@ -1,0 +1,1468 @@
+---
+sidebar_position: 2
+title: API
+custom_edit_url: null
+---
+
+:::info
+Currently, the pricing renderer is specifically designed for the [Pricing2Yaml 3.1 specification](../../../pricing-description-languages/Pricing2Yaml/versions/pricing2yaml-v31-specification.mdx).
+
+Nonetheless, we provide **PARTIAL** support for the [Pricing2Yaml 3.0 syntax](../../../pricing-description-languages/Pricing2Yaml/versions/pricing2yaml-v30-specification.mdx).
+The renderer will use all the syntax of [Pricing2Yaml 3.0](../../../pricing-description-languages/Pricing2Yaml/versions/pricing2yaml-v30-specification.mdx)
+compatible with Pricing2Yaml 3.1 specification. You will see a warning message in the renderer that emphasizes this fact.
+:::
+
+In order to use the `PricingRenderer` component you have to provide an iPricing method input to the renderer.
+You **MUST** choose only one method to configure the `PricingRenderer` input:
+- Use `pricing` prop if you provide a **JavaScript object** compatible with the [Pricing2Yaml 3.1 specification](../../../pricing-description-languages/Pricing2Yaml/versions/pricing2yaml-v31-specification.mdx).
+- Use `src` prop if you provide a **URL** (HTTP or HTTPS only) where the Pricing2Yaml is exposed.
+- Use `yaml` prop if you provide a **string** encoded in [Pricing2Yaml 3.1 specification](../../../pricing-description-languages/Pricing2Yaml/versions/pricing2yaml-v31-specification.mdx).
+
+
+## Props
+
+This section describes the available props of the `PricingRenderer` component.
+
+### aria-label
+
+Define the `aria-label` of the `PricingRenderer`. See the [MDN docs](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-label)
+to learn more about `aria-label`.
+
+#### Signature
+
+[View source](https://github.com/javiercavlop/pricing-renderer/blob/27c6c673ed63b3044faeb25931cf73a9ee81e469/src/react/index.ts#L80).
+```typescript
+'aria-label'?: string
+```
+
+#### Details
+
+```jsx
+<PricingRenderer pricing={pricing} aria-label="Pricing Renderer" />
+```
+
+### className
+
+You can specify the CSS class of the `PricingRenderer` with the `className` prop.
+
+#### Signature
+
+[View source](https://github.com/javiercavlop/pricing-renderer/blob/27c6c673ed63b3044faeb25931cf73a9ee81e469/src/react/index.ts#L78).
+```typescript
+className?: string
+```
+
+#### Details
+
+```jsx
+<PricingRenderer pricing={pricing} className="MyPricingRenderer" />
+```
+
+### ctaEnabled
+
+:::warning
+You can configure call-to-actions (CTAs) exclusively for plans.
+:::
+
+If you have configured call-to-actions (CTAs), the **boolean** `ctaEnabled`
+prop controls whether they are displayed in the `PricingRenderer`.
+- When `ctaEnabled` is `true`, the CTAs are rendered.
+- when `ctaEnabled` is `false`, the CTAs are not rendered.
+- `ctaEnabled` defaults to `true`
+
+#### Signature
+
+[View source](https://github.com/javiercavlop/pricing-renderer/blob/27c6c673ed63b3044faeb25931cf73a9ee81e469/src/react/index.ts#L70).
+```typescript
+ctaEnabled?: boolean
+```
+
+#### Details
+
+```jsx
+<PricingRenderer pricing={pricing} ctaEnabled={false} />
+```
+
+### defaultSelection
+
+With the `defaultSelection` prop you can set which plans and add-ons are selected by default on the `PricingRenderer`.
+You can also customize the default billing period and the default values for variables.
+
+#### Signature
+
+[View source](https://github.com/javiercavlop/pricing-renderer/blob/27c6c673ed63b3044faeb25931cf73a9ee81e469/src/react/index.ts#L63).
+```typescript
+defaultSelection?: Partial<PricingSelection>
+```
+
+#### Properties
+
+```typescript
+interface PricingSelection {
+  planId?: string;
+  billingPeriod?: string;
+  variables: Record<string, unknown>;
+  addOns: Record<string, AddOnSelection>;
+}
+```
+
+The `PricingSelection` structure is composed of:
+- `planId` (**optional**): the `planId` is the
+**key name** of a plan defined inside the Pricing2Yaml [`plans`](../../../pricing-description-languages/Pricing2Yaml/versions/pricing2yaml-v31-specification.mdx#plans)
+map. The type of `planId` is a string.
+- `billingPeriod` (**optional**): the `billingPeriod` is the **key name** of a billing period defined
+inside the Pricing2Yaml [`billing`](../../../pricing-description-languages/Pricing2Yaml/versions/pricing2yaml-v31-specification.mdx#billing) map.
+The type of `billingPeriod` is a string.
+- `variables` (**optional**): an object in which the property names of the object are the key names of
+the variables defined inside the Pricing2Yaml [`variables`](../../../pricing-description-languages/Pricing2Yaml/versions/pricing2yaml-v31-specification.mdx#variables)
+map and values are the default values for the *Configure your pricing* section.
+- `addOns` (**optional**): an object in which the property names of the object are the key names of
+an add-on inside the Pricing2Yaml [`addOns`](../../../pricing-description-languages/Pricing2Yaml/versions/pricing2yaml-v31-specification.mdx#addons)
+map. Each key of the object must map to an object of type [`AddOnSelection`](https://github.com/javiercavlop/pricing-renderer/blob/27c6c673ed63b3044faeb25931cf73a9ee81e469/src/core/types.ts#L157-L160).
+The type of `addOns` is a `Record<string, AddOnSelection>`.
+
+  An object of type [`AddOnSelection`](https://github.com/javiercavlop/pricing-renderer/blob/27c6c673ed63b3044faeb25931cf73a9ee81e469/src/core/types.ts#L157-L160)
+  has two properties `selected` and `quantity`. The `selected` property indicates if the add-on is selected.
+  The `quantity` property indicates how many add-ons are contracted.
+
+  [`AddOnSelection` source code:](https://github.com/javiercavlop/pricing-renderer/blob/27c6c673ed63b3044faeb25931cf73a9ee81e469/src/core/types.ts#L157-L160)
+  ```typescript
+  interface AddOnSelection {
+    selected: boolean;
+    quantity: number;
+  }
+  ```
+
+#### Examples
+
+In this section we will explain in detail how to configure `defaultSelection` object.
+
+Here is a quick example using the [CCSIM](https://sphere.score.us.es/static/pricings/uploaded/CCSIM/1.0.yml)
+as reference for how to use the `defaultSelection` prop:
+```jsx
+import CCSIM from "./ccsim.js"
+
+const initialSelection = {
+    planId: "ENTERPRISE",
+    billingPeriod: "annual",
+    addOns: {
+      extraProject: {
+        selected: true,
+        quantity: 1
+      },
+      uiTests: {
+        selected: true,
+        quantity: 1
+      }
+    }
+  }
+<PricingRenderer pricing={CCSIM} defaultSelection={initialSelection} />
+```
+
+
+**Selecting a plan**
+
+To show how to select a plan by default, we will be using the [CCSIM](https://sphere.score.us.es/static/pricings/uploaded/CCSIM/1.0.yml)
+pricing stored in SPHERE (pricing repository).
+
+We will configure the `PricingRenderer` with the *PRO* plan. Take the key name of the *PRO*
+plan defined in [CCSIM](https://sphere.score.us.es/static/pricings/uploaded/CCSIM/1.0.yml)
+and store it in an object with a property called `planId`. Then pass this object to the `defaultSelection` prop:
+```jsx
+import CCSIM from "./ccsim.js"
+
+const intialSelection = {
+  planId: "PRO"
+}
+
+<PricingRenderer pricing={CCSIM} defaultSelection={initialSelection} />
+```
+
+**Selecting a billing period**
+
+To show how to select a billing period by default, we will be using the [CCSIM](https://sphere.score.us.es/static/pricings/uploaded/CCSIM/1.0.yml)
+pricing stored in SPHERE (pricing repository).
+
+We will configure the `PricingRenderer` with an *annual* billing period. Take the key name of the *annual*
+billing period defined in [CCSIM](https://sphere.score.us.es/static/pricings/uploaded/CCSIM/1.0.yml)
+and store it in an object with a property called `billingPeriod`. Then pass this object to the `defaultSelection` prop:
+```jsx
+import CCSIM from "./ccsim.js"
+
+const intialSelection = {
+  billingPeriod: "annual"
+}
+
+<PricingRenderer pricing={CCSIM} defaultSelection={initialSelection} />
+```
+
+**Selecting default values for defined variables**
+
+:::warning
+If [`variablesEnabled`](#variablesenabled) is set to `true` all variable controls will be disabled and
+the values in the `variables` object will not take effect.
+:::
+
+To show how to select default values for defined variables, we will be using the [CCSIM](https://sphere.score.us.es/static/pricings/uploaded/CCSIM/1.0.yml)
+pricing stored in SPHERE (pricing repository).
+
+Imagine that you want to base your pricing on the number of seats and, for convenience,
+provide a default number of seats (e.g., 5).
+
+Given that the formula for the *PRO* plan is 239 * #seats, you would need to create an object
+with a `seats` property set to `5` (The type of the value must match the type expected by the formula):
+
+
+```jsx
+import CCSIM from "./ccsim.js"
+
+const intialSelection = {
+  variables: {
+    seats: 5
+  }
+}
+
+<PricingRenderer pricing={pricing} defaultSelection={initialSelection} />
+```
+
+**Selecting add-ons**
+
+To show how to select add-ons by default, we will be using the [CCSIM](https://sphere.score.us.es/static/pricings/uploaded/CCSIM/1.0.yml)
+pricing stored in SPHERE (pricing repository).
+
+We will configure the `PricingRenderer` with *Extra Project* and *UI Tests* add-ons.
+Use the key names defined for these add-ons in [CCSIM](https://sphere.score.us.es/static/pricings/uploaded/CCSIM/1.0.yml)
+as the keys of the [`addOns`](../../../pricing-description-languages/Pricing2Yaml/versions/pricing2yaml-v31-specification.mdx#addons)
+map, *Extra Project* is named as `extraProject` and *UI Tests* is named `uiTests`.
+Each key must map to an [`AddOnSelection`](https://github.com/javiercavlop/pricing-renderer/blob/27c6c673ed63b3044faeb25931cf73a9ee81e469/src/core/types.ts#L157-L160)
+object. Configure `selected` with the value `true` and a numeric value for `quantity` indicating the count of
+add-ons desired. The resulting configuration will be:
+```jsx
+import CCSIM from "./ccsim.js"
+
+const intialSelection = {
+  addOns: {
+    extraProject: {
+      selected: true,
+      quantity: 1
+    },
+    uiTests: {
+      selected: true,
+      quantity: 1
+    }
+  }
+}
+
+<PricingRenderer pricing={CCSIM} defaultSelection={initialSelection} />
+```
+
+### expressionOptions
+
+The prop `expressionOptions` enables the user to define global custom functions
+that can be used inside any formula.
+
+#### Signature
+
+[View source](https://github.com/javiercavlop/pricing-renderer/blob/27c6c673ed63b3044faeb25931cf73a9ee81e469/src/react/index.ts#L66).
+```typescript
+expressionOptions?: ExpressionOptions
+```
+
+[View source](https://github.com/javiercavlop/pricing-renderer/blob/27c6c673ed63b3044faeb25931cf73a9ee81e469/src/core/types.ts#L38-L40).
+```typescript
+interface ExpressionOptions {
+  functions?: Readonly<Record<string, ExpressionFunction>>;
+}
+```
+
+[View source](https://github.com/javiercavlop/pricing-renderer/blob/27c6c673ed63b3044faeb25931cf73a9ee81e469/src/core/types.ts#L36).
+```typescript
+type ExpressionFunction = (...argumentsList: unknown[]) => unknown;
+```
+
+#### Details
+
+To make a custom function available to a formula, define it in the `functions` property
+of the expression options object. Each key of the object will be the function name
+that you can use globally.
+
+Given the formula `volumePrice(#seats)`, `volumePrice` will be called with the variable `seats`
+as an argument:
+```jsx
+const exOpts = {
+  functions: {
+    volumePrice: (units) => Number(units) * 0.8
+  }
+}
+
+<PricingRenderer pricing={pricing} expressionOptions={exOpts} />
+```
+
+### id
+
+The `id` prop configures the HTML [id](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Global_attributes/id)
+of the `PricingRenderer`.
+
+#### Signature
+
+[View source](https://github.com/javiercavlop/pricing-renderer/blob/27c6c673ed63b3044faeb25931cf73a9ee81e469/src/react/index.ts#L79).
+```typescript
+id?: string
+```
+
+#### Details
+
+```jsx
+<PricingRenderer pricing={pricing} id="pricing-renderer" />
+```
+
+### layout
+
+The `layout` prop controls the visualization display mode of the `PricingRenderer`.
+
+#### Signature
+
+[View source](https://github.com/javiercavlop/pricing-renderer/blob/27c6c673ed63b3044faeb25931cf73a9ee81e469/src/react/index.ts#L74).
+```typescript
+layout?: 'auto' | 'compact' | 'table'
+```
+
+- When `layout` is `auto`, the pricing renderer changes between the `table` and `compact` layout
+using the width available in the screen.
+- When `layout` is `compact`, features and usage limits will be displayed using a comparison table.
+- When `layout` is `table`, features and usage limits will be displayed as independent items.
+- `layout` defaults to `auto`
+
+#### Details
+
+```jsx
+<PricingRenderer pricing={pricing} layout="compact" />
+```
+
+### loadingLabel
+
+The `loadingLabel` prop controls the text that is displayed when the pricing is being
+processed.
+
+#### Signature
+
+[View source](https://github.com/javiercavlop/pricing-renderer/blob/27c6c673ed63b3044faeb25931cf73a9ee81e469/src/react/index.ts#L77).
+```typescript
+loadingLabel?: string
+```
+
+#### Details
+
+```jsx
+<PricingRenderer pricing={pricing} loadingLabel="Caricando..." />
+```
+
+### loadPricing
+
+The `PricingRenderer` has a built-in loader to fetch a pricing but is quite limited. However, you
+can implement your own workflow to get a pricing. This is useful if:
+- You need a custom authentication process
+- You need to access Cloud Storage Services like: [Amazon S3](https://aws.amazon.com/es/s3/),
+[Google Cloud Storage](https://cloud.google.com/storage), [Alibaba Cloud Object Storage Service](https://www.alibabacloud.com/en/product/object-storage-service) or any provider
+- You use a certain SDK to fetch your pricing
+
+:::note
+The default built-in loader has the following restrictions:
+- Permits only HTTP or HTTPS `GET` only
+- The internal `fetch` method uses `credentials: "omit"`, meaning credentials will not be sent in the request or
+included in the response.
+:::
+
+#### Signature
+
+[View source](https://github.com/javiercavlop/pricing-renderer/blob/27c6c673ed63b3044faeb25931cf73a9ee81e469/src/yaml/types.ts#L24)
+```typescript
+(context: PricingLoaderContext) => Promise<string | IPricingLike>
+```
+
+The `loadPricing` function takes one parameter `context` of type [`PricingLoaderContext`](https://github.com/javiercavlop/pricing-renderer/blob/27c6c673ed63b3044faeb25931cf73a9ee81e469/src/yaml/types.ts#L16-L22)
+and returns a promise that resolves to a string or a [`IPricingLike`](https://github.com/javiercavlop/pricing-renderer/blob/27c6c673ed63b3044faeb25931cf73a9ee81e469/src/core/types.ts#L3-L18)
+object
+
+#### Parameters
+
+`context`: `PricingLoaderContext`
+
+[`PricingLoaderContext` source code](https://github.com/javiercavlop/pricing-renderer/blob/27c6c673ed63b3044faeb25931cf73a9ee81e469/src/yaml/types.ts#L16-L22):
+```typescript
+interface PricingLoaderContext {
+  url: string;
+  signal: AbortSignal;
+  request: Omit<PricingRequestOptions, 'headers' | 'fetch'> & {
+    headers?: HeadersInit;
+  };
+}
+```
+
+#### Details
+
+Imagine that we have the following implementation of a pricing loader function. This function implementation
+includes a `Bearer` token in the `Authorization` header to access a private resource:
+```javascript
+const customLoadPricing = async (context) => {
+  const authorizationToken = await getAccessToken();
+
+  const response = await fetch(context.url, {
+    method: "GET",
+    signal: context.signal,
+    headers: {
+      Authorization: `Bearer ${authorizationToken}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error(`Failed to load pricing: ${response.status}`);
+  }
+
+  return response.text();
+};
+```
+
+You can pass the previous `customLoadPricing` function to the `loadPricing` prop of the `PricingRenderer`:
+```jsx
+<PricingRenderer src="https://acme.cloud.com/pricings/2026.07-foo.yaml" loadPricing={customLoadPricing} />
+```
+
+### locale
+
+Configure the renderer's default locale. The renderer text, dates, and prices will be
+formatted according to the option chosen.
+
+#### Signature
+
+[View source](https://github.com/javiercavlop/pricing-renderer/blob/27c6c673ed63b3044faeb25931cf73a9ee81e469/src/react/index.ts#L67).
+```
+locale?: string
+```
+
+Currently the renderer supports these locales:
+- `en-US` configured by default
+- `es-ES`
+
+:::note
+Internationalization support for the renderer can be extended. See the [i18 documentation](https://github.com/javiercavlop/pricing-renderer/blob/main/docs/i18n.md).
+:::
+
+#### Details
+
+```jsx
+<PricingRenderer locale="es-ES" />
+```
+
+### messages
+
+The prop `messages` allows you to override the localized texts defined for the
+selected [`locale`](#locale).
+
+#### Signature
+
+[View source](https://github.com/javiercavlop/pricing-renderer/blob/27c6c673ed63b3044faeb25931cf73a9ee81e469/src/react/index.ts#L72).
+```typescript
+messages?: Record<string, string>;
+```
+
+<details>
+<summary>Keys used in the message catalog</summary>
+- `pricing.add`:	Add
+- `pricing.addAddOn`:	Add \{addOn\}
+- `pricing.added`:	Added
+- `pricing.addOns`:	Add-ons
+- `pricing.availableFor`:	Available for \{plans\}
+- `pricing.billing`:	Billing period
+- `pricing.cancel`:	Cancel
+- `pricing.collapseAll`:	Collapse all
+- `pricing.comparison`:	Compare plans
+- `pricing.confirmChanges`:	Review configuration changes
+- `pricing.confirmChangesDescription`:	This change will update related add-ons.
+- `pricing.contactSales`:	Contact sales
+- `pricing.createdAt`:	Created
+- `pricing.currency`:	Currency
+- `pricing.decrease`:	Decrease \{item\}
+- `pricing.dependsOn`:	Requires \{items\}
+- `pricing.description`:	Choose the plan that fits your needs.
+- `pricing.details`:	Pricing details
+- `pricing.documentation`:	Documentation
+- `pricing.discount`:	Save \{percent\}%
+- `pricing.effects`:	What this add-on changes
+- `pricing.error`:	The pricing could not be rendered.
+- `pricing.excludes`:	Cannot be combined with \{items\}
+- `pricing.expandAll`:	Expand all
+- `pricing.featureEffect`:	Feature
+- `pricing.features`:	Features
+- `pricing.from`:	From
+- `pricing.included`:	Included
+- `pricing.increase`:	Increase \{item\}
+- `pricing.limitEffect`:	Usage limit
+- `pricing.limitExtension`:	Limit extension
+- `pricing.loading`:	Loading pricing…
+- `pricing.noPlans`:	No plans are available.
+- `pricing.notAvailable`:	Not available for the selected plan
+- `pricing.notIncluded`:	Not included
+- `pricing.onlyDifferences`:	Only differences
+- `pricing.per`:	per \{unit\}
+- `pricing.plans`:	Plans
+- `pricing.private`:	Private
+- `pricing.quantityConstraints`:	Quantity \{min\}–\{max\}, in steps of \{step\}
+- `pricing.removeAddOn`:	Remove \{addOn\}
+- `pricing.requiresQuote`:	Requires quote
+- `pricing.reset`:	Reset
+- `pricing.retry`:	Retry
+- `pricing.rowsShown`:	\{count\} items shown
+- `pricing.search`:	Search features
+- `pricing.select`:	Select
+- `pricing.selected`:	Selected
+- `pricing.selectedPlan`:	Selected plan
+- `pricing.showRemaining`:	Show \{count\} more
+- `pricing.subtotal`:	Known subtotal
+- `pricing.tags`:	Tags
+- `pricing.title`:	Pricing
+- `pricing.total`:	Estimated total
+- `pricing.trackable`:	Trackable
+- `pricing.unbounded`:	unbounded
+- `pricing.unlimited`:	Unlimited
+- `pricing.usageLimits`:	Usage limits
+- `pricing.variableError`:	This value cannot produce a valid price. The last valid price is shown.
+- `pricing.variables`:	Configure your pricing
+- `pricing.version`:	Version
+- `pricing.warning`:	Pricing warning
+- `pricing.willAdd`:	Will add: \{items\}
+- `pricing.willRemove`:	Will remove: \{items\}
+</details>
+
+#### Details
+
+```jsx
+const newMessageCatalog = {
+  "pricing.plans": "Plans",
+  "pricing.addOns": "Compléments",
+  "pricing.choosePlan": "Choisir {plan}"
+}
+
+<PricingRenderer pricing={pricing}
+  locale="fr-FR"
+  messages={newMessageCatalog} />
+```
+
+### mode
+
+The property `mode` controls whether the metadata defined in the Pricing2Yaml input,
+like `version`, `createdAt`, `currency` or `url`, should be displayed in the renderer.
+
+#### Signature
+
+[View source](https://github.com/javiercavlop/pricing-renderer/blob/27c6c673ed63b3044faeb25931cf73a9ee81e469/src/react/index.ts#L73).
+```typescript
+mode?: 'commercial' | 'catalog'
+```
+
+- When `mode` is `commercial` metadata is not displayed.
+- When `mode` is `catalog` metadata is displayed.
+- `mode` defaults to `commercial`
+
+#### Details
+
+```jsx
+<PricingRenderer pricing={pricing} mode="catalog" />
+```
+
+### normalizeOptions
+
+The `normalizeOptions` prop lets you pass Pricing2Yaml syntax adapters before
+the normalization is done. This is useful if you want to make some application
+specific changes in the syntax.
+
+#### Signature
+
+[View source](https://github.com/javiercavlop/pricing-renderer/blob/27c6c673ed63b3044faeb25931cf73a9ee81e469/src/react/index.ts#L65).
+```typescript
+normalizeOptions?: NormalizePricingOptions
+```
+
+[View source](https://github.com/javiercavlop/pricing-renderer/blob/27c6c673ed63b3044faeb25931cf73a9ee81e469/src/core/types.ts#L153-L155).
+```typescript
+interface NormalizePricingOptions {
+  syntaxAdapters?: readonly PricingSyntaxAdapter[];
+}
+```
+
+[View source](https://github.com/javiercavlop/pricing-renderer/blob/27c6c673ed63b3044faeb25931cf73a9ee81e469/src/core/types.ts#L147-L151).
+```typescript
+interface PricingSyntaxAdapter {
+  id: string;
+  supports: (syntaxVersion: string) => boolean;
+  adapt: (pricing: IPricingLike) => IPricingLike;
+}
+```
+
+
+#### Details
+
+In this example we are passing the `adapter` function to a `PricingSyntaxAdapter` object.
+This adapter changes the `saasName` by appending the `createdAt` to the `saasName`
+property of the Pricing2Yaml:
+```jsx
+const adapter = (pricing) =>
+  ({...pricing, saasName: `${pricing.saasName} (${pricing.createdAt})`})
+
+normOpts = {
+  syntaxAdapters: [
+    {
+      id: "adapter1",
+      supports: (syntaxVersion) => syntaxVersion === "3.1",
+      adapt: adapter
+    }
+  ]
+}
+
+<PricingRenderer pricing={pricing} normalizeOptions={normOpts} />
+```
+
+### onAction
+
+The `onAction` prop takes a [`PricingActionEvent`](https://github.com/javiercavlop/pricing-renderer/blob/27c6c673ed63b3044faeb25931cf73a9ee81e469/src/element/events.ts#L34)
+handler function.
+The `onAction` function callback is executed if the user triggers a call-to-action (CTA)
+of a plan. For example clicking on `Choose X`/`Start with X` will trigger the `onAction`
+callback. However, you can define your own CTAs in the [`presentation.ctas`](#presentation) object.
+
+#### Signature
+
+[View source](https://github.com/javiercavlop/pricing-renderer/blob/27c6c673ed63b3044faeb25931cf73a9ee81e469/src/react/index.ts#L83)
+```typescript
+onAction?: (event: PricingActionEvent) => void
+```
+
+This function is defined with one parameter `event` of type [`PricingActionEvent`](https://github.com/javiercavlop/pricing-renderer/blob/27c6c673ed63b3044faeb25931cf73a9ee81e469/src/react/index.ts#L83),
+an alias of a [`CustomEvent`](https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent)
+with [`PricingActionDetail`](https://github.com/javiercavlop/pricing-renderer/blob/27c6c673ed63b3044faeb25931cf73a9ee81e469/src/element/events.ts#L19-L26) data
+attached, and must return `void`.
+
+#### Parameters
+
+`event`: `PricingActionEvent` (alias of `CustomEvent<PricingActionDetail>`)
+
+[View `PricingActionDetail` source](https://github.com/javiercavlop/pricing-renderer/blob/27c6c673ed63b3044faeb25931cf73a9ee81e469/src/element/events.ts#L19-L26):
+```ts
+interface PricingActionDetail {
+  actionId: string;
+  planId?: string;
+  href?: string;
+  selection: PricingSelection;
+  resolved: ResolvedPricing;
+  metadata?: UnknownRecord;
+}
+```
+
+#### Details
+
+In this example, each time that the user clicks on the `Choose X` plan section, the
+`handleRendererAction` handler logic will be executed.
+```jsx
+const handleRendererAction = (customEvent) =>
+  registerPlanSelected(customEvent.detail.actionId, customEvent.detail.planId)
+
+<PricingRenderer onAction={handleRendererAction} />
+```
+
+:::info
+To access the [`event`](https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent) information
+access `event.detail` object.
+:::
+
+### onDiagnostic
+
+A [`PricingDiagnosticEvent`](https://github.com/javiercavlop/pricing-renderer/blob/27c6c673ed63b3044faeb25931cf73a9ee81e469/src/element/events.ts#L35) handler function.
+This function will be triggered if:
+- The pricing renderer detects an error in the Pricing2Yaml provided.
+
+#### Signature
+
+[View source](https://github.com/javiercavlop/pricing-renderer/blob/27c6c673ed63b3044faeb25931cf73a9ee81e469/src/react/index.ts#L84).
+```typescript
+(event: PricingDiagnosticEvent) => void
+```
+
+This function is defined with a single parameter `event` of type [`PricingDiagnosticEvent`](https://github.com/javiercavlop/pricing-renderer/blob/27c6c673ed63b3044faeb25931cf73a9ee81e469/src/element/events.ts#L35),
+an alias of a [`CustomEvent`](https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent) with [`PricingDiagnosticDetail`](https://github.com/javiercavlop/pricing-renderer/blob/27c6c673ed63b3044faeb25931cf73a9ee81e469/src/element/events.ts#L28-L30)
+data attached, and must return `void`.
+
+#### Parameters
+
+[`PricingDiagnosticDetail` source code](https://github.com/javiercavlop/pricing-renderer/blob/27c6c673ed63b3044faeb25931cf73a9ee81e469/src/element/events.ts#L28-L30):
+```typescript
+interface PricingDiagnosticDetail {
+  diagnostics: PricingDiagnostic[];
+}
+```
+
+[`PricingDiagnostic` source code](https://github.com/javiercavlop/pricing-renderer/blob/27c6c673ed63b3044faeb25931cf73a9ee81e469/src/core/types.ts#L22-L28):
+```typescript
+interface PricingDiagnostic {
+  code: string;
+  severity: DiagnosticSeverity;
+  message: string;
+  path?: string;
+  details?: UnknownRecord;
+}
+```
+
+#### Details
+
+Imagine that you have defined the following `handlePricingDiagnostics` handler function. You can
+pass that function to the `onDiagnostic` prop:
+```jsx
+const handlePricingDiagnostics = (event) =>
+  console.log(event.detail)
+
+<PricingRenderer pricing={pricing} onDiagnostic={handlePricingDiagnostics} />
+```
+
+:::info
+In order to get the pricing diagnostics from the parameter `event` object you will have
+to access the `detail` property.
+:::
+
+Following the previous example, if you provide Pricing2Yaml 3.0 `pricing` object the callback function
+will be executed and the diagnostics will be logged to the console:
+```json
+[
+  {
+    code: "PR_VERSION_BEST_EFFORT",
+    message: "Pricing2Yaml 3.0 is rendered using the compatible 3.1 subset.",
+    path: "syntaxVersion",
+    severity: "warning"
+  }
+]
+```
+
+### onReady
+
+A [`PricingReadyEvent`](https://github.com/javiercavlop/pricing-renderer/blob/27c6c673ed63b3044faeb25931cf73a9ee81e469/src/element/events.ts#L32) handler function.
+This function will be triggered if:
+- The Pricing2Yaml input was loaded and normalized successfully
+
+:::info
+If the loading or normalization process **FAILS** the `PricingRenderer` will execute the callback
+passed in the prop [`onDiagnostic`](#ondiagnostic).
+
+If this failure state is corrected, the event `onReady` is emitted again and the callback is executed.
+:::
+
+#### Signature
+
+[View source](https://github.com/javiercavlop/pricing-renderer/blob/27c6c673ed63b3044faeb25931cf73a9ee81e469/src/react/index.ts#L81).
+```typescript
+(event: PricingReadyEvent) => void
+```
+
+This function is defined with a single parameter `event` of type [`PricingReadyEvent`](https://github.com/javiercavlop/pricing-renderer/blob/27c6c673ed63b3044faeb25931cf73a9ee81e469/src/element/events.ts#L32),
+an alias of a [`CustomEvent`](https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent) with [`PricingReadyDetail`](https://github.com/javiercavlop/pricing-renderer/blob/27c6c673ed63b3044faeb25931cf73a9ee81e469/src/element/events.ts#L9-L12)
+data attached, and must return `void`.
+
+#### Parameters
+
+`event`: `PricingReadyEvent` (alias of `CustomEvent<PricingReadyDetail>`)
+
+[`PricingReadyDetail` source code](https://github.com/javiercavlop/pricing-renderer/blob/27c6c673ed63b3044faeb25931cf73a9ee81e469/src/element/events.ts#L9-L12):
+```typescript
+interface PricingReadyDetail {
+  pricing: NormalizedPricing;
+  diagnostics: PricingDiagnostic[];
+}
+```
+
+The [`PricingReadyDetail`](https://github.com/javiercavlop/pricing-renderer/blob/27c6c673ed63b3044faeb25931cf73a9ee81e469/src/element/events.ts#L9-L12)
+interface is composed of two properties `pricing` and `diagnostics`. The property `pricing`
+contains the normalized pricing. The property `diagnostics` contains warnings and incidents
+occurred while normalizing the pricing.
+
+#### Details
+
+```jsx
+const handleOnReady = (event) => console.log(event.detail.pricing)
+
+<PricingRenderer onReady={handleOnReady} />
+```
+
+### onSelectionChange
+
+A [`PricingSelectionChangeEvent`](https://github.com/javiercavlop/pricing-renderer/blob/27c6c673ed63b3044faeb25931cf73a9ee81e469/src/element/events.ts#L33)
+handler function. This function callback is called every time that the pricing selection changes or
+a variable that is involved in the computation of the final price changes.
+
+The following list enumerates some actions that affect the pricing selection:
+- Change the billing period.
+- Add or remove a plan. In the `Plans` section, click inside a plan card or click in the `Select` button
+to include a plan. You can select another plan by clicking on a different card.
+- Add or remove an add-on. In the `Add-ons` section, click `Add` to include an add-on and click again to remove it.
+- Change the quantity of add-ons contracted.
+- Confirm dependencies changes or conflicts between add-ons.
+
+These are some actions that affect the variables of a pricing:
+- Modifying a customizable variable.
+- Resetting all the customizable variables to the default values. Just click on
+the `Reset` button in the `Configure your pricing` section.
+
+:::warning
+Configured Call to Actions (CTAs) do not trigger the `onSelectionChange` event.
+:::
+
+#### Signature
+
+[View source](https://github.com/javiercavlop/pricing-renderer/blob/27c6c673ed63b3044faeb25931cf73a9ee81e469/src/react/index.ts#L82).
+
+```typescript
+(event: PricingSelectionChangeEvent) => void
+```
+
+This function is defined with a single parameter event of type [`PricingSelectionChangeEvent`](https://github.com/javiercavlop/pricing-renderer/blob/27c6c673ed63b3044faeb25931cf73a9ee81e469/src/element/events.ts#L33),
+an alias of a [`CustomEvent`](https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent) with [`PricingSelectionChangeDetail`](https://github.com/javiercavlop/pricing-renderer/blob/27c6c673ed63b3044faeb25931cf73a9ee81e469/src/element/events.ts#L14-L17)
+data attached, and must return void.
+
+#### Parameters
+
+`event`: `PricingSelectionChangeEvent` (alias of `CustomEvent<PricingSelectionChangeDetail>`).
+
+[`PricingSelectionChangeDetail` source code](https://github.com/javiercavlop/pricing-renderer/blob/27c6c673ed63b3044faeb25931cf73a9ee81e469/src/element/events.ts#L14-L17):
+```typescript
+interface PricingSelectionChangeDetail {
+  selection: PricingSelection;
+  resolved: ResolvedPricing;
+}
+```
+
+#### Details
+
+:::info
+To access the [`event`](https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent) information you have to
+access `event.detail` object.
+:::
+
+```jsx
+const handlePricingSelection = (customEvent) =>
+  console.log(customEvent.detail)
+
+<PricingRenderer onSelectionChange={handlePricingSelection} />
+```
+
+### presentation
+
+#### Signature
+
+[View source](https://github.com/javiercavlop/pricing-renderer/blob/27c6c673ed63b3044faeb25931cf73a9ee81e469/src/react/index.ts#L64).
+```typescript
+presentation?: PricingPresentation
+```
+
+[`PricingPresentation` source code](https://github.com/javiercavlop/pricing-renderer/blob/27c6c673ed63b3044faeb25931cf73a9ee81e469/src/core/types.ts#L256-L266):
+```typescript
+interface PricingPresentation {
+  title?: string;
+  subtitle?: string;
+  planBadges?: Record<string, PricingPlanBadge[]>;
+  planHighlights?: Record<string, PricingPlanHighlightSetting>;
+  planInheritance?: false | 'auto';
+  ctas?: PricingCta[];
+  variableControls?: 'auto' | false | VariableControl[];
+  billingLabels?: Record<string, string>;
+  maxHighlights?: number;
+}
+```
+
+<details>
+  <summary>Call-to-actions</summary>
+
+  ```typescript
+  interface PricingCta {
+    id: string;
+    label: string;
+    href?: string;
+    target?: '_self' | '_blank';
+    planId?: string;
+    kind?: 'primary' | 'secondary';
+    metadata?: UnknownRecord;
+  }
+  ```
+</details>
+
+<details>
+  <summary>Variable controls</summary>
+
+  [View source](https://github.com/javiercavlop/pricing-renderer/blob/27c6c673ed63b3044faeb25931cf73a9ee81e469/src/core/types.ts#L200-L210).
+  ```typescript
+  interface VariableControl {
+    path: string;
+    label?: string;
+    description?: string;
+    type: VariableControlType;
+    min?: number;
+    max?: number;
+    step?: number;
+    options?: VariableControlOption[];
+    hidden?: boolean;
+  }
+  ```
+
+  [View source](https://github.com/javiercavlop/pricing-renderer/blob/27c6c673ed63b3044faeb25931cf73a9ee81e469/src/core/types.ts#L193).
+  ```typescript
+  type VariableControlType = 'boolean' | 'number' | 'text' | 'select' | 'slider';
+  ```
+
+  [View source](https://github.com/javiercavlop/pricing-renderer/blob/27c6c673ed63b3044faeb25931cf73a9ee81e469/src/core/types.ts#L195).
+  ```typescript
+  interface VariableControlOption {
+    value: unknown;
+    label: string;
+  }
+  ```
+</details>
+
+#### Details
+
+##### Adding variable controls
+
+There are five types of variable controls:
+- Boolean
+- Number
+- Text
+- Select
+- Slider
+
+Boolean variable control:
+```jsx
+const varControls = [
+  {
+    path: "vipAccess",
+    type: "boolean",
+    label: "VIP access"
+  }
+]
+
+<PricingRenderer pricing={pricing} presentation={{variableControls: varControls}} />
+```
+
+Number variable control:
+```jsx
+const varControls = [
+  {
+    path: "tokens",
+    type: "number",
+    label: "Tokens",
+    min: 0
+  }
+]
+
+<PricingRenderer pricing={pricing} presentation={{variableControls: varControls}} />
+```
+
+Text variable control:
+```jsx
+const varControls = [
+  {
+    path: "version",
+    type: "text",
+    label: "Version",
+  }
+]
+
+<PricingRenderer pricing={pricing} presentation={{variableControls: varControls}} />
+```
+
+Select variable control:
+```jsx
+const varControls = [
+  {
+    path: "gpu",
+    type: "select",
+    label: "GPU",
+    options: [
+      {
+        value: "rtx-3060",
+        label: "RTX 3060"
+      },
+      {
+        value: "rtx-4060",
+        label: "RTX 4060"
+      },
+      {
+        value: "rtx-5060",
+        label: "RTX 5060"
+      }
+    ]
+  }
+]
+
+<PricingRenderer pricing={pricing} presentation={{variableControls: varControls}} />
+```
+
+Slider variable control:
+```jsx
+const varControls = [
+  {
+    path: "seats",
+    type: "slider",
+    label: "Team seats",
+    min: 1,
+    max: 100,
+    step: 2
+  }
+]
+
+<PricingRenderer pricing={pricing} presentation={{variableControls: varControls}} />
+```
+
+
+##### Adding CTAs
+
+You can configure the renderer with your own defined call-to-actions. There are two types of
+call-to-actions:
+- buttons
+- links
+
+Button CTA:
+```jsx
+const myCTAs = [
+  {
+    id: "button-cta",
+    label: "Start with BASIC",
+    planId: "BASIC",
+    kind: "secondary"
+  }
+]
+
+<PricingRenderer pricing={pricing} presentation={{ctas: myCTAs}} />
+```
+
+Link CTA:
+```jsx
+const myCTAs = [
+  {
+    id: "link-cta",
+    label: "Hyperlink CTA",
+    href: "https://example.org/",
+    target: "_blank",
+    planId: "PRO"
+  }
+]
+
+<PricingRenderer pricing={pricing} presentation={{ctas: myCTAs}} />
+```
+
+
+:::info
+You can also define an object with the shape of [`PricingPresentation`](https://github.com/javiercavlop/pricing-renderer/blob/27c6c673ed63b3044faeb25931cf73a9ee81e469/src/core/types.ts#L256-L266)
+object under the `custom.pricingRenderer` YAML path in the [Pricing2Yaml specification](../../../pricing-description-languages/Pricing2Yaml/versions/pricing2yaml-v31-specification.mdx#custom).
+
+```yaml
+custom:
+  pricingRenderer:
+    ctas:
+      - id: start-starter
+        label: Start with Starter
+        planId: starter
+      - id: start-growth
+        label: Start free trial
+        planId: growth
+```
+
+The `presentation` prop takes precedence over the `custom.pricingRenderer` configuration
+in Pricing2Yaml when configuring the `PricingRenderer`.
+:::
+
+### pricing
+
+:::warning
+If you use `pricing` prop you cannot use the following props:
+- [`loadPricing`](#loadpricing)
+- [`request`](#request)
+- [`src`](#src)
+- [`yaml`](#yaml)
+:::
+
+You can pass your own **JavaScript object** to the `PricingRenderer` using
+the `pricing` prop. The object must be compatible with the [Pricing2Yaml 3.1 specification](../../../pricing-description-languages/Pricing2Yaml/versions/pricing2yaml-v31-specification.mdx).
+
+#### Signature
+
+[View source](https://github.com/javiercavlop/pricing-renderer/blob/27c6c673ed63b3044faeb25931cf73a9ee81e469/src/react/index.ts#L40).
+```typescript
+pricing: IPricingLike
+```
+
+#### Details
+
+Suppose that we have the following Pricing2Yaml object in `myPricing` variable:
+```javascript
+const myPricing = {
+    syntaxVersion: "3.1",
+    saasName: "Acme Cloud",
+    features: {
+        storage: {
+            description: "Dedicated storage to save your files in the cloud.",
+            valueType: "BOOLEAN",
+            defaultValue: true,
+        },
+    },
+    usageLimits: {
+        maxStorage: {
+            description: "Included managed storage.",
+            valueType: "NUMERIC",
+            defaultValue: 5,
+            unit: "GB",
+            type: "RENEWABLE",
+            period: {
+                value: 1,
+                unit: "MONTH"
+            },
+            linkedFeatures: ["storage"],
+            trackable: true,
+        }
+    },
+    plans: {
+        free: {
+            price: 0,
+            unit: "month",
+            features: null,
+            usageLimits: {
+                maxStorage: {
+                    value: 5
+                }
+            }
+        },
+        standard: {
+            description: "For small teams.",
+            price: 15,
+            unit: "month",
+            features: null,
+            usageLimits: {
+                maxStorage: {
+                    value: 1000
+                }
+            }
+        }
+    }
+}
+```
+
+Use `myPricing` variable inside the `pricing` prop of the `PricingRenderer` to render the pricing:
+```jsx
+<PricingRenderer pricing={myPricing} />
+```
+
+### pricingPath
+
+Declares the pricing path name for the host application. The default path configured is
+`/pricing`.
+
+:::info
+Learn more about absolute path in [Section 3.3 of RFC 3986: STD 66: Uniform Resource Identifier (URI): Generic Syntax](https://www.rfc-editor.org/info/rfc3986/#section-3.3).
+:::
+
+#### Signature
+
+[View source](https://github.com/javiercavlop/pricing-renderer/blob/27c6c673ed63b3044faeb25931cf73a9ee81e469/src/react/index.ts#L68).
+```typescript
+pricingPath?: string
+```
+
+#### Details
+
+```jsx
+<PricingRenderer pricingPath="/products/ACME/pricing" />
+```
+
+### request
+
+This prop accepts a **JavaScript object** of type [`PricingRequestOptions`](https://github.com/javiercavlop/pricing-renderer/blob/27c6c673ed63b3044faeb25931cf73a9ee81e469/src/yaml/types.ts#L8-L14).
+
+#### Signature
+
+[View source](https://github.com/javiercavlop/pricing-renderer/blob/27c6c673ed63b3044faeb25931cf73a9ee81e469/src/react/index.ts#L57).
+```typescript
+request?: PricingRequestOptions
+```
+
+[`PricingRequestOptions` source code:](https://github.com/javiercavlop/pricing-renderer/blob/27c6c673ed63b3044faeb25931cf73a9ee81e469/src/yaml/types.ts#L8-L14)
+```typescript
+interface PricingRequestOptions {
+  headers?: HeadersInit | (() => HeadersInit | Promise<HeadersInit>);
+  credentials?: RequestCredentials;
+  timeoutMs?: number;
+  maxBytes?: number;
+  fetch?: typeof globalThis.fetch;
+}
+```
+
+#### Properties
+
+`headers` (**optional**):
+- Accepts a [`Headers`](https://developer.mozilla.org/en-US/docs/Web/API/Headers) like object
+- Accepts a function that returns a `Headers` like object
+- Accepts an async function that returns a promise containing [`Headers`](https://developer.mozilla.org/en-US/docs/Web/API/Headers)
+or [`Headers`](https://developer.mozilla.org/en-US/docs/Web/API/Headers) like object
+
+Example of a [`Headers`](https://developer.mozilla.org/en-US/docs/Web/API/Headers) like object
+```javascript
+const customHeaders = {
+  'Content-Type': 'application/json',
+  'Authorization': 'Bearer <REDACTED>'
+}
+```
+
+Example of a function that returns a [`Headers`](https://developer.mozilla.org/en-US/docs/Web/API/Headers) like object:
+```javascript
+const customHeaders = () => ({
+  'Content-Type': 'application/json',
+  'Authorization': 'Bearer <REDACTED>'
+})
+```
+
+Example of an async function that returns a promise containing `Headers` or `Headers` like object
+  ```javascript
+  const customHeaders = async () => ({
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${await refreshAccessToken()}`
+  })
+  ```
+`credentials` (**optional**): string
+
+Whether or not the browser sends credentials with the request. Accepted values are:
+  - `omit`
+  - `same-origin`
+  - `include`
+
+`timeoutMs` (**optional**): number
+
+Maximum time to wait for the download in milliseconds (Default is 15000 ms)
+
+`maxBytes` (**optional**): number
+
+Maximum number of bytes to be interpreted by the renderer (Default is 2 MiB).
+
+`fetch` (**optional**): function
+
+A fetch implementation
+
+#### Details
+
+In this example we define an object `requestOptions` with an async function in the `headers` property. This function
+gets a JWT refresh token and updates the JWT access token allowing the renderer to keep displaying the
+pricing:
+```jsx
+const requestOptions = {
+  headers: async () => ({ 'Authorization': `Bearer ${await refreshAccessToken()}`})
+}
+
+<PricingRenderer src="https://acme.cloud.com/products/acme/pricing" request={requestOptions} />
+```
+
+### selection
+
+The `selection` prop is controlled. The component uses it as the primary source
+for the current selection. The developer must update the prop `selection` in response
+to a `onSelectionChange` event.
+
+Use [`defaultSelection`](#defaultSelection) when you need to seed the initial state
+of the pricing renderer.
+
+#### Signature
+
+[View source](https://github.com/javiercavlop/pricing-renderer/blob/27c6c673ed63b3044faeb25931cf73a9ee81e469/src/react/index.ts#L62).
+```typescript
+selection?: PricingSelection
+```
+
+#### Details
+
+You can control the selection of your pricing combining the
+`useState` hook and the prop `selection` of the pricing renderer:
+```jsx
+function PricingExample() {
+  const [selection, setSelection] = useState({
+    planId: 'PRO',
+    billingPeriod: 'monthly',
+    variables: {
+      seats: 5,
+    },
+    addOns: {},
+  });
+
+  return (
+    <PricingRenderer
+      pricing={pricing}
+      selection={selection}
+      onSelectionChange={(event) => {
+        setSelection(event.detail.selection);
+      }}
+    />
+  );
+}
+```
+
+
+### selectionEnabled
+
+#### Signature
+
+[View source](https://github.com/javiercavlop/pricing-renderer/blob/27c6c673ed63b3044faeb25931cf73a9ee81e469/src/react/index.ts#L69).
+```typescript
+selectionEnabled?: boolean
+```
+
+- When `selectionEnabled` is `true` plan and add-on selection controls, quantity
+steppers, and full-card selection are enabled.
+- When `selectionEnabled` is `false` plan and add-on selection controls, quantity
+steppers, and full-card selection are disabled.
+- `selectionEnabled` defaults to `true`
+
+#### Details
+
+```jsx
+<PricingRenderer pricing={pricing} selectionEnabled={false} />
+```
+
+### src
+
+:::warning
+If you use `src` prop you cannot use the following props:
+- [`pricing`](#pricing)
+- [`yaml`](#yaml)
+:::
+
+#### Signature
+
+[View source](https://github.com/javiercavlop/pricing-renderer/blob/27c6c673ed63b3044faeb25931cf73a9ee81e469/src/react/index.ts#L54).
+```typescript
+src: string
+```
+
+#### Details
+
+You can provide a web [**URL**](https://www.rfc-editor.org/info/rfc3986/#section-1.1.3) (HTTP or HTTPS only) to the `PricingRenderer`
+in the `src` prop to display the pricing:
+```jsx
+<PricingRenderer src="https://acme.cloud.com/pricings/example.yml"/>
+```
+
+### theme
+
+Choose the general appearance of the pricing renderer.
+
+#### Signature
+
+[View source](https://github.com/javiercavlop/pricing-renderer/blob/27c6c673ed63b3044faeb25931cf73a9ee81e469/src/react/index.ts#L76).
+```typescript
+theme?: 'light' | 'dark' | 'auto'
+```
+
+Supported values are:
+- `light` configured by default
+- `dark`
+- `auto`
+
+#### Details
+
+```jsx
+<PricingRenderer theme="dark" />
+```
+
+### variablesEnabled
+
+#### Signature
+
+[View source](https://github.com/javiercavlop/pricing-renderer/blob/27c6c673ed63b3044faeb25931cf73a9ee81e469/src/react/index.ts#L71).
+```typescript
+variablesEnabled?: boolean
+```
+
+- When `variablesEnabled` is `true` variable controls will be displayed in the renderer and
+price formulas use the user input to compute the price.
+- When `variablesEnabled` is `false` variable controls will not be displayed in the renderer
+and price formulas use the iPricing variable defaults defined in [`variables`](../../../pricing-description-languages/Pricing2Yaml/versions/pricing2yaml-v31-specification.mdx#variables)
+map.
+- `variablesEnabled` defaults to `true`.
+
+#### Details
+
+```jsx
+<PricingRenderer pricing={pricing} variablesEnabled={false} />
+```
+
+### visibility
+
+The `visibility` prop controls the renderer visibility of plans and add-ons.
+
+#### Signature
+
+[View source](https://github.com/javiercavlop/pricing-renderer/blob/27c6c673ed63b3044faeb25931cf73a9ee81e469/src/react/index.ts#L75).
+```typescript
+visibility?: 'public-only' | 'all'
+```
+
+- When `visibility` is `public-only`, **ONLY** public plans and add-ons will be displayed. A plan or add-on is public if
+`plans|addOns.<name>.private` is absent or set to `false`.
+- When `visibility` is `all`, **ALL** add-ons and plans will be displayed in the renderer
+whether the [plan](../../../pricing-description-languages/Pricing2Yaml/versions/pricing2yaml-v31-specification.mdx#plansnameprivate)
+or [add-on](../../../pricing-description-languages/Pricing2Yaml/versions/pricing2yaml-v31-specification.mdx#addonsnameprivate)
+is `private` or not (see `private` prop in the Pricing2Yaml Specification).
+- `visibility` defaults to `public-only`.
+
+#### Details
+
+All plans and add-ons will be displayed ignoring the status of the `private` property.
+```jsx
+<PricingRenderer pricing={pricing} visibility="all"/>
+```
+
+### yaml
+
+:::warning
+If you use `yaml` prop you cannot use the following props:
+- [`loadPricing`](#loadpricing)
+- [`pricing`](#pricing)
+- [`request`](#request)
+- [`src`](#src)
+:::
+
+The `PricingRenderer` accepts the prop `yaml`. This property expects a **string** encoded according to the
+[Pricing2Yaml 3.1 specification](../../../pricing-description-languages/Pricing2Yaml/versions/pricing2yaml-v31-specification.mdx).
+
+#### Signature
+
+[View source](https://github.com/javiercavlop/pricing-renderer/blob/27c6c673ed63b3044faeb25931cf73a9ee81e469/src/react/index.ts#L47).
+```typescript
+yaml: string
+```
+
+#### Details
+
+```jsx
+const myPricing = `
+syntaxVersion: '3.1'
+saasName: Example Cloud
+features:
+  featureA:
+    valueType: BOOLEAN
+    defaultValue: true
+plans:
+  free:
+    price: 0
+`
+
+<PricingRenderer yaml={myPricing}/>
+```
+
+:::info
+If you use [Vite](https://vite.dev/guide/assets) you have the option to import a Pricing2Yaml
+as a **String** using `?raw` suffix in the `import` statement:
+```jsx
+import myPricing from './2026-09-example-cloud.yaml?raw'
+
+<PricingRenderer yaml={myPricing} />
+```
+:::

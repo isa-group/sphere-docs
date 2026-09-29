@@ -1,0 +1,67 @@
+---
+sidebar_position: 3
+title: Getting started
+custom_edit_url: null
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+## Installation
+
+Install the latest version from npm:
+
+<Tabs>
+  <TabItem value="npm" label="npm" default>
+  ```bash
+  npm install pricing-renderer
+  ```
+  </TabItem>
+  <TabItem value="pnpm" label="pnpm">
+  ```bash
+  pnpm add pricing-renderer
+  ```
+  </TabItem>
+  <TabItem value="yarn" label="yarn">
+  ```bash
+  yarn add pricing-renderer
+  ```
+  </TabItem>
+</Tabs>
+
+## React
+
+:::warning
+The `pricing-renderer` is works with React 18 and 19.
+:::
+
+In order to use the `PricingRenderer` component follow these steps:
+1. Import the `PricingRenderer` component in `pricing-renderer/react`.
+2. Import the CSS stylesheet bundled in `pricing-renderer` (`import 'pricing-renderer/styles.css'`).
+3. Choose a method to input a Pricing2Yaml to the `PricingRenderer`. Read about the available methods in
+the [API documentation](React/api.mdx).
+
+Here is a snippet to help you start working with the `PricingRenderer`:
+```jsx
+import { configurePricingRenderer } from 'pricing-renderer';
+import { PricingRenderer } from 'pricing-renderer/react';
+import 'pricing-renderer/styles.css';
+import pricingYaml from '../../../tests/fixtures/acme-pricing.yml?raw';
+
+configurePricingRenderer({
+  locale: 'en-US',
+  pricingPath: '/pricing',
+  selectionEnabled: true,
+  ctaEnabled: true,
+  variablesEnabled: true,
+});
+
+<PricingRenderer
+  yaml={pricingYaml}
+  theme="light"
+  onAction={(event) => {
+    console.info('Pricing action', event.detail);
+}}/>
+```
+
+The are more usage examples in the [API documentation](React/api.mdx).
