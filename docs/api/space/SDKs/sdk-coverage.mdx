@@ -1,0 +1,34 @@
+---
+title: SDK versions and coverage
+sidebar_position: 1
+---
+
+# SPACE SDK versions and coverage
+
+| SDK | Version | Role | Package |
+| --- | --- | --- | --- |
+| [Node.js](./Backend%20SDKs/space-node-client.mdx) | 0.4.0 | Backend | `space-node-client` |
+| [Python](./Backend%20SDKs/space-python-client.mdx) | 1.1.0 | Sync/async backend | `space-python-client` |
+| [Java](./Backend%20SDKs/space-java-client.mdx) | 0.5.0 | Backend, optional Spring integration | `io.github.isa-group:space-java-client` |
+| [React](./Frontend%20SDKs/space-react-client.mdx) | 0.4.0 | Browser UI | `space-react-client` |
+
+The three backend SDKs provide contract reads/creation/deletion, individual and group novations,
+usage increments, feature evaluation/consumption, pricing tokens, pricing YAML, new-contract and
+contracted versions, novation previews, conditional writes, optional idempotent retries, detailed
+refunds, event deduplication/resync and ES256 JWKS verification. They are integration clients, not
+wrappers for every administration endpoint of SPACE.
+
+React provides feature gating, subscription/token hooks, updated claims, event metadata/resync
+when connected, and optional verification. Run privileged contract and consumption operations in
+your backend. Do not ship a management key to the browser. Token-only mode requires your backend
+to deliver new tokens and has no direct SPACE event stream.
+
+Server capabilities are checked before requesting guarantees an older SPACE cannot provide.
+Event delivery has no replay guarantee: on `resync`, reload current state. Idempotency only protects
+the same key and request for the server's retention period. Preserve the key across job retries.
+For refunds, prefer the detailed method so a 200 response's `skipped` limits are visible.
+
+These minor releases preserve existing public methods. Applications should adopt the user ID
+helper rather than interpreting `sub`, handle 412 by reloading the contract, and keep automatic
+retries opt-in. The server's ES256 mode needs signing keys configured; the expected issuer and
+organization must match the deployment. Verify the authenticated user as well as signature/claims.

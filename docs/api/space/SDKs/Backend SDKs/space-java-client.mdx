@@ -1,76 +1,101 @@
 ---
-title: "Java"
+title: "Java 0.5.0"
+custom_edit_url: null
 ---
 
-# ☕ Space Java Client
+# Space Java Client
 
-Java client library for [Space](https://github.com/isa-group/space), a pricing-driven self-adaptation platform for SaaS applications.
+## Release 0.5.0
+
+This minor release preserves existing public methods and adds subscription reads, contract events,
+multiorganization token claims, event deduplication and JWKS verification. Backend SDKs also
+provide pricing YAML reads, novation previews, optimistic concurrency and opt-in idempotent retries.
+Use a SPACE server advertising the required `X-Space-Capabilities`; merging server changes alone
+does not deploy them. Read `userId` through the provided helper: `sub` is opaque.
+
+### Detailed consumption reversions
+
+`features.revertConsumptionDetails(userId, featureId, consumptionId[, writeOptions])` preserves the server's refund details. The existing boolean
+`revertConsumption` / `revert_consumption` remains available and unchanged.
+
+| SPACE response | Detailed result |
+| --- | --- |
+| 204 | Found; nothing omitted. No per-limit amounts were returned (`reverted` is absent/null). |
+| 200 | Found; `reverted` contains amounts and `skipped` identifies limits which no longer exist. |
+| 404 | Not found; nothing was changed by this request. |
+| 409 | An API error is propagated, including a disabled service or `IDEMPOTENCY_STATE_CHANGED`; no automatic retry. |
+
+The result is `ConsumptionRevertResult`: consumption ID, `found`, optional `reverted` amounts and
+`skipped` limit IDs (Python uses `consumption_id`; Java uses getters and `isFound()`). To retry one
+operation across process restarts, store and reuse its idempotency key. A new key means a new operation.
+A successful signature still requires the application to match the token's user to its authenticated user.
+
+Java client library for [Space](https://github.com/isa-group/space) - A pricing-driven self-adaptation platform for SaaS applications.
 
 [![Maven Central](https://img.shields.io/maven-central/v/io.github.isa-group/space-java-client.svg)](https://search.maven.org/artifact/io.github.isa-group/space-java-client)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-## Table of Contents
+## Features
 
-- [🎁 What You Get](#-what-you-get)
-- [✅ Requirements](#-requirements)
-- [📦 Installation](#-installation)
-- [⚙️ SetUp](#️-setup)
-- [📚 API Overview](#-api-overview)
-  - [SpaceClientFactory](#spaceclientfactory)
-  - [SpaceClient](#spaceclient)
-  - [ContractModule](#contractmodule)
-  - [FeatureModule](#featuremodule)
-  - [CacheModule](#cachemodule)
-- [📊 Data Models](#-data-models)
-- [💾 Caching](#-caching)
-- [🔌 WebSocket Events](#-websocket-events)
-- [⚠️ Error Handling](#️-error-handling)
-- [✨ Best Practices](#-best-practices)
-- [🤝 Contributing](#-contributing)
-- [📄 Disclaimer & License](#-disclaimer--license)
+- 🚀 Easy-to-use API for Space platform integration
+- 📦 Contract management (create, retrieve, update)
+- ✨ Feature evaluation with caching support
+- 💾 Built-in and Redis cache providers
+- 🔌 WebSocket support for real-time events
+- 📊 Pricing token generation
+- ⚡ Thread-safe and production-ready
 
-## 🎁 What You Get
+## Requirements
 
-- Simple API to connect to Space.
-- Contract lifecycle operations.
-- Feature evaluation with optional expected consumption.
-- Revert operation for optimistic usage updates.
-- Pricing token generation.
-- Built-in in-memory cache and Redis cache support.
-- WebSocket events for real-time pricing updates.
-
-## ✅ Requirements
-
-- Java 21+
+- Java 11 or higher
 - Maven 3.6+
 
-## 📦 Installation
+## Installation
 
-Add this dependency to your `pom.xml`:
+Add the following dependency to your `pom.xml`:
 
 ```xml
 <dependency>
-  <groupId>io.github.isa-group</groupId>
-  <artifactId>space-java-client</artifactId>
-  <version>{version}</version>
+    <groupId>io.github.isa-group</groupId>
+    <artifactId>space-java-client</artifactId>
+    <version>0.5.0</version>
 </dependency>
 ```
 
-## ⚙️ SetUp
+## Usage Guide
 
-import Tabs from "@theme/Tabs";
-import TabItem from "@theme/TabItem";
+### 1) Plain Java Application
 
-<Tabs defaultValue="spring" values={[
-  {label: '🌱 Spring', value: 'spring'},
-  {label: '☕ Java Vanilla', value: 'java'},
-]}>
-<TabItem value="spring">
-### Quick Start in 2 Minutes (Spring)
+Use `SpaceClientFactory` to create a client and call modules directly.
 
-#### 1. Configure properties
+```java
+import io.github.isagroup.spaceclient.SpaceClient;
+import io.github.isagroup.spaceclient.SpaceClientFactory;
+import io.github.isagroup.spaceclient.types.FeatureEvaluationResult;
 
-Go to `application.properties`:
+SpaceClient client = SpaceClientFactory.connect(
+    "http://localhost:3000",
+    "your-api-key",
+    10000
+);
+
+FeatureEvaluationResult evaluation = client.features.evaluate("user123", "serviceA-featureX");
+if (evaluation.getEval()) {
+    System.out.println("Feature enabled");
+}
+
+String pricingToken = client.features.generateUserPricingToken("user123");
+System.out.println(pricingToken);
+
+client.close();
+```
+
+### 2) Spring Application
+
+For Spring integration, configure a `SpaceClient` bean and a `SpringPricingConfigurator` implementation.
+If you use `@RequireFeature`, make sure Spring AOP is enabled in your project (for example, with `spring-boot-starter-aop`).
+
+#### 2.1 Configure properties
 
 ```properties
 space.client.url=http://localhost:3000
@@ -78,1380 +103,227 @@ space.client.api-key=your-api-key
 space.client.timeout=10000
 ```
 
-where:
-
-- `space.client.url`: URL of your SPACE instance (e.g., `http://localhost:3000`).
-- `space.client.api-key`: API key for authentication (obtainable from SPACE dashboard). It must be an organization-level API key.
-- `space.client.timeout` (default `10000`): HTTP request timeout in milliseconds.
-
-#### 2. Scan and inject space-java-client's spring module
-
-In your main application class, add the package scan for `io.github.isagroup.spaceclient.spring`:
+#### 2.2 Register configuration
 
 ```java
-package org.springframework.samples.myapp;
+import io.github.isagroup.spaceclient.spring.SpaceClientAutoConfiguration;
+import io.github.isagroup.spaceclient.spring.config.SpringPricingConfigurator;
+import org.aspectj.lang.ProceedingJoinPoint;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
+import org.springframework.security.core.context.SecurityContextHolder;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.ComponentScan;
+@Configuration
+@EnableAspectJAutoProxy
+@Import(SpaceClientAutoConfiguration.class)
+public class SpacePricingConfig {
 
-@SpringBootApplication()
-@ComponentScan(basePackages = {
-    "org.springframework.samples.myapp",
-    "io.github.isagroup.spaceclient.spring"  // ← Add this
-})
-public class MyApp {
-
-	public static void main(String[] args) {
-		SpringApplication.run(MyApp.class, args);
-	}
-
+    @Bean
+    public SpringPricingConfigurator springPricingConfigurator() {
+        return new SpringPricingConfigurator() {
+            @Override
+            public String resolveUserId(ProceedingJoinPoint joinPoint) {
+                var auth = SecurityContextHolder.getContext().getAuthentication();
+                return auth != null ? auth.getName() : null;
+            }
+        };
+    }
 }
 ```
 
-#### 3. Inject and use SpaceClient in a service
+#### 2.3 Protect methods with `@RequireFeature`
 
 ```java
-import io.github.isagroup.spaceclient.SpaceClient;
-import io.github.isagroup.spaceclient.types.FeatureEvaluationResult;
+import io.github.isagroup.spaceclient.annotations.RequireFeature;
 import org.springframework.stereotype.Service;
 
 @Service
-public class PricingService {
+public class ExportService {
 
-  private final SpaceClient spaceClient;
-
-  public PricingService(SpaceClient spaceClient) {
-    this.spaceClient = spaceClient;
-  }
-
-  public boolean canUseExport(String userId) {
-    FeatureEvaluationResult result = spaceClient.features.evaluate(userId, "myapp-billingExport");
-    return result.getError() == null && result.getEval();
-  }
+    @RequireFeature("premium-export")
+    public String exportReport() {
+        return "exported";
+    }
 }
 ```
 
-:::warning
-The example above is provided solely as a minimal illustration of how to bootstrap the usage of `space-java-client` within a SPACE-based application. 
+See the complete annotation guide in [REQUIRE_FEATURE_ANNOTATION.md](https://github.com/Alex-GF/space-java-client/blob/main/REQUIRE_FEATURE_ANNOTATION.md).
 
-It assumes that a service named `myapp` is already provisioned in SPACE, along with an active contract associated with a user identified by `userId`. This user is subscribed to a specific service version in which the `billingExport` feature is explicitly governed by the pricing configuration.
+## Quick Start
 
-As such, this example omits prerequisite steps such as service provisioning, contract creation, and feature configuration, all of which are required for correct evaluation and execution.
-:::
-
-</TabItem>
-
-<TabItem value="java">
-
-:::important
-This setup can also be used to integrate SPACE within a Spring-based application. However, for production-grade scenarios, the dedicated Spring module is recommended, as it provides a higher level of abstraction, streamlined configuration, and tighter integration with the Spring ecosystem (e.g., auto-configuration and dependency injection support).
-:::
-
-### Quick Start in 2 Minutes (Java Vanilla)
+### Basic Connection
 
 ```java
 import io.github.isagroup.spaceclient.SpaceClient;
 import io.github.isagroup.spaceclient.SpaceClientFactory;
-import io.github.isagroup.spaceclient.types.FeatureEvaluationResult;
-
-public class Main {
-  public static void main(String[] args) {
-    SpaceClient client = SpaceClientFactory.connect(
-        "http://localhost:3000",
-        "your-api-key",
-        10_000
-    );
-
-    boolean healthy = client.isConnectedToSpace();
-    System.out.println("Connected: " + healthy);
-
-    String userId = "user-123";
-
-    FeatureEvaluationResult result = client.features.evaluate(userId, "serviceA-featureX");
-    if (result.getError() != null) {
-      System.err.println("Evaluation error: " + result.getError().getMessage());
-    } else {
-      System.out.println("Feature enabled: " + result.getEval());
-    }
-
-    String pricingToken = client.features.generateUserPricingToken(userId);
-    System.out.println("Pricing token: " + pricingToken);
-
-    client.close();
-  }
-}
-```
-
-### Configuration (Java Vanilla)
-
-You can connect using either convenience factory methods or `SpaceConnectionOptions`.
-
-#### Option A: simple connection
-
-```java
-SpaceClient client = SpaceClientFactory.connect("http://localhost:3000", "your-api-key");
-```
-
-#### Option B: custom timeout
-
-```java
-SpaceClient client = SpaceClientFactory.connect("http://localhost:3000", "your-api-key", 15000);
-```
-
-#### Option C: full options object
-
-```java
 import io.github.isagroup.spaceclient.types.SpaceConnectionOptions;
 
+// Simple connection
+SpaceClient client = SpaceClientFactory.connect("http://localhost:3000", "your-api-key");
+
+// With custom timeout
+SpaceClient client = SpaceClientFactory.connect("http://localhost:3000", "your-api-key", 10000);
+
+// With options object
 SpaceConnectionOptions options = new SpaceConnectionOptions(
     "http://localhost:3000",
     "your-api-key",
-    15000
+    5000
 );
-
 SpaceClient client = SpaceClientFactory.connect(options);
 ```
 
-`SpaceClientFactory.connect(...)` validation rules:
-
-- **URL** is **required** and must start with `http://` or `https://`.
-- **API key** is **required**.
-- **Timeout** is **optional**, but must be a positive number.
-
-</TabItem>
-</Tabs>
-
-## 📚 API Overview
-
-### SpaceClientFactory
-
-Factory utility for safe construction and input validation.
-
-| Method | Description |
-|---|---|
-| `connect(SpaceConnectionOptions options)` | Creates client with full options and validates required inputs. |
-| `connect(String url, String apiKey)` | Convenience overload, default timeout (`5000`). |
-| `connect(String url, String apiKey, int timeout)` | Convenience overload with custom timeout. |
-
-### SpaceClient
-
-Main entry point. Exposes modules as public fields:
-
-- `contracts` (`ContractModule`)
-- `features` (`FeatureModule`)
-- `cache` (`CacheModule`)
-
-Core methods:
-
-| Method | Returns | Details |
-|---|---|---|
-| `isConnectedToSpace()` | `boolean` | HTTP health check against `/healthcheck`. |
-| `on(String event, Consumer<Object> callback)` | `void` | Registers event callback for supported event names. |
-| `removeListener(String event)` | `void` | Removes one callback by event name. |
-| `removeAllListeners()` | `void` | Removes all event callbacks. |
-| `connect()` | `void` | Connects/reconnects WebSocket namespace if disconnected. |
-| `disconnect()` | `void` | Disconnects WebSocket namespace and clears socket handlers. |
-| `close()` | `void` | Closes sockets, cache provider, and HTTP resources. |
-
-Getters:
-
-- `getHttpUrl()`
-- `getApiKey()`
-- `getTimeout()`
-- `getObjectMapper()`
-
-### ContractModule
-
-Contract operations available at `spaceClient.contracts`.
-
-| Method | Returns | Details |
-|---|---|---|
-| `getContract(String userId)` | `Contract` | Reads from cache first when enabled; returns `null` on error. |
-| `addContract(ContractToCreate contractToCreate)` | `Contract` | Creates contract and invalidates/refreshes user cache; `null` on error. |
-| `updateContractSubscription(String userId, Subscription newSubscription)` | `Contract` | Updates one user subscription; updates cache when enabled. |
-| `updateContractSubscriptionByGroupId(String groupId, Subscription newSubscription)` | `List<Contract>` | Batch update by group ID; invalidates cache for each updated user. |
-| `updateContractUsageLevels(String userId, String serviceName, Map<String, Number> usageLevelsNovations)` | `Contract` | Updates usage levels for a user and service. |
-| `removeContract(String userId)` | `void` | Deletes contract and invalidates user cache if enabled. |
-
-Usage example:
+### Contract Management
 
 ```java
 import io.github.isagroup.spaceclient.types.*;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.HashMap;
 
-UserContact userContact = new UserContact("user-123", "john_doe");
+// Create a new contract
+UserContact userContact = new UserContact("user123", "john_doe");
 userContact.setEmail("john@example.com");
 
-ContractToCreate.BillingPeriodToCreate billing =
-    new ContractToCreate.BillingPeriodToCreate(true, 30);
+Map<String, String> contractedServices = new HashMap<>();
+contractedServices.put("serviceA", "pricing/v1");
 
-Map<String, String> contractedServices = Map.of("serviceA", "pricing/v1");
-Map<String, String> subscriptionPlans = Map.of("serviceA", "basic");
-Map<String, Map<String, Integer>> addOns = new HashMap<>();
+Map<String, String> subscriptionPlans = new HashMap<>();
+subscriptionPlans.put("serviceA", "basic");
 
-ContractToCreate toCreate = new ContractToCreate(
+Map<String, Map<String, Integer>> subscriptionAddOns = new HashMap<>();
+
+ContractToCreate contractToCreate = new ContractToCreate(
     userContact,
-    billing,
     contractedServices,
-    "group-1",
     subscriptionPlans,
-    addOns
+    subscriptionAddOns
 );
 
-Contract created = client.contracts.addContract(toCreate);
-Contract current = client.contracts.getContract("user-123");
+Contract contract = client.contracts.addContract(contractToCreate);
 
-Subscription subscription = new Subscription(
+// Get existing contract
+Contract contract = client.contracts.getContract("user123");
+
+// Update subscription
+Subscription newSubscription = new Subscription(
     contractedServices,
     Map.of("serviceA", "premium"),
-    addOns
+    subscriptionAddOns
 );
-
-Contract updatedSingle = client.contracts.updateContractSubscription("user-123", subscription);
-List<Contract> updatedGroup = client.contracts.updateContractSubscriptionByGroupId("group-1", subscription);
-
-Map<String, Number> usagePatch = Map.of("requests", 120, "storage", 2048);
-Contract usageUpdated = client.contracts.updateContractUsageLevels("user-123", "serviceA", usagePatch);
-
-client.contracts.removeContract("user-123");
+Contract updated = client.contracts.updateContractSubscription("user123", newSubscription);
 ```
 
-### FeatureModule
-
-Feature operations available at `spaceClient.features`.
-
-| Method | Returns | Details |
-|---|---|---|
-| `evaluate(String userId, String featureId)` | `FeatureEvaluationResult` | Read-only evaluation. Cache can be used. |
-| `evaluate(String userId, String featureId, Map<String, Number> expectedConsumption)` | `FeatureEvaluationResult` | Evaluation with consumption payload. |
-| `evaluate(String userId, String featureId, Map<String, Number> expectedConsumption, boolean details, boolean server)` | `FeatureEvaluationResult` | Full control over query flags. |
-| `revertEvaluation(String userId, String featureId)` | `boolean` | Reverts evaluation update (latest behavior). |
-| `revertEvaluation(String userId, String featureId, boolean revertToLatest)` | `boolean` | Revert strategy control (`latest=true/false`). |
-| `generateUserPricingToken(String userId)` | `String` | Returns token or `null` on failure. |
-
-Feature example:
+### Feature Evaluation
 
 ```java
 import io.github.isagroup.spaceclient.types.FeatureEvaluationResult;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.HashMap;
 
-FeatureEvaluationResult readOnly = client.features.evaluate("user-123", "serviceA-featureX");
-if (readOnly.getError() == null && readOnly.getEval()) {
-  System.out.println("Read-only evaluation enabled");
+// Simple evaluation (read-only)
+FeatureEvaluationResult result = client.features.evaluate("user123", "serviceA-featureX");
+
+if (result.getEval()) {
+    System.out.println("Feature is enabled for user");
 }
 
-Map<String, Number> expectedConsumption = new HashMap<>();
-expectedConsumption.put("requests", 10);
-expectedConsumption.put("storage", 1024);
+// Evaluation with consumption
+Map<String, Number> consumption = new HashMap<>();
+consumption.put("requests", 10);
+consumption.put("storage", 1024);
 
-FeatureEvaluationResult withConsumption = client.features.evaluate(
-    "user-123",
+FeatureEvaluationResult result = client.features.evaluate(
+    "user123",
     "serviceA-featureX",
-    expectedConsumption,
-    true,
-    false
+    consumption
 );
 
-boolean reverted = client.features.revertEvaluation("user-123", "serviceA-featureX", true);
-String pricingToken = client.features.generateUserPricingToken("user-123");
-```
-
-### CacheModule
-
-Cache module is exposed as `spaceClient.cache`. It is initialized automatically if enabled in `SpaceConnectionOptions`.
-
-Common methods:
-
-| Method | Description |
-|---|---|
-| `isEnabled()` | Whether cache is active and provider initialized. |
-| `get(String key, Class<T> type)` | Read value by key. |
-| `set(String key, T value)` | Set value using default TTL from cache config. |
-| `set(String key, T value, Integer ttl)` | Set value with explicit TTL (seconds). |
-| `delete(String key)` | Delete one key. |
-| `has(String key)` | Check key presence. |
-| `clear()` | Clear all provider entries. |
-| `keys(String pattern)` | List keys by glob pattern. |
-| `invalidateUser(String userId)` | Clear common key groups for user. |
-| `close()` | Close provider resources. |
-
-Key helper methods:
-
-- `getContractKey(userId)`
-- `getFeatureKey(userId, featureName)`
-- `getSubscriptionKey(userId)`
-- `getPricingTokenKey(userId)`
-
-## 📊 Data Models
-
-### SpaceConnectionOptions
-
-Configuration options for establishing a connection to the Space server.
-
-| Field | Type | Default | Required | Description |
-|-------|------|---------|----------|-------------|
-| `url` | `String` | - | Yes | The base URL of the Space server |
-| `apiKey` | `String` | - | Yes | API key for authentication |
-| `timeout` | `Integer` | `5000` | No | Connection timeout in milliseconds |
-| `cache` | `CacheOptions` | `null` | No | Cache configuration options |
-
-**Example:**
-
-```java
-SpaceConnectionOptions options = new SpaceConnectionOptions();
-options.setUrl("https://space.example.com");
-options.setApiKey("sk-1234567890abcdef");
-options.setTimeout(10000);
-```
-
-Or using the constructor:
-
-```java
-SpaceConnectionOptions options = new SpaceConnectionOptions(
-    "https://space.example.com",
-    "sk-1234567890abcdef",
-    10000
-);
-```
-
----
-
-### CacheOptions
-
-Cache configuration for storing feature evaluation results.
-
-| Field | Type | Default | Required | Description |
-|-------|------|---------|----------|-------------|
-| `enabled` | `boolean` | `false` | Yes | Enable/disable caching |
-| `type` | `CacheType` | `BUILTIN` | No | Type of cache to use |
-| `ttl` | `Integer` | `300` | No | Time-to-live in seconds (default 5 minutes) |
-| `external` | `ExternalCacheConfig` | `null` | No | External cache configuration (required when type is REDIS) |
-
-**CacheType Enum**
-
-| Value | Description |
-|-------|-------------|
-| `BUILTIN` | In-memory cache (default) |
-| `REDIS` | External Redis cache |
-
-**ExternalCacheConfig**
-
-| Field | Type | Default | Required | Description |
-|-------|------|---------|----------|-------------|
-| `redis` | `RedisConfig` | - | Yes | Redis server configuration |
-
-**RedisConfig**
-
-| Field | Type | Default | Required | Description |
-|-------|------|---------|----------|-------------|
-| `host` | `String` | - | Yes | Redis server hostname |
-| `port` | `Integer` | `6379` | No | Redis server port |
-| `password` | `String` | `null` | No | Redis authentication password |
-| `db` | `Integer` | `0` | No | Redis database number (valid range: 0-15) |
-| `connectTimeout` | `Integer` | `5000` | No | Connection timeout in milliseconds |
-| `keyPrefix` | `String` | `"space-client:"` | No | Prefix for cache keys |
-
-**Examples:**
-
-**Basic cache with built-in memory:**
-
-```java
-CacheOptions cacheOptions = new CacheOptions();
-cacheOptions.setEnabled(true);
-cacheOptions.setType(CacheOptions.CacheType.BUILTIN);
-cacheOptions.setTtl(600); // 10 minutes
-```
-
-**Redis cache configuration:**
-
-```java
-CacheOptions.RedisConfig redisConfig = new CacheOptions.RedisConfig("redis.example.com");
-redisConfig.setPort(6379);
-redisConfig.setPassword("redis-password");
-redisConfig.setDb(2);
-redisConfig.setConnectTimeout(3000);
-redisConfig.setKeyPrefix("petclinic:");
-
-CacheOptions.ExternalCacheConfig externalConfig = new CacheOptions.ExternalCacheConfig();
-externalConfig.setRedis(redisConfig);
-
-CacheOptions cacheOptions = new CacheOptions();
-cacheOptions.setEnabled(true);
-cacheOptions.setType(CacheOptions.CacheType.REDIS);
-cacheOptions.setExternal(externalConfig);
-```
-
----
-
-### FeatureEvaluationResult
-
-Result of evaluating a feature flag against a user context.
-
-| Field | Type | Default | Required | Description |
-|-------|------|---------|----------|-------------|
-| `eval` | `boolean` | - | Yes | Whether the feature is enabled |
-| `used` | `Map<String, Object>` | - | No | Variables used in the evaluation |
-| `limit` | `Map<String, Object>` | - | No | Limit values applied |
-| `error` | `EvaluationError` | `null` | No | Error information if evaluation failed |
-
-**EvaluationError**
-
-| Field | Type | Default | Required | Description |
-|-------|------|---------|----------|-------------|
-| `code` | `String` | - | Yes | Error code identifier |
-| `message` | `String` | - | Yes | Human-readable error message |
-
-**Examples:**
-
-**Successful evaluation:**
-
-```java
-FeatureEvaluationResult result = new FeatureEvaluationResult();
-result.setEval(true);
-result.setUsed(Map.of("userId", "user-123", "plan", "premium"));
-result.setLimit(Map.of("maxRequests", 1000));
-result.setError(null);
-```
-
-**Evaluation with error:**
-
-```java
-FeatureEvaluationResult.EvaluationError error = new FeatureEvaluationResult.EvaluationError(
-    "FEATURE_NOT_FOUND",
-    "Feature 'dark-mode' does not exist"
+// Evaluation with options
+FeatureEvaluationResult result = client.features.evaluate(
+    "user123",
+    "serviceA-featureX",
+    consumption,
+    true,  // details
+    false  // server
 );
 
-FeatureEvaluationResult result = new FeatureEvaluationResult();
-result.setEval(false);
-result.setError(error);
+// Give back exactly that consumption (for failed transactions); see "Consumption, Retries and
+// Idempotency-Key" below. revertEvaluation(userId, featureId) is deprecated.
+boolean reverted = client.features.revertConsumption("user123", "serviceA-featureX", result.getConsumptionId());
+
+// Generate pricing token
+String token = client.features.generateUserPricingToken("user123");
 ```
 
-**Reading the result:**
+### Consumption, Retries and Idempotency-Key
+
+Consumptions (`evaluate` with a consumption), reverts, contract creation, novations (single and by
+group) and usage level changes are writes that must not be applied twice when a request is retried
+after a timeout or a dropped connection. Each of these calls sends an `Idempotency-Key` header. On
+a SPACE with the `idempotency-key` capability, a request repeated with the same key gets the stored
+outcome of the first one (`Idempotent-Replayed: true`) and applies nothing; an older SPACE ignores
+the header. Evaluations without a consumption and reads carry no key.
+
+- **Generated keys.** By default the client creates a random UUID per call and reuses it for that
+  call's own retries, which covers retries inside one process.
+- **Your own key.** When the operation may be retried after the process restarts (a job queue, an
+  outbox, a message handler), create the key once, store it with the operation and pass it on every
+  attempt: `WriteOptions.withIdempotencyKey(key)`, or `NovationOptions.idempotencyKey(key)` for
+  `novate`. Use a new key for each new operation, and a new key after correcting a request SPACE
+  refused with a `4xx`. With a key of your own the client first checks that SPACE advertises
+  `idempotency-key` and throws `SpaceFeatureUnsupportedException` (`isWritten() == false`) if it
+  does not. A key that is not 1 to 255 characters is rejected with `IllegalArgumentException`.
+- **Retries** are off by default (`setRetries(0)`). With `options.setRetries(n)` (0 to 10) the
+  client retries those keyed writes, with the same key and the same request, after a
+  `SpaceConnectionException`, a `5xx` or a `409 IDEMPOTENCY_IN_PROGRESS`, and only while SPACE
+  advertises `idempotency-key` (without it each retry could be applied again). It waits
+  `Retry-After` when SPACE sends one (and stops if that is longer than `retryMaxDelayMs`), otherwise
+  an exponential backoff with jitter from `retryBaseDelayMs` (250 ms) up to `retryMaxDelayMs`
+  (10 s). Other `4xx` and requests without a key are never retried. (OkHttp's own transparent
+  retry of a failed connection, on by default, resends the same headers, key included.)
+- The overloads that take `WriteOptions` (and `novate`, `revertConsumption`) throw their failures;
+  the older overloads still log them and return `null` (`false`, or an evaluation whose
+  `getError().getCode()` is `IO_ERROR` or the idempotency code) as before, now with a generated key.
 
 ```java
-if (result.getError() != null) {
-    System.err.println("Error: " + result.getError().getCode() + " - " + result.getError().getMessage());
-} else if (result.getEval()) {
-    System.out.println("Feature is enabled!");
-    // Access used variables
-    Object userId = result.getUsed().get("userId");
-} else {
-    System.out.println("Feature is disabled");
+SpaceConnectionOptions options = new SpaceConnectionOptions("http://localhost:3000", "your-api-key");
+options.setRetries(2);
+SpaceClient client = new SpaceClient(options);
+
+// job.getIdempotencyKey() = UUID.randomUUID().toString(), created and stored when the job was enqueued.
+FeatureEvaluationResult result = client.features.evaluate(job.getUserId(), "acme-exports",
+        Collections.singletonMap("acme-maxExports", 1), WriteOptions.withIdempotencyKey(job.getIdempotencyKey()));
+if (!result.getEval()) {
+    return; // over the limit: nothing was consumed
+}
+try {
+    runExport(job);
+} catch (RuntimeException e) {
+    // Give back exactly this consumption, whatever happened meanwhile.
+    client.features.revertConsumption(job.getUserId(), "acme-exports", result.getConsumptionId(),
+            WriteOptions.withIdempotencyKey(job.getIdempotencyKey() + ":revert"));
+    throw e;
 }
 ```
 
----
+With `atomic-usage-limits`, SPACE applies a consumption only if every amount fits its limit, also
+under concurrency; one that does not fit answers `getEval() == false` and consumes nothing. A
+`consumptionId` stays revertible for SPACE's `CONSUMPTION_RETENTION_SECONDS` (24 h by default), and
+keys are remembered for `IDEMPOTENCY_KEY_TTL_SECONDS` (24 h by default). `revertConsumption` returns
+`false` when SPACE does not know the id (404) and throws `SpaceFeatureUnsupportedException` without
+sending anything on a SPACE without `atomic-usage-limits`.
 
-### ContractToCreate
+### Caching
 
-Request object for creating a new contract.
+The client supports two caching strategies: built-in (in-memory) and Redis.
 
-| Field | Type | Default | Required | Description |
-|-------|------|---------|----------|-------------|
-| `userContact` | `UserContact` | - | Yes | Contact information for the contract owner |
-| `billingPeriod` | `BillingPeriodToCreate` | - | Yes | Billing period configuration |
-| `groupId` | `String` | `null` | No | Group identifier |
-| `contractedServices` | `Map<String, String>` | - | Yes | Services contracted (service name → service ID) |
-| `subscriptionPlans` | `Map<String, String>` | - | Yes | Subscription plans (plan name → plan ID) |
-| `subscriptionAddOns` | `Map<String, Map<String, Integer>>` | - | Yes | Add-ons with quantities (service → add-on → quantity) |
-
-**BillingPeriodToCreate (nested class)**
-
-| Field | Type | Default | Required | Description |
-|-------|------|---------|----------|-------------|
-| `autoRenew` | `Boolean` | `null` | Yes | Whether the contract auto-renews |
-| `renewalDays` | `Integer` | `null` | Yes | Days before renewal to send notification |
-
-**Example:**
-
-```java
-UserContact contact = new UserContact("user-001", "jdoe", "John", "Doe", "john@example.com", "+1-555-0123");
-
-ContractToCreate.BillingPeriodToCreate billingPeriod = new ContractToCreate.BillingPeriodToCreate(
-    true,  // autoRenew
-    30     // renewalDays
-);
-
-Map<String, String> services = new HashMap<>();
-services.put("petclinic", "svc-petclinic-001");
-
-Map<String, String> plans = new HashMap<>();
-plans.put("petclinic", "plan-premium");
-
-Map<String, Map<String, Integer>> addons = new HashMap<>();
-addons.put("petclinic", Map.of("extra-users", 5, "storage-gb", 10));
-
-ContractToCreate contract = new ContractToCreate();
-contract.setUserContact(contact);
-contract.setBillingPeriod(billingPeriod);
-contract.setGroupId("group-abc");
-contract.setContractedServices(services);
-contract.setSubscriptionPlans(plans);
-contract.setSubscriptionAddOns(addons);
-```
-
----
-
-### Contract
-
-Full contract information retrieved from the Space server.
-
-| Field | Type | Default | Required | Description |
-|-------|------|---------|----------|-------------|
-| `id` | `String` | - | No | Contract identifier |
-| `_id` | `String` | - | No | Internal MongoDB identifier |
-| `userContact` | `UserContact` | - | Yes | Contact information for the contract owner |
-| `billingPeriod` | `BillingPeriod` | - | Yes | Current billing period details |
-| `organizationId` | `String` | - | No | Organization identifier |
-| `groupId` | `String` | - | No | Group identifier |
-| `usageLevels` | `Map<String, Map<String, UsageLevel>>` | - | Yes | Usage tracking per service and feature |
-| `contractedServices` | `Map<String, String>` | - | Yes | Services contracted (service name → service ID) |
-| `subscriptionPlans` | `Map<String, String>` | - | Yes | Subscription plans (plan name → plan ID) |
-| `subscriptionAddOns` | `Map<String, Map<String, Integer>>` | - | Yes | Add-ons with quantities |
-| `history` | `List<ContractHistoryEntry>` | - | Yes | History of contract changes |
-
-**Example:**
-
-```java
-Contract contract = new Contract();
-contract.setId("contract-001");
-contract.setOrganizationId("org-petclinic");
-contract.setGroupId("group-veterinary");
-
-UserContact contact = new UserContact("user-001", "jdoe", "John", "Doe", "john@example.com", "+1-555-0123");
-contract.setUserContact(contact);
-
-BillingPeriod billingPeriod = new BillingPeriod();
-billingPeriod.setStartDate(new Date());
-billingPeriod.setAutoRenew(true);
-billingPeriod.setRenewalDays(30);
-contract.setBillingPeriod(billingPeriod);
-
-Map<String, String> services = new HashMap<>();
-services.put("petclinic", "svc-petclinic-001");
-contract.setContractedServices(services);
-
-Map<String, String> plans = new HashMap<>();
-plans.put("petclinic", "plan-premium");
-contract.setSubscriptionPlans(plans);
-
-Map<String, Map<String, Integer>> addons = new HashMap<>();
-addons.put("petclinic", Map.of("extra-users", 5));
-contract.setSubscriptionAddOns(addons);
-
-Map<String, Map<String, UsageLevel>> usageLevels = new HashMap<>();
-UsageLevel level = new UsageLevel();
-level.setConsumed(150.0);
-level.setResetTimeStamp(new Date());
-usageLevels.put("petclinic", Map.of("api-calls", level));
-contract.setUsageLevels(usageLevels);
-
-List<ContractHistoryEntry> history = new ArrayList<>();
-// ... add history entries
-contract.setHistory(history);
-```
-
----
-
-### Subscription
-
-Request object for updating an existing subscription.
-
-| Field | Type | Default | Required | Description |
-|-------|------|---------|----------|-------------|
-| `contractedServices` | `Map<String, String>` | `new HashMap<>()` | Yes | Services contracted (service name → service ID) |
-| `subscriptionPlans` | `Map<String, String>` | `new HashMap<>()` | Yes | Subscription plans (plan name → plan ID) |
-| `subscriptionAddOns` | `Map<String, Map<String, Integer>>` | `new HashMap<>()` | Yes | Add-ons with quantities |
-
-**Example:**
-
-```java
-Subscription subscription = new Subscription();
-
-Map<String, String> services = new HashMap<>();
-services.put("petclinic", "svc-petclinic-001");
-subscription.setContractedServices(services);
-
-Map<String, String> plans = new HashMap<>();
-plans.put("petclinic", "plan-enterprise");
-subscription.setSubscriptionPlans(plans);
-
-Map<String, Map<String, Integer>> addons = new HashMap<>();
-addons.put("petclinic", Map.of("extra-users", 10, "storage-gb", 50));
-subscription.setSubscriptionAddOns(addons);
-```
-
-Or using the constructor:
-
-```java
-Subscription subscription = new Subscription(
-    Map.of("petclinic", "svc-petclinic-001"),
-    Map.of("petclinic", "plan-enterprise"),
-    Map.of("petclinic", Map.of("extra-users", 10))
-);
-```
-
----
-
-### BillingPeriod
-
-Billing period information for a contract.
-
-| Field | Type | Default | Required | Description |
-|-------|------|---------|----------|-------------|
-| `startDate` | `Date` | - | Yes | Start date of the billing period |
-| `endDate` | `Date` | - | Yes | End date of the billing period |
-| `autoRenew` | `boolean` | `false` | Yes | Whether the contract auto-renews |
-| `renewalDays` | `int` | `0` | Yes | Days before renewal to send notification |
-
-**Example:**
-
-```java
-import java.util.Calendar;
-
-Calendar startCal = Calendar.getInstance();
-Calendar endCal = Calendar.getInstance();
-endCal.add(Calendar.MONTH, 1);
-
-BillingPeriod billingPeriod = new BillingPeriod();
-billingPeriod.setStartDate(startCal.getTime());
-billingPeriod.setEndDate(endCal.getTime());
-billingPeriod.setAutoRenew(true);
-billingPeriod.setRenewalDays(15);
-```
-
-Or using the constructor:
-
-```java
-BillingPeriod billingPeriod = new BillingPeriod(
-    new Date(),           // startDate
-    endDate,              // endDate
-    true,                 // autoRenew
-    15                    // renewalDays
-);
-```
-
----
-
-### UserContact
-
-User contact information. Uses `@JsonInclude(JsonInclude.Include.NON_NULL)` to omit null fields during serialization.
-
-| Field | Type | Default | Required | Description |
-|-------|------|---------|----------|-------------|
-| `userId` | `String` | - | Yes | User identifier |
-| `username` | `String` | - | Yes | Username |
-| `firstName` | `String` | `""` | No | First name (defaults to empty string to satisfy SPACE validation) |
-| `lastName` | `String` | `""` | No | Last name (defaults to empty string to satisfy SPACE validation) |
-| `email` | `String` | `null` | No | Email address |
-| `phone` | `String` | `null` | No | Phone number |
-
-> **Note:** When using the constructor `UserContact(userId, username)`, `firstName` and `lastName` are automatically set to empty strings to avoid SPACE validation errors.
-
-**Examples:**
-
-**Minimal contact (recommended):**
-
-```java
-UserContact contact = new UserContact("user-001", "jdoe");
-// firstName and lastName are automatically set to ""
-```
-
-**Full contact:**
-
-```java
-UserContact contact = new UserContact(
-    "user-001",
-    "jdoe",
-    "John",
-    "Doe",
-    "john.doe@petclinic.com",
-    "+1-555-0123"
-);
-```
-
-**Using setters:**
-
-```java
-UserContact contact = new UserContact();
-contact.setUserId("user-001");
-contact.setUsername("jdoe");
-contact.setFirstName("John");
-contact.setLastName("Doe");
-contact.setEmail("john.doe@petclinic.com");
-contact.setPhone("+1-555-0123");
-```
-
----
-
-### UsageLevel
-
-Usage tracking information for a specific feature within a service.
-
-| Field | Type | Default | Required | Description |
-|-------|------|---------|----------|-------------|
-| `resetTimeStamp` | `Date` | - | Yes | When the usage counter will reset |
-| `consumed` | `double` | `0.0` | Yes | Amount of the limit consumed |
-
-**Example:**
-
-```java
-UsageLevel usageLevel = new UsageLevel();
-usageLevel.setConsumed(750.0);
-usageLevel.setResetTimeStamp(new Date());
-```
-
-Or using the constructor:
-
-```java
-UsageLevel usageLevel = new UsageLevel(resetDate, 750.0);
-```
-
-**Checking usage against limits:**
-
-```java
-double consumed = usageLevel.getConsumed();
-double limit = 1000.0;
-double percentage = (consumed / limit) * 100;
-System.out.println("Usage: " + percentage + "%");
-```
-
----
-
-### ContractHistoryEntry
-
-Historical record of a contract state.
-
-| Field | Type | Default | Required | Description |
-|-------|------|---------|----------|-------------|
-| `startDate` | `Date` | - | Yes | Start date of this contract version |
-| `endDate` | `Date` | - | Yes | End date of this contract version |
-| `contractedServices` | `Map<String, String>` | - | Yes | Services contracted during this period |
-| `subscriptionPlans` | `Map<String, String>` | - | Yes | Subscription plans during this period |
-| `subscriptionAddOns` | `Map<String, Map<String, Integer>>` | - | Yes | Add-ons with quantities during this period |
-
-**Example:**
-
-```java
-ContractHistoryEntry entry = new ContractHistoryEntry();
-entry.setStartDate(startDate);
-entry.setEndDate(endDate);
-
-Map<String, String> services = new HashMap<>();
-services.put("petclinic", "svc-petclinic-001");
-entry.setContractedServices(services);
-
-Map<String, String> plans = new HashMap<>();
-plans.put("petclinic", "plan-basic");
-entry.setSubscriptionPlans(plans);
-
-Map<String, Map<String, Integer>> addons = new HashMap<>();
-addons.put("petclinic", Map.of("extra-users", 2));
-entry.setSubscriptionAddOns(addons);
-```
-
----
-
-### SpaceEvent
-
-Enum representing events that can be listened to for real-time updates.
-
-| Value | Event Name | Description |
-|-------|------------|-------------|
-| `SYNCHRONIZED` | `"synchronized"` | Data synchronization completed |
-| `PRICING_CREATED` | `"pricing_created"` | New pricing was created |
-| `PRICING_ARCHIVED` | `"pricing_archived"` | Pricing was archived |
-| `PRICING_ACTIVED` | `"pricing_actived"` | Pricing was activated |
-| `SERVICE_DISABLED` | `"service_disabled"` | A service was disabled |
-| `ERROR` | `"error"` | An error occurred |
-
-**Examples:**
-
-**Using the enum directly:**
-
-```java
-SpaceEvent event = SpaceEvent.PRICING_CREATED;
-String eventName = event.getEventName(); // "pricing_created"
-```
-
-**Converting from string:**
-
-```java
-SpaceEvent event = SpaceEvent.fromString("synchronized");
-if (event != null) {
-    System.out.println("Event: " + event.name());
-}
-```
-
----
-
-### Quick Reference: Map Key Conventions
-
-Many types use `Map<String, String>` or `Map<String, Map<String, Integer>>`. Here are the typical key patterns:
-
-**contractedServices**
-
-```java
-Map<String, String> services = Map.of(
-    "petclinic", "svc-petclinic-001"  // serviceName → serviceId
-);
-```
-
-**subscriptionPlans**
-
-```java
-Map<String, String> plans = Map.of(
-    "petclinic", "plan-premium"  // serviceName → planId
-);
-```
-
-**subscriptionAddOns**
-
-```java
-Map<String, Map<String, Integer>> addons = Map.of(
-    "petclinic", Map.of(           // serviceName → {addOnName → quantity}
-        "extra-users", 5,
-        "storage-gb", 10
-    )
-);
-```
-
-**usageLevels**
-
-```java
-Map<String, Map<String, UsageLevel>> usageLevels = Map.of(
-    "petclinic", Map.of(           // serviceName → {featureName → UsageLevel}
-        "api-calls", new UsageLevel(resetDate, 150.0),
-        "storage", new UsageLevel(resetDate, 5.5)
-    )
-);
-```
-
-## CacheOptions
-
-Cache configuration for storing feature evaluation results.
-
-| Field | Type | Default | Required | Description |
-|-------|------|---------|----------|-------------|
-| `enabled` | `boolean` | `false` | Yes | Enable/disable caching |
-| `type` | `CacheType` | `BUILTIN` | No | Type of cache to use |
-| `ttl` | `Integer` | `300` | No | Time-to-live in seconds (default 5 minutes) |
-| `external` | `ExternalCacheConfig` | `null` | No | External cache configuration (required when type is REDIS) |
-
-### CacheType Enum
-
-| Value | Description |
-|-------|-------------|
-| `BUILTIN` | In-memory cache (default) |
-| `REDIS` | External Redis cache |
-
-### ExternalCacheConfig
-
-| Field | Type | Default | Required | Description |
-|-------|------|---------|----------|-------------|
-| `redis` | `RedisConfig` | - | Yes | Redis server configuration |
-
-### RedisConfig
-
-| Field | Type | Default | Required | Description |
-|-------|------|---------|----------|-------------|
-| `host` | `String` | - | Yes | Redis server hostname |
-| `port` | `Integer` | `6379` | No | Redis server port |
-| `password` | `String` | `null` | No | Redis authentication password |
-| `db` | `Integer` | `0` | No | Redis database number (valid range: 0-15) |
-| `connectTimeout` | `Integer` | `5000` | No | Connection timeout in milliseconds |
-| `keyPrefix` | `String` | `"space-client:"` | No | Prefix for cache keys |
-
-### Examples
-
-**Basic cache with built-in memory:**
-
-```java
-CacheOptions cacheOptions = new CacheOptions();
-cacheOptions.setEnabled(true);
-cacheOptions.setType(CacheOptions.CacheType.BUILTIN);
-cacheOptions.setTtl(600); // 10 minutes
-```
-
-**Redis cache configuration:**
-
-```java
-CacheOptions.RedisConfig redisConfig = new CacheOptions.RedisConfig("redis.example.com");
-redisConfig.setPort(6379);
-redisConfig.setPassword("redis-password");
-redisConfig.setDb(2);
-redisConfig.setConnectTimeout(3000);
-redisConfig.setKeyPrefix("petclinic:");
-
-CacheOptions.ExternalCacheConfig externalConfig = new CacheOptions.ExternalCacheConfig();
-externalConfig.setRedis(redisConfig);
-
-CacheOptions cacheOptions = new CacheOptions();
-cacheOptions.setEnabled(true);
-cacheOptions.setType(CacheOptions.CacheType.REDIS);
-cacheOptions.setExternal(externalConfig);
-```
-
----
-
-## FeatureEvaluationResult
-
-Result of evaluating a feature flag against a user context.
-
-| Field | Type | Default | Required | Description |
-|-------|------|---------|----------|-------------|
-| `eval` | `boolean` | - | Yes | Whether the feature is enabled |
-| `used` | `Map<String, Object>` | - | No | Variables used in the evaluation |
-| `limit` | `Map<String, Object>` | - | No | Limit values applied |
-| `error` | `EvaluationError` | `null` | No | Error information if evaluation failed |
-
-### EvaluationError
-
-| Field | Type | Default | Required | Description |
-|-------|------|---------|----------|-------------|
-| `code` | `String` | - | Yes | Error code identifier |
-| `message` | `String` | - | Yes | Human-readable error message |
-
-### Examples
-
-**Successful evaluation:**
-
-```java
-FeatureEvaluationResult result = new FeatureEvaluationResult();
-result.setEval(true);
-result.setUsed(Map.of("userId", "user-123", "plan", "premium"));
-result.setLimit(Map.of("maxRequests", 1000));
-result.setError(null);
-```
-
-**Evaluation with error:**
-
-```java
-FeatureEvaluationResult.EvaluationError error = new FeatureEvaluationResult.EvaluationError(
-    "FEATURE_NOT_FOUND",
-    "Feature 'dark-mode' does not exist"
-);
-
-FeatureEvaluationResult result = new FeatureEvaluationResult();
-result.setEval(false);
-result.setError(error);
-```
-
-**Reading the result:**
-
-```java
-if (result.getError() != null) {
-    System.err.println("Error: " + result.getError().getCode() + " - " + result.getError().getMessage());
-} else if (result.getEval()) {
-    System.out.println("Feature is enabled!");
-    // Access used variables
-    Object userId = result.getUsed().get("userId");
-} else {
-    System.out.println("Feature is disabled");
-}
-```
-
----
-
-## ContractToCreate
-
-Request object for creating a new contract.
-
-| Field | Type | Default | Required | Description |
-|-------|------|---------|----------|-------------|
-| `userContact` | `UserContact` | - | Yes | Contact information for the contract owner |
-| `billingPeriod` | `BillingPeriodToCreate` | - | Yes | Billing period configuration |
-| `groupId` | `String` | `null` | No | Group identifier |
-| `contractedServices` | `Map<String, String>` | - | Yes | Services contracted (service name → service ID) |
-| `subscriptionPlans` | `Map<String, String>` | - | Yes | Subscription plans (plan name → plan ID) |
-| `subscriptionAddOns` | `Map<String, Map<String, Integer>>` | - | Yes | Add-ons with quantities (service → add-on → quantity) |
-
-### BillingPeriodToCreate (nested class)
-
-| Field | Type | Default | Required | Description |
-|-------|------|---------|----------|-------------|
-| `autoRenew` | `Boolean` | `null` | Yes | Whether the contract auto-renews |
-| `renewalDays` | `Integer` | `null` | Yes | Days before renewal to send notification |
-
-### Example
-
-```java
-UserContact contact = new UserContact("user-001", "jdoe", "John", "Doe", "john@example.com", "+1-555-0123");
-
-ContractToCreate.BillingPeriodToCreate billingPeriod = new ContractToCreate.BillingPeriodToCreate(
-    true,  // autoRenew
-    30     // renewalDays
-);
-
-Map<String, String> services = new HashMap<>();
-services.put("petclinic", "svc-petclinic-001");
-
-Map<String, String> plans = new HashMap<>();
-plans.put("petclinic", "plan-premium");
-
-Map<String, Map<String, Integer>> addons = new HashMap<>();
-addons.put("petclinic", Map.of("extra-users", 5, "storage-gb", 10));
-
-ContractToCreate contract = new ContractToCreate();
-contract.setUserContact(contact);
-contract.setBillingPeriod(billingPeriod);
-contract.setGroupId("group-abc");
-contract.setContractedServices(services);
-contract.setSubscriptionPlans(plans);
-contract.setSubscriptionAddOns(addons);
-```
-
----
-
-## Contract
-
-Full contract information retrieved from the Space server.
-
-| Field | Type | Default | Required | Description |
-|-------|------|---------|----------|-------------|
-| `id` | `String` | - | No | Contract identifier |
-| `_id` | `String` | - | No | Internal MongoDB identifier |
-| `userContact` | `UserContact` | - | Yes | Contact information for the contract owner |
-| `billingPeriod` | `BillingPeriod` | - | Yes | Current billing period details |
-| `organizationId` | `String` | - | No | Organization identifier |
-| `groupId` | `String` | - | No | Group identifier |
-| `usageLevels` | `Map<String, Map<String, UsageLevel>>` | - | Yes | Usage tracking per service and feature |
-| `contractedServices` | `Map<String, String>` | - | Yes | Services contracted (service name → service ID) |
-| `subscriptionPlans` | `Map<String, String>` | - | Yes | Subscription plans (plan name → plan ID) |
-| `subscriptionAddOns` | `Map<String, Map<String, Integer>>` | - | Yes | Add-ons with quantities |
-| `history` | `List<ContractHistoryEntry>` | - | Yes | History of contract changes |
-
-### Example
-
-```java
-Contract contract = new Contract();
-contract.setId("contract-001");
-contract.setOrganizationId("org-petclinic");
-contract.setGroupId("group-veterinary");
-
-UserContact contact = new UserContact("user-001", "jdoe", "John", "Doe", "john@example.com", "+1-555-0123");
-contract.setUserContact(contact);
-
-BillingPeriod billingPeriod = new BillingPeriod();
-billingPeriod.setStartDate(new Date());
-billingPeriod.setAutoRenew(true);
-billingPeriod.setRenewalDays(30);
-contract.setBillingPeriod(billingPeriod);
-
-Map<String, String> services = new HashMap<>();
-services.put("petclinic", "svc-petclinic-001");
-contract.setContractedServices(services);
-
-Map<String, String> plans = new HashMap<>();
-plans.put("petclinic", "plan-premium");
-contract.setSubscriptionPlans(plans);
-
-Map<String, Map<String, Integer>> addons = new HashMap<>();
-addons.put("petclinic", Map.of("extra-users", 5));
-contract.setSubscriptionAddOns(addons);
-
-Map<String, Map<String, UsageLevel>> usageLevels = new HashMap<>();
-UsageLevel level = new UsageLevel();
-level.setConsumed(150.0);
-level.setResetTimeStamp(new Date());
-usageLevels.put("petclinic", Map.of("api-calls", level));
-contract.setUsageLevels(usageLevels);
-
-List<ContractHistoryEntry> history = new ArrayList<>();
-// ... add history entries
-contract.setHistory(history);
-```
-
----
-
-## Subscription
-
-Request object for updating an existing subscription.
-
-| Field | Type | Default | Required | Description |
-|-------|------|---------|----------|-------------|
-| `contractedServices` | `Map<String, String>` | `new HashMap<>()` | Yes | Services contracted (service name → service ID) |
-| `subscriptionPlans` | `Map<String, String>` | `new HashMap<>()` | Yes | Subscription plans (plan name → plan ID) |
-| `subscriptionAddOns` | `Map<String, Map<String, Integer>>` | `new HashMap<>()` | Yes | Add-ons with quantities |
-
-### Example
-
-```java
-Subscription subscription = new Subscription();
-
-Map<String, String> services = new HashMap<>();
-services.put("petclinic", "svc-petclinic-001");
-subscription.setContractedServices(services);
-
-Map<String, String> plans = new HashMap<>();
-plans.put("petclinic", "plan-enterprise");
-subscription.setSubscriptionPlans(plans);
-
-Map<String, Map<String, Integer>> addons = new HashMap<>();
-addons.put("petclinic", Map.of("extra-users", 10, "storage-gb", 50));
-subscription.setSubscriptionAddOns(addons);
-```
-
-Or using the constructor:
-
-```java
-Subscription subscription = new Subscription(
-    Map.of("petclinic", "svc-petclinic-001"),
-    Map.of("petclinic", "plan-enterprise"),
-    Map.of("petclinic", Map.of("extra-users", 10))
-);
-```
-
----
-
-## BillingPeriod
-
-Billing period information for a contract.
-
-| Field | Type | Default | Required | Description |
-|-------|------|---------|----------|-------------|
-| `startDate` | `Date` | - | Yes | Start date of the billing period |
-| `endDate` | `Date` | - | Yes | End date of the billing period |
-| `autoRenew` | `boolean` | `false` | Yes | Whether the contract auto-renews |
-| `renewalDays` | `int` | `0` | Yes | Days before renewal to send notification |
-
-### Example
-
-```java
-import java.util.Calendar;
-
-Calendar startCal = Calendar.getInstance();
-Calendar endCal = Calendar.getInstance();
-endCal.add(Calendar.MONTH, 1);
-
-BillingPeriod billingPeriod = new BillingPeriod();
-billingPeriod.setStartDate(startCal.getTime());
-billingPeriod.setEndDate(endCal.getTime());
-billingPeriod.setAutoRenew(true);
-billingPeriod.setRenewalDays(15);
-```
-
-Or using the constructor:
-
-```java
-BillingPeriod billingPeriod = new BillingPeriod(
-    new Date(),           // startDate
-    endDate,              // endDate
-    true,                 // autoRenew
-    15                    // renewalDays
-);
-```
-
----
-
-## UserContact
-
-User contact information. Uses `@JsonInclude(JsonInclude.Include.NON_NULL)` to omit null fields during serialization.
-
-| Field | Type | Default | Required | Description |
-|-------|------|---------|----------|-------------|
-| `userId` | `String` | - | Yes | User identifier |
-| `username` | `String` | - | Yes | Username |
-| `firstName` | `String` | `""` | No | First name (defaults to empty string to satisfy SPACE validation) |
-| `lastName` | `String` | `""` | No | Last name (defaults to empty string to satisfy SPACE validation) |
-| `email` | `String` | `null` | No | Email address |
-| `phone` | `String` | `null` | No | Phone number |
-
-> **Note:** When using the constructor `UserContact(userId, username)`, `firstName` and `lastName` are automatically set to empty strings to avoid SPACE validation errors.
-
-### Examples
-
-**Minimal contact (recommended):**
-
-```java
-UserContact contact = new UserContact("user-001", "jdoe");
-// firstName and lastName are automatically set to ""
-```
-
-**Full contact:**
-
-```java
-UserContact contact = new UserContact(
-    "user-001",
-    "jdoe",
-    "John",
-    "Doe",
-    "john.doe@petclinic.com",
-    "+1-555-0123"
-);
-```
-
-**Using setters:**
-
-```java
-UserContact contact = new UserContact();
-contact.setUserId("user-001");
-contact.setUsername("jdoe");
-contact.setFirstName("John");
-contact.setLastName("Doe");
-contact.setEmail("john.doe@petclinic.com");
-contact.setPhone("+1-555-0123");
-```
-
----
-
-## UsageLevel
-
-Usage tracking information for a specific feature within a service.
-
-| Field | Type | Default | Required | Description |
-|-------|------|---------|----------|-------------|
-| `resetTimeStamp` | `Date` | - | Yes | When the usage counter will reset |
-| `consumed` | `double` | `0.0` | Yes | Amount of the limit consumed |
-
-### Example
-
-```java
-UsageLevel usageLevel = new UsageLevel();
-usageLevel.setConsumed(750.0);
-usageLevel.setResetTimeStamp(new Date());
-```
-
-Or using the constructor:
-
-```java
-UsageLevel usageLevel = new UsageLevel(resetDate, 750.0);
-```
-
-**Checking usage against limits:**
-
-```java
-double consumed = usageLevel.getConsumed();
-double limit = 1000.0;
-double percentage = (consumed / limit) * 100;
-System.out.println("Usage: " + percentage + "%");
-```
-
----
-
-## ContractHistoryEntry
-
-Historical record of a contract state.
-
-| Field | Type | Default | Required | Description |
-|-------|------|---------|----------|-------------|
-| `startDate` | `Date` | - | Yes | Start date of this contract version |
-| `endDate` | `Date` | - | Yes | End date of this contract version |
-| `contractedServices` | `Map<String, String>` | - | Yes | Services contracted during this period |
-| `subscriptionPlans` | `Map<String, String>` | - | Yes | Subscription plans during this period |
-| `subscriptionAddOns` | `Map<String, Map<String, Integer>>` | - | Yes | Add-ons with quantities during this period |
-
-### Example
-
-```java
-ContractHistoryEntry entry = new ContractHistoryEntry();
-entry.setStartDate(startDate);
-entry.setEndDate(endDate);
-
-Map<String, String> services = new HashMap<>();
-services.put("petclinic", "svc-petclinic-001");
-entry.setContractedServices(services);
-
-Map<String, String> plans = new HashMap<>();
-plans.put("petclinic", "plan-basic");
-entry.setSubscriptionPlans(plans);
-
-Map<String, Map<String, Integer>> addons = new HashMap<>();
-addons.put("petclinic", Map.of("extra-users", 2));
-entry.setSubscriptionAddOns(addons);
-```
-
----
-
-## SpaceEvent
-
-Enum representing events that can be listened to for real-time updates.
-
-| Value | Event Name | Description |
-|-------|------------|-------------|
-| `SYNCHRONIZED` | `"synchronized"` | Data synchronization completed |
-| `PRICING_CREATED` | `"pricing_created"` | New pricing was created |
-| `PRICING_ARCHIVED` | `"pricing_archived"` | Pricing was archived |
-| `PRICING_ACTIVED` | `"pricing_actived"` | Pricing was activated |
-| `SERVICE_DISABLED` | `"service_disabled"` | A service was disabled |
-| `ERROR` | `"error"` | An error occurred |
-
-### Examples
-
-**Using the enum directly:**
-
-```java
-SpaceEvent event = SpaceEvent.PRICING_CREATED;
-String eventName = event.getEventName(); // "pricing_created"
-```
-
-**Converting from string:**
-
-```java
-SpaceEvent event = SpaceEvent.fromString("synchronized");
-if (event != null) {
-    System.out.println("Event: " + event.name());
-}
-```
-
----
-
-## Quick Reference: Map Key Conventions
-
-Many types use `Map<String, String>` or `Map<String, Map<String, Integer>>`. Here are the typical key patterns:
-
-### contractedServices
-
-```java
-Map<String, String> services = Map.of(
-    "petclinic", "svc-petclinic-001"  // serviceName → serviceId
-);
-```
-
-### subscriptionPlans
-
-```java
-Map<String, String> plans = Map.of(
-    "petclinic", "plan-premium"  // serviceName → planId
-);
-```
-
-### subscriptionAddOns
-
-```java
-Map<String, Map<String, Integer>> addons = Map.of(
-    "petclinic", Map.of(           // serviceName → {addOnName → quantity}
-        "extra-users", 5,
-        "storage-gb", 10
-    )
-);
-```
-
-### usageLevels
-
-```java
-Map<String, Map<String, UsageLevel>> usageLevels = Map.of(
-    "petclinic", Map.of(           // serviceName → {featureName → UsageLevel}
-        "api-calls", new UsageLevel(resetDate, 150.0),
-        "storage", new UsageLevel(resetDate, 5.5)
-    )
-);
-```
-
-## 💾 Caching
-
-The client supports two strategies.
-
-### 1) Built-in in-memory cache
+#### Built-in Cache
 
 ```java
 import io.github.isagroup.spaceclient.types.CacheOptions;
 import io.github.isagroup.spaceclient.types.CacheOptions.CacheType;
-import io.github.isagroup.spaceclient.types.SpaceConnectionOptions;
 
 CacheOptions cacheOptions = new CacheOptions(true, CacheType.BUILTIN, 300);
 
@@ -1465,26 +337,21 @@ SpaceConnectionOptions options = new SpaceConnectionOptions(
 SpaceClient client = SpaceClientFactory.connect(options);
 ```
 
-### 2) Redis cache
+#### Redis Cache
 
 ```java
 import io.github.isagroup.spaceclient.types.CacheOptions;
-import io.github.isagroup.spaceclient.types.CacheOptions.CacheType;
-import io.github.isagroup.spaceclient.types.CacheOptions.ExternalCacheConfig;
-import io.github.isagroup.spaceclient.types.CacheOptions.RedisConfig;
-import io.github.isagroup.spaceclient.types.SpaceConnectionOptions;
+import io.github.isagroup.spaceclient.types.CacheOptions.*;
 
-RedisConfig redis = new RedisConfig("localhost", 6379);
-redis.setPassword("your-password"); // optional
-redis.setDb(0);
-redis.setConnectTimeout(5000);
-redis.setKeyPrefix("space-client:");
+RedisConfig redisConfig = new RedisConfig("localhost", 6379);
+redisConfig.setPassword("your-password"); // Optional
+redisConfig.setDb(0);
 
-ExternalCacheConfig external = new ExternalCacheConfig();
-external.setRedis(redis);
+ExternalCacheConfig externalConfig = new ExternalCacheConfig();
+externalConfig.setRedis(redisConfig);
 
 CacheOptions cacheOptions = new CacheOptions(true, CacheType.REDIS, 300);
-cacheOptions.setExternal(external);
+cacheOptions.setExternal(externalConfig);
 
 SpaceConnectionOptions options = new SpaceConnectionOptions(
     "http://localhost:3000",
@@ -1496,103 +363,497 @@ SpaceConnectionOptions options = new SpaceConnectionOptions(
 SpaceClient client = SpaceClientFactory.connect(options);
 ```
 
-Cache notes:
-
-- Contract reads use cache when enabled.
-- Read-only feature evaluations may be cached for 60 seconds.
-- Pricing tokens may be cached for 900 seconds.
-- Mutations invalidate related user keys.
-
-## 🔌 WebSocket Events
-
-Supported events:
-
-- `synchronized`
-- `pricing_created`
-- `pricing_archived`
-- `pricing_actived`
-- `service_disabled`
-- `error`
-
-Example:
+### WebSocket Events
 
 ```java
-client.on("synchronized", data -> System.out.println("Socket connected"));
-client.on("pricing_created", data -> System.out.println("Pricing created: " + data));
-client.on("error", err -> System.err.println("Socket error: " + err));
+// Register event handlers
+client.on("synchronized", data -> {
+    System.out.println("Connected to Space WebSocket");
+});
 
+client.on("pricing_created", data -> {
+    System.out.println("New pricing created: " + data);
+});
+
+client.on("pricing_archived", data -> {
+    System.out.println("Pricing archived: " + data);
+});
+
+client.on("pricing_actived", data -> {
+    System.out.println("Pricing activated: " + data);
+});
+
+client.on("service_disabled", data -> {
+    System.out.println("Service disabled: " + data);
+});
+
+client.on("error", error -> {
+    System.err.println("WebSocket error: " + error);
+});
+
+// Contract events of the API key's organisation (authenticated /contracts namespace)
+client.on("contract_novated", data -> {
+    ContractEventDetails details = (ContractEventDetails) data;
+    System.out.println(details.getUserId() + " is now at " + details.getContractVersion()
+            + " for " + details.getServices());
+});
+
+// Connect to WebSocket
 client.connect();
 
-// ...
-
+// Remove specific listener
 client.removeListener("pricing_created");
+
+// Remove all listeners
 client.removeAllListeners();
+
+// Disconnect
 client.disconnect();
 ```
 
-## ⚠️ Error Handling
+### Pricing Pages
 
-Current behavior by module:
-
-- `SpaceClientFactory.connect(...)` throws `IllegalArgumentException` for invalid input.
-- `SpaceClient.isConnectedToSpace()` returns `false` when health check fails.
-- `ContractModule` methods return `null` on HTTP/IO failure (except `removeContract`, which logs internally).
-- `FeatureModule.evaluate(...)` returns a `FeatureEvaluationResult` with `error` populated on IO failures.
-- `FeatureModule.revertEvaluation(...)` returns `false` on failure.
-- `FeatureModule.generateUserPricingToken(...)` returns `null` on failure.
-
-Suggested defensive pattern:
+A host backend (for example a Spring service holding the SPACE org key) renders a pricing page
+with the version a visitor would get, or with the version a signed-in customer is on:
 
 ```java
-FeatureEvaluationResult result = client.features.evaluate(userId, featureId);
-if (result.getError() != null) {
-  // handle recoverable error
-  return;
+import io.github.isagroup.spaceclient.exceptions.PricingYamlUnavailableException;
+import io.github.isagroup.spaceclient.types.*;
+
+// Signed-out visitor: the version SPACE assigns to new contracts.
+NewContractsPricing current = client.services.getNewContractsPricing("acme");
+PricingYaml pricing = client.pricings.getYaml("acme", current.getVersion());
+// current.getSource(): "sphere-policy" | "default" | "latest-active"
+
+// Signed-in customer: the version of THEIR contract.
+ContractPricings mine = client.contracts.getPricings("user123");
+ContractServicePricing acme = mine.getServices().get("acme");
+acme.getVersion(); acme.isArchived(); acme.getPlan(); acme.getAddOns(); acme.getNewContractsVersion();
+PricingYaml theirs = client.pricings.getYaml("acme", acme.getVersion());
+
+// The file is returned byte for byte; keep its ETag to revalidate cheaply.
+PricingYaml again = client.pricings.getYaml("acme", acme.getVersion(), theirs.getEtag());
+if (again.isNotModified()) {
+    // reuse theirs.getYaml()
 }
-if (!result.getEval()) {
-  // feature disabled
-  return;
-}
-// proceed
 ```
 
-## ✨ Best Practices
+### Changing a Subscription Safely
 
-- Keep one `SpaceClient` per process/service where possible.
-- Always call `client.close()` on shutdown to release resources.
-- Use Redis cache for multi-instance deployments.
-- For deterministic behavior under network issues, always check `null` / `false` / `error` outputs.
-- Reuse connection options and avoid creating short-lived clients per request.
+Preview first, then apply with the `contractVersion` the preview was computed on. If anything
+changed the contract in between, SPACE answers 412 and the client throws
+`ContractChangedException` instead of overwriting it:
 
-## 🛠️ Tech Stack
+```java
+import io.github.isagroup.spaceclient.exceptions.ContractChangedException;
+import io.github.isagroup.spaceclient.exceptions.SpaceFeatureUnsupportedException;
+import io.github.isagroup.spaceclient.types.*;
 
-The project uses the following main tools and technologies:
+Subscription change = new Subscription();          // contractedServices left empty:
+change.setSubscriptionPlans(Map.of("acme", "growth")); // keep the versions or let the policy decide
+change.setSubscriptionAddOns(Map.of("acme", Map.of("extraStorage", 2)));
 
-<div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', justifyContent: 'center', marginTop: '1rem' }}>
+NovationPreview preview = client.contracts.previewNovation("user123", change, true);
+if (!preview.isValid()) {
+    for (NovationError error : preview.getErrors()) {
+        if (error.is(NovationErrorCode.ADDON_NOT_AVAILABLE)) { /* ... */ }
+        System.out.println(error.getCode() + " " + error.getPath() + ": " + error.getMessage());
+    }
+} else {
+    try {
+        Contract updated = client.contracts.novate("user123", preview.getEffective(),
+                NovationOptions.expecting(preview.getContractVersion()).keepBillingPeriod(true));
+        updated.getContractVersion(); // the new version
+    } catch (ContractChangedException e) {
+        // Changed meanwhile: re-read, show the customer, ask again.
+        System.out.println("Current version: " + e.getContractVersion());
+    } catch (SpaceFeatureUnsupportedException e) {
+        // This SPACE cannot honour the option (e.getCapability()).
+        if (e.isWritten()) {
+            // The change WAS applied without the guarantee: e.getContract()
+        }
+    }
+}
+```
 
-![Java](https://img.shields.io/badge/-Java-007396?logo=openjdk&logoColor=white&style=for-the-badge)
-![Maven](https://img.shields.io/badge/-Maven-C71A36?logo=apachemaven&logoColor=white&style=for-the-badge)
-![OkHttp](https://img.shields.io/badge/-OkHttp-3E4348?style=for-the-badge)
-![Jackson](https://img.shields.io/badge/-Jackson-000000?style=for-the-badge)
-![Socket.IO](https://img.shields.io/badge/-Socket.IO-010101?logo=socketdotio&logoColor=white&style=for-the-badge)
-![Redis](https://img.shields.io/badge/-Redis-DC382D?logo=redis&logoColor=white&style=for-the-badge)
-![SLF4J](https://img.shields.io/badge/-SLF4J-4D4D4D?style=for-the-badge)
-![JUnit 5](https://img.shields.io/badge/-JUnit%205-25A162?logo=junit5&logoColor=white&style=for-the-badge)
-![Mockito](https://img.shields.io/badge/-Mockito-78A641?style=for-the-badge)
-![Spring](https://img.shields.io/badge/-Spring-6DB33F?logo=spring&logoColor=white&style=for-the-badge)
+- `previewNovation` writes nothing and leaves the cache alone. An invalid change is an answer
+  (`isValid() == false`), not an exception. Unknown error codes are kept as strings
+  (`getKnownCode()` returns `null` for them).
+- The expected version is sent as `If-Match`. `NovationOptions.expecting(null)` or `""` throws
+  `IllegalArgumentException`: a version that was never known must not quietly turn a conditional
+  novation into an unconditional one. For an unconditional novation, do not set it.
+  `keepBillingPeriod(true)` sends `?keepBillingPeriod=true`: history is still recorded but the
+  billing period is not restarted.
+- `rejectPrivate(true)` sends `?rejectPrivate=true`, asking SPACE to refuse private plans and
+  add-ons. Rejection is opt-in: without it SPACE accepts them, as before. The same options can be
+  passed to the preview: `previewNovation(userId, subscription, options)`.
+- `novate` throws on every failure. The existing `updateContractSubscription(userId, subscription)`
+  is unchanged: unconditional, one PUT, and `null` on failure.
+- `Contract.getContractVersion()` is filled from the body or, failing that, from the `ETag` of
+  the update response. It is `null` on SPACE versions without it.
 
-</div>
+> **Older SPACE versions.** A SPACE without optimistic concurrency ignores `If-Match`, one without
+> `keepBillingPeriod` ignores the query and restarts the billing period, and one without
+> `rejectPrivate` accepts private plans. So `novate` does not trust the options blindly. When
+> `expectedContractVersion`, `keepBillingPeriod` or `rejectPrivate` is set:
+>
+> - **Before writing** it checks the `X-Space-Capabilities` header for `contract-version` /
+>   `keep-billing-period` / `reject-private`. The header is read from any SPACE response and
+>   cached per client for `SpaceClient.CAPABILITIES_TTL_MS` (60 s; `client.clearCapabilities()`
+>   forgets it). When nothing recent is known it reads the contract once. If a token is missing it throws
+>   `SpaceFeatureUnsupportedException` (`getCapability()`, `isWritten() == false`) and **writes
+>   nothing**. If that read's `ETag` already differs from the expected version it throws
+>   `ContractChangedException` early; `If-Match` on the PUT is still the atomic check.
+> - **After writing** it throws `SpaceFeatureUnsupportedException` with `isWritten() == true` and
+>   the stored `getContract()` if the answer shows the option was ignored anyway: no `ETag` with an
+>   expected version, or a different `billingPeriod.startDate` with `keepBillingPeriod`. The
+>   user's cache entries are dropped.
+> - `previewNovation` with `keepBillingPeriod` or `rejectPrivate` throws the same exception when
+>   the SPACE that answered does not advertise `keep-billing-period` / `reject-private`.
+>
+> With no option set, nothing is checked and the request is a single PUT.
 
-## 🤝 Contributing
+`getYaml` throws `PricingYamlUnavailableException` when SPACE knows the version but no longer has
+its original file. `getPricings` is never served from cache.
 
-Contributions are welcome. Open an [issue](https://github.com/Alex-GF/space-java-client/issues) or submit a [pull request](https://github.com/Alex-GF/space-java-client/pulls).
+> **Older SPACE versions.** These calls need a SPACE with the subscription-change API. Without it,
+> `getPricings` and `getNewContractsPricing` throw `SpaceApiException` with SPACE's 404. An older
+> SPACE ignores `?format=yaml` and answers with the JSON pricing; `getYaml` then throws
+> `SpaceFeatureUnsupportedException` (`getCapability()` is `pricing-yaml`) instead of returning
+> JSON as if it were the file. Only `application/yaml`, `text/yaml` and their `x-` variants are
+> accepted.
 
+#### Contract events
 
-## 📄 Disclaimer & License
+`contract_created`, `contract_novated`, `contract_deleted` and `contract_renewed` arrive on the
+authenticated `/contracts` namespace, and only for contracts of the API key's organisation. The
+client opens it, sending the key as socket.io `auth: {apiKey: ...}`, when the first contract
+listener is registered, and closes it when the last one is removed. A member user key (`usr_...`)
+must also name its organisation: `options.setOrganizationId("org-1")` makes the handshake send
+`auth: {apiKey: ..., organizationId: "org-1"}`; organisation keys need nothing more. The callback
+receives a `ContractEventDetails` (`userId`, `organizationId`, `contractVersion`, `services`),
+after the user's cache entries have been invalidated; `getContractVersion()` is `null` for
+`contract_deleted`. A key SPACE refuses is reported to the `error` listener. Listeners may be
+registered and removed from any thread.
 
-This project is licensed under the MIT License. See [LICENSE](https://github.com/Alex-GF/space-java-client/blob/main/LICENSE).
+#### Event ids and occurredAt
 
-:::warning
-This SDK is part of **ongoing research** in pricing-driven devops.
-It is still in an early stage and not intended for production use.
-:::
+`ContractEventDetails` also carries the event's own fields, and pricing listeners receive a
+`PricingEventDetails`, which is the `details` `JSONObject` SPACE sent plus the same getters:
+
+```java
+client.on("contract_novated", data -> {
+    ContractEventDetails details = (ContractEventDetails) data;
+    details.getCode();          // "CONTRACT_NOVATED"
+    details.getEventId();       // "019a2a6b-7c1e-7d3f-9b2a-5c4e8f1a2b3c", the same in every copy
+    details.getOccurredAt();    // Instant: when SPACE stored the change
+    details.getRawOccurredAt(); // "2026-10-27T10:00:00.123Z", as sent
+});
+```
+
+SPACE sends `eventId` and `occurredAt` from the version that advertises `contract-event-ids` in
+`X-Space-Capabilities`. With an older SPACE the getters return `null` (`getOccurredAt()` also
+returns `null` if the value is not a valid date).
+
+#### Delivery guarantees
+
+SPACE events are hints that something changed, not a log of the changes:
+
+- **At most once per connection, no replay.** An event goes to the connections open when it is
+  emitted. While the client is disconnected or reconnecting, events are lost, and SPACE does not
+  resend them.
+- **Repeats are possible.** A consumer with several connections gets one copy per connection, all
+  with the same `eventId`. The client drops a repeated `eventId` before invalidating the cache or
+  calling your listener. It remembers the last 10,000 ids for up to 10 minutes (both namespaces
+  share the window); events without `eventId` are always delivered. Each `SpaceClient` has its own
+  window, so two clients (or two replicas of your backend) each get their copy, which is what each
+  needs to refresh its own cache.
+- **No ordering.** Events may arrive in another order than the changes were stored. Never order
+  events by `eventId` (compare it for equality only), and do not compare `occurredAt` across SPACE
+  instances, whose clocks may differ. `contractVersion` is a hash, not a counter.
+
+So treat a contract event as a reason to re-read the contract (`client.contracts.getContract(userId)`)
+and compare its `contractVersion` with the one you hold: unchanged means nothing to do. A late,
+repeated or out-of-order event then costs one read and changes nothing. (`getContract` returns
+`null` when the contract no longer exists, and also when the call fails; check the log to tell
+them apart.)
+
+After a reconnection, re-read the contracts you hold, because anything that changed while the
+client was disconnected was not announced. The `resync` event tells you when. Its listener
+receives a `ResyncInfo`: `getNamespace()` is `"pricings"` or `"contracts"`, and `isReconnect()` is
+`false` on the namespace's first connection and `true` after that. When `/contracts` reconnects,
+the client first invalidates the cached contracts, evaluations and pricing tokens of every user,
+so these reads go to SPACE:
+
+```java
+client.on("resync", data -> {
+    ResyncInfo info = (ResyncInfo) data;
+    if (ResyncInfo.CONTRACTS.equals(info.getNamespace()) && info.isReconnect()) {
+        refreshCachedContracts(); // e.g. getContract() for each user you hold
+    }
+});
+```
+
+If you read contracts before the first contract listener opened `/contracts`, re-read them on the
+first `resync` too.
+
+The deduplication window is configurable, or can be turned off:
+
+```java
+SpaceConnectionOptions options = new SpaceConnectionOptions("http://localhost:5403", "your-api-key");
+options.setEventDeduplicationMaxEntries(50_000);
+options.setEventDeduplicationWindow(Duration.ofMinutes(30));
+// or options.setEventDeduplication(false) to deliver every copy
+```
+
+### Pricing Tokens
+
+`features.generateUserPricingToken(userId)` returns a JWT signed by SPACE. To read it on the
+backend, for example to know the user's subscription and `contractVersion`, decode it:
+
+```java
+PricingTokenPayload payload = PricingTokenPayload.decode(client.features.generateUserPricingToken("user123"));
+PricingTokenSubscription subscription = payload.getSubscription(); // null for older SPACE versions
+if (subscription != null) {
+    subscription.getContractedServices();
+    subscription.getSubscriptionPlans();
+    subscription.getSubscriptionAddOns();
+    subscription.getContractVersion();
+}
+```
+
+`decode` does **not** verify the signature: use it to read a token you just received from SPACE,
+never to authenticate one a caller sent you.
+
+#### Token claims: `userId`, `organizationId`, `aud`, `iss`
+
+A userId is unique only within its organization, so SPACE versions with per-organization userIds
+(capability `contract-userid-per-org`) issue tokens with these claims:
+
+| Claim | Getter | Value |
+| --- | --- | --- |
+| `sub` | `getSub()` | `urn:space:<organizationId>:<percent-encoded userId>`. Opaque: do not parse it. |
+| `userId` | `getUserId()` | The userId as stored in SPACE (not encoded). |
+| `organizationId` | `getOrganizationId()` | The organization of the contract. |
+| `aud` | `getAud()` | The organization the token is for (same value as `organizationId`), as a list. |
+| `iss` | `getIss()` | The SPACE server: its `JWT_ISSUER`, `space` by default. |
+
+Tokens of older SPACE versions only have the bare userId in `sub`; the other getters then return
+`null`. `resolveUserId()` returns `getUserId()` and falls back to `getSub()` only when the token has
+no `userId` claim (an older server); it never parses the URN. Code that used `getSub()` as the
+userId should switch to it:
+
+```java
+String userId = PricingTokenPayload.decode(token).resolveUserId();
+```
+
+When a token is checked on the server side, also compare `getOrganizationId()` (or `getAud()`) with
+your organization: the same userId can exist in another organization of the same SPACE.
+
+#### Verifying pricing tokens
+
+SPACE versions with the capability `pricing-token-jwks` sign pricing tokens with ES256 and publish
+the public keys at `GET {url}/api/v1/.well-known/jwks.json` (no API key). A token that comes back to
+your backend (from a browser, a queue, another service) can then be verified with public material
+only:
+
+```java
+PricingTokenPayload payload = client.features.verifyPricingToken(token, "my-org-id");
+String userId = payload.resolveUserId();
+```
+
+or, without a client:
+
+```java
+PricingTokenVerifier verifier = PricingTokenVerifier.builder("https://space.example.com")
+        .organizationId("my-org-id")
+        .issuer("space")                     // the JWT_ISSUER of your SPACE (default "space")
+        .leeway(Duration.ofSeconds(5))       // tolerance for exp (default 0)
+        .build();
+PricingTokenPayload payload = verifier.verify(token);
+```
+
+What is checked:
+
+- The signature is ES256 by a key of the JWKS, chosen by the token's `kid`. Any other `alg`
+  (`HS256`, `none`, ...) is rejected, and so is a token with a `jwk`, `jku`, `x5u` or `x5c` header:
+  keys only come from the JWKS URL of your SPACE.
+- `exp` is required and checked (with the leeway).
+- `iss` equals the configured issuer (`space` by default).
+- `aud` and `organizationId` equal the expected organization. It is required: pass it to the call
+  or the builder; `features.verifyPricingToken(token)` uses the `organizationId` of the client
+  options. A userId is only unique within an organization, so a valid signature alone does not tell
+  you the token is for one of your users.
+
+The JWKS is cached for the `max-age` of its response (SPACE sends 5 minutes; 5 minutes also without
+`Cache-Control`, nothing with `no-store`/`no-cache`) and fetched again when a token names a `kid` it
+does not know, at most once per refetch cooldown (default 30 s), so key rotations need nothing on
+your side. The verifier is thread-safe; keep one (or one client) and reuse it. Signatures are
+checked with [Nimbus JOSE + JWT](https://connect2id.com/products/nimbus-jose-jwt), a new dependency
+without transitive dependencies of its own.
+
+Exceptions, all `PricingTokenVerificationException` (a `SpaceException`) with `getCode()`:
+`PricingTokenSignatureException` (forged or tampered token), `PricingTokenExpiredException`
+(`getExpiredAt()`), `PricingTokenAudienceException` (another organization),
+`PricingTokenIssuerException`, `PricingTokenUnknownKeyException` (`getKid()` not published, e.g. a
+removed key), and the base class with `PRICING_TOKEN_INVALID` (malformed token, wrong `alg`,
+forbidden header, missing claims) or `PRICING_TOKEN_JWKS_UNAVAILABLE` (the JWKS could not be
+fetched). A SPACE that does not publish its keys (older versions, or one in the deprecated
+`PRICING_TOKEN_ALG=HS256` mode) throws `SpaceFeatureUnsupportedException` with
+`getCapability()` = `pricing-token-jwks`.
+
+### Cleanup
+
+Always close the client when done to release resources:
+
+```java
+// Close client and cleanup resources
+client.close();
+```
+
+## API Reference
+
+### SpaceClient
+
+Main client class for interacting with the Space platform.
+
+**Methods:**
+- `isConnectedToSpace()`: Check if connected to Space API
+- `hasCapability(String token)`: Whether SPACE advertises an `X-Space-Capabilities` token (`idempotency-key`, `atomic-usage-limits`...), from a recent response or `GET /healthcheck`
+- `on(String event, Consumer<Object> callback)`: Register event listener
+- `removeListener(String event)`: Remove specific event listener
+- `removeAllListeners()`: Remove all event listeners
+- `connect()`: Connect to WebSocket
+- `disconnect()`: Disconnect from WebSocket (listeners are kept; `connect()` reconnects)
+- `close()`: Close all connections and cleanup
+- `contracts`: ContractModule instance (for managing contracts)
+- `features`: FeatureModule instance (for evaluating features)
+- `pricings`: PricingModule instance (for reading Pricing2Yaml files)
+- `services`: ServiceModule instance (for service-level information)
+- `cache`: CacheModule instance (for cache management)
+
+### ContractModule
+
+Manage user contracts.
+
+**Methods:**
+- `getContract(String userId)`: Retrieve user contract
+- `addContract(ContractToCreate contract[, WriteOptions options])`: Create new contract (with `WriteOptions`: your `Idempotency-Key`, failures thrown)
+- `updateContractSubscriptionByGroupId(String groupId, Subscription subscription[, WriteOptions options])`: Novate every contract of a group
+- `updateContractUsageLevels(String userId, String serviceName, Map<String, Number> increments[, WriteOptions options])`: Usage level increments
+- `updateContractSubscription(String userId, Subscription subscription)`: Update subscription (unconditional; `null` on failure)
+- `novate(String userId, Subscription subscription, NovationOptions options)`: Novation with `expectedContractVersion` (`If-Match`, 412 -> `ContractChangedException`), `keepBillingPeriod`, `rejectPrivate` and `idempotencyKey`; throws on failure, and `SpaceFeatureUnsupportedException` when SPACE cannot honour an option
+- `previewNovation(String userId, Subscription subscription[, boolean keepBillingPeriod | NovationOptions options])`: Dry run (`NovationPreview`); `options` carries `keepBillingPeriod` and `rejectPrivate`
+- `getPricings(String userId)`: Pricing version, status, plan and add-ons of every service of the contract, plus its `contractVersion` (`ContractPricings`)
+
+### PricingModule
+
+**Methods:**
+- `getYaml(String serviceName, String pricingVersion)`: Raw Pricing2Yaml of a version (`PricingYaml`: YAML, ETag, syntax version)
+- `getYaml(String serviceName, String pricingVersion, String etag)`: Conditional variant (`isNotModified()` on 304)
+
+### ServiceModule
+
+**Methods:**
+- `getNewContractsPricing(String serviceName)`: The version SPACE assigns to new contracts (`NewContractsPricing`)
+
+### FeatureModule
+
+Evaluate features and manage pricing.
+
+**Methods:**
+- `evaluate(String userId, String featureId)`: Evaluate feature (read-only)
+- `evaluate(String userId, String featureId, Map<String, Number> consumption)`: Evaluate with consumption
+- `evaluate(String userId, String featureId, Map<String, Number> consumption, boolean details, boolean server)`: Full evaluation
+- `evaluate(String userId, String featureId, Map<String, Number> consumption, WriteOptions options)`: Consumption with your `Idempotency-Key`; failures thrown
+- `revertConsumption(String userId, String featureId, String consumptionId[, WriteOptions options])`: Revert exactly the consumption with that `getConsumptionId()` (`false` on 404)
+- `revertEvaluation(String userId, String featureId[, boolean revertToLatest])`: **Deprecated**, use `revertConsumption`
+- `generateUserPricingToken(String userId)`: Generate pricing token
+- `verifyPricingToken(String token)` / `verifyPricingToken(String token, String organizationId)`:
+  Verify a pricing token with the JWKS of SPACE (see [Verifying pricing tokens](#verifying-pricing-tokens))
+
+## Events
+
+Available WebSocket events:
+- `synchronized`: Connected to WebSocket
+- `pricing_created`: New pricing created
+- `pricing_archived`: Pricing archived
+- `pricing_actived`: Pricing activated
+- `service_disabled`: Service disabled
+- `contract_created`, `contract_novated`, `contract_deleted`, `contract_renewed`: A contract of the
+  API key's organisation changed (callback receives `ContractEventDetails`)
+- `resync`: A namespace connected or reconnected (callback receives `ResyncInfo`); re-read the
+  contracts you hold after a reconnection, see [Delivery guarantees](#delivery-guarantees)
+- `error`: Connection error
+
+## Error Handling
+
+The methods of the subscription-change API (`pricings.getYaml`, `contracts.getPricings`,
+`contracts.previewNovation`, `contracts.novate`,
+`services.getNewContractsPricing`, `features.revertConsumption` and the overloads that take
+`WriteOptions`) throw unchecked exceptions instead
+of returning `null`:
+
+All of them extend `SpaceException` (unchecked), so one `catch` handles every failure:
+
+- `SpaceApiException`: SPACE refused (non-2xx). Carries `getStatusCode()`, `getMethod()`,
+  `getPath()`, `getBody()` and `getErrorCode()` (the `error` field of a JSON body).
+- `PricingYamlUnavailableException` (a `SpaceApiException`): `404 PRICING_YAML_UNAVAILABLE`.
+- `ContractChangedException` (a `SpaceApiException`): `412 CONTRACT_CHANGED` on a conditional
+  novation (or the same conflict seen on the read before it). Carries `getUserId()`,
+  `getExpectedContractVersion()` and the current `getContractVersion()`; the user's cache entries
+  are invalidated.
+- `SpaceConnectionException`: SPACE could not be reached (the `IOException` is the cause).
+- `SpaceFeatureUnsupportedException`: the connected SPACE lacks a feature the call depends on.
+  `getCapability()` is its `X-Space-Capabilities` token (e.g. `pricing-yaml` when `getYaml`
+  receives JSON from a SPACE that ignores `format=yaml`, or `contract-version` /
+  `keep-billing-period` from `novate`); `isWritten()` says whether SPACE changed anything, and
+  `getContract()` is what it stored when it did.
+- `IdempotencyException` (a `SpaceApiException`, with `getCode()` and `getIdempotencyKey()`) on the
+  keyed writes: `IdempotencyConflictException` (`409 IDEMPOTENCY_CONFLICT`, the key was used for a
+  different request), `IdempotencyInProgressException` (`409 IDEMPOTENCY_IN_PROGRESS` once the
+  retries are spent; `getRetryAfterSeconds()`; retry later with the same key) and
+  `IdempotencyKeyInvalidException` (`400 IDEMPOTENCY_KEY_INVALID`). `SpaceApiException.getHeader`
+  reads the response headers.
+- `SpaceException` itself: SPACE answered 2xx with a body the client cannot read.
+
+The older methods keep their existing behaviour (they log the failure and return `null`):
+
+```java
+Contract contract = client.contracts.getContract("user123");
+if (contract == null) {
+    System.err.println("Failed to get contract (see the logs)");
+}
+```
+
+## Thread Safety
+
+SpaceClient is thread-safe and can be used concurrently from multiple threads. The cache implementations use thread-safe data structures.
+
+## Publishing to Maven Central
+
+This package is configured for publishing to Maven Central. To publish:
+
+1. Configure your `~/.m2/settings.xml` with OSSRH credentials
+2. Generate GPG keys for signing
+3. Run: `mvn clean deploy -P release`
+
+See [Maven Central Publishing Guide](https://central.sonatype.org/publish/publish-guide/) for details.
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](https://github.com/Alex-GF/space-java-client/blob/main/LICENSE) file for details.
+
+## Authors
+
+- ISA-Group
+
+## Links
+
+- [Space Platform](https://github.com/isa-group/space)
+- [API Documentation](https://github.com/isa-group/space/wiki)
+- [Issue Tracker](https://github.com/Alex-GF/space-java-client/issues)
