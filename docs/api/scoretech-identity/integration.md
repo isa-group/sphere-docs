@@ -7,7 +7,7 @@ Use SCORETech Identity as the OpenID Connect (OIDC) provider for user sign-in in
 
 ## Request a client
 
-Email [garcia29@us.es](mailto:garcia29@us.es) to request a client. The SCORETech team registers the application and issues its credentials. Include the following information:
+Email [agarcia29@us.es](mailto:agarcia29@us.es) to request a client. The SCORETech team registers the application and issues its credentials. Include the following information:
 
 - The application name and environment, such as staging or production.
 - The application type. Specify whether the browser or your backend exchanges the authorization code.
