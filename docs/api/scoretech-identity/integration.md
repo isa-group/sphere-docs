@@ -1,47 +1,78 @@
 ---
 title: Integrate SCORETech Identity
+sidebar_label: Getting started
 sidebar_position: 1
+description: Request an OpenID Connect client and set up SCORETech sign-in for a browser or backend application.
 ---
 
-Use SCORETech Identity as the OpenID Connect (OIDC) provider for user sign-in in your application.
+Use SCORETech Identity to sign users in through OpenID Connect (OIDC). This guide takes you from requesting a client to verifying your first login.
 
-## Request a client
+## 1. Choose your client type
 
-Email [agarcia29@us.es](mailto:agarcia29@us.es) to request a client. The SCORETech team registers the application and issues its credentials. Include the following information:
+Choose based on where the authorization code is exchanged for tokens.
 
-- The application name and environment, such as staging or production.
-- The application type. Specify whether the browser or your backend exchanges the authorization code.
-- The exact HTTPS origin and callback URLs. For example, register the origin `https://app.example.org` and the callback `https://app.example.org/auth/callback`. Use absolute URLs on that origin without wildcards. Include any post-logout redirect URLs you need.
-- The access permissions or groups of users who should be able to sign in.
+| Where the exchange happens | Request | You receive |
+| --- | --- | --- |
+| JavaScript running in the browser | **Browser application** (public client) | Client ID |
+| Your server, including a backend for a web frontend | **Backend application** (confidential client) | Client ID and Client Secret |
 
-| Application type | Credentials issued |
-| --- | --- |
-| Browser application (SPA) | A public Client ID. The browser uses Authorization Code with PKCE S256. |
-| Backend application | A confidential Client ID and Client Secret. The backend authenticates at the token endpoint and uses Authorization Code with PKCE S256. |
+Both use Authorization Code with PKCE S256. Store the Client Secret in your server's secret manager or protected environment.
 
-If your web app has a backend that handles the code exchange, request a **backend application**. Store the secret in your backend's secret manager or environment. Never include it in a browser bundle, source control, or logs.
+## 2. Request your client
 
-## Configure OpenID Connect
+Email [agarcia29@us.es](mailto:agarcia29@us.es). The SCORETech team registers your application and issues its credentials. Copy the request below and replace the example values.
+
+```text title="Example client request"
+Subject: SCORETech Identity client request — Research Portal (staging)
+
+Application: Research Portal
+Environment: staging
+Client type: Backend application
+Origin: https://portal-staging.example.org
+Sign-in callback: https://portal-staging.example.org/auth/callback
+After sign-out: https://portal-staging.example.org/
+Who needs access: Research Portal members
+Test access: Please arrange access for one test account.
+```
+
+- **Origin** means the scheme, host and port, with no path or trailing slash.
+- **Sign-in callback** is where the browser returns with the authorization code. Provide at least one and up to ten exact URLs on the application's origin. Use HTTPS and give the full path, including any trailing slash. Wildcards are unavailable.
+- **After sign-out** is optional. If you want users to land back in your application after central sign-out, provide the exact return URL on the same origin.
+- **Who needs access** tells the team which users should receive the required application permissions. Ask for a separate client for each environment on a different origin.
+
+## 3. Configure your OIDC client
+
+Keep the settings issued to your application next to these shared settings.
 
 | Setting | Value |
 | --- | --- |
 | Issuer | `https://sphere.score.us.es/identity/auth/realms/score` |
-| Discovery document | [OpenID configuration](https://sphere.score.us.es/identity/auth/realms/score/.well-known/openid-configuration) |
-| Flow | Authorization Code, `response_type=code` |
+| Discovery | [OpenID configuration](https://sphere.score.us.es/identity/auth/realms/score/.well-known/openid-configuration) |
+| Flow | Authorization Code (`response_type=code`) |
 | PKCE | `S256` |
 | Scopes | `openid profile email` |
-| Redirect URI | The exact callback URL registered for your client |
-| Client authentication | Public clients send their Client ID. Confidential clients authenticate the token request with their Client Secret on the backend. |
+| Redirect URI | Your registered sign-in callback |
 
-1. Configure an OIDC library with the issuer and the credentials issued for your client. Let it discover the authorization, token, signing key and logout endpoints.
-2. Start sign-in by redirecting the browser to the authorization endpoint. Use a fresh `state`, `nonce` and PKCE verifier for each login.
-3. At the registered callback, check `state` and exchange the code with the original PKCE verifier. Validate the ID token's signature, issuer, audience, expiry and nonce. Use the issuer and `sub` together as the user's stable identifier in your application.
-4. Create your application's session. If you use refresh tokens, let your OIDC library handle rotation and keep the latest token. Use an approved post-logout URL when redirecting users after central sign-out.
+Point your library at the issuer and use discovery for the authorization, token, signing-key and logout endpoints. The browser example uses the Keycloak adapter, which takes the Keycloak base URL and realm separately. [Keycloak OIDC guide](https://www.keycloak.org/securing-apps/oidc-layers)
 
-See the [Keycloak OIDC guide](https://www.keycloak.org/securing-apps/oidc-layers) and the [OpenID Connect specification](https://openid.net/specs/openid-connect-core-1_0.html).
+```mermaid
+sequenceDiagram
+    participant B as User's browser
+    participant A as Your application
+    participant I as SCORETech Identity
+    B->>A: Select Sign in
+    A-->>B: Redirect with state, nonce and PKCE challenge
+    B->>I: Open sign-in
+    I-->>B: Return to the registered callback
+    B->>A: Deliver authorization code and state
+    A->>I: Exchange code with PKCE verifier
+    I-->>A: Return ID and access tokens
+    A-->>B: Open the signed-in application
+```
 
-## Apply application permissions
+In a browser application, the application exchanges the code in the browser. In a backend application, the server performs that step and supplies its Client Secret.
 
-SCORETech Identity checks the permissions required by the registered client. The team assigns those permissions through roles. Ask for a test account with access when you request the client.
+## 4. Follow the walkthrough and test sign-in
 
-Your application still controls its own routes and resources. If your API accepts SCORETech access tokens, validate the signature, issuer, expiry and expected audience. For a managed client, the access token's `realm_access.roles` contains the scoped service permissions. Use an ID token to establish the login session and an access token to authorize API calls.
+1. Follow the [browser walkthrough](./browser.md) for a public client or the [backend walkthrough](./backend.md) for a confidential client.
+2. Run the [verification checklist](./verify.md) with the account granted access. Use the troubleshooting table if a step fails.
