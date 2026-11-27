@@ -1,0 +1,66 @@
+---
+sidebar_position: 4
+sidebar_label: "⚙️ Configuration reference"
+title: "Configuration reference"
+description: "Every variable of the .env file of a self-hosted SPHERE instance."
+custom_edit_url: null
+---
+
+# Configuration reference
+
+A [self-hosted instance](./02-deploy-your-own-instance.mdx) reads these variables from `docker/self-hosted/.env`. Start from [`.env.example`](https://github.com/SCORELabUS/SPHERE/blob/main/docker/self-hosted/.env.example) and run `docker compose up -d` after any change.
+
+## Instance
+
+| Variable | Required | Default | Description |
+| --- | --- | --- | --- |
+| `SPHERE_URL` | Yes | | Public address of the instance, without a trailing slash. Links, emails, permanent links, file URLs and OAuth discovery use it. |
+| `SPHERE_VERSION` | | `latest` | Release of the `sphere-api` and `sphere-client` images, such as `2.13.0`. |
+| `HTTP_PORT` | | `80` | Host port where nginx listens. |
+
+## Secrets
+
+| Variable | Required | Description |
+| --- | --- | --- |
+| `MONGO_ROOT_PASSWORD` | Yes | Password of MongoDB's `root` user. Letters and digits only. Applied when the database is created. |
+| `MONGO_PASSWORD` | Yes | Password of the `sphere` user the API connects with. Letters and digits only. Applied when the database is created. |
+| `JWT_SECRET` | Yes | Key that signs sign-in sessions. Changing it signs every user out. |
+
+Generate each one with `openssl rand -hex 32`.
+
+## Email
+
+SPHERE sends email through [Brevo](https://www.brevo.com): account verification, password resets and notifications. In this configuration, sign-up needs it.
+
+| Variable | Default | Description |
+| --- | --- | --- |
+| `BREVO_API_KEY` | | Brevo API key. |
+| `BREVO_SENDER_EMAIL` | | Sender address, verified in Brevo. |
+| `BREVO_SENDER_NAME` | `SPHERE` | Sender name. |
+
+## Google sign-in
+
+Optional. Create an OAuth client in Google Cloud with `<SPHERE_URL>/api/v1/users/auth/sso/google/callback` as an authorized redirect URI.
+
+| Variable | Description |
+| --- | --- |
+| `GOOGLE_CLIENT_ID` | OAuth client ID. |
+| `GOOGLE_CLIENT_SECRET` | OAuth client secret. |
+
+## AI assistants
+
+Optional. See [Enable the AI assistants](./03-ai-assistants.mdx).
+
+| Variable | Default | Used by |
+| --- | --- | --- |
+| `OPENAI_API_KEY` | | ORBIT's chat, HARVEY and A-MINT. Without it they are off. |
+| `OPENAI_BASE_URL` | `https://api.openai.com/v1` | ORBIT's chat, HARVEY and A-MINT: any OpenAI-compatible API. |
+| `OPENAI_MODEL` | `gpt-5-nano` | ORBIT's chat and HARVEY. |
+| `AMINT_LLM_MODEL` | `gpt-5.2` | A-MINT, to extract pricings. |
+| `AMINT_LLM_BETTER_MODEL` | `gpt-5.2` | A-MINT, for its higher-quality steps. |
+
+HARVEY and A-MINT run only with the `ai` profile: `docker compose --profile ai up -d`.
+
+## Fixed in the Compose file
+
+The Compose file sets the rest of the API's configuration: the database name and user (`sphere`), the Redis address, the storage folders and `ENVIRONMENT=production`. To change any of them, edit `docker-compose.yml`; the API's full list of variables is in [`api/.env.testing`](https://github.com/SCORELabUS/SPHERE/blob/main/api/.env.testing). Sign-in through SCORETech Identity is configured as described in [`docs/scoretech-identity.md`](https://github.com/SCORELabUS/SPHERE/blob/main/docs/scoretech-identity.md).

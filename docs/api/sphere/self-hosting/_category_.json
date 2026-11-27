@@ -1,0 +1,9 @@
+{
+  "label": "🛠️ Self-hosting",
+  "position": 3,
+  "link": {
+    "type": "generated-index",
+    "description": "Run SPHERE on your own machine or server: a local demo, a production deployment, the AI assistants and every setting.",
+    "slug": "/api/sphere/self-hosting"
+  }
+}

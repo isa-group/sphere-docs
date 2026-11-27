@@ -1,0 +1,71 @@
+---
+sidebar_position: 1
+sidebar_label: "💻 Try it locally"
+title: "Try SPHERE locally"
+description: "Start SPHERE on your machine with one command, with demo accounts and 32 example pricings."
+custom_edit_url: null
+---
+
+# Try SPHERE locally
+
+The demo stack starts SPHERE on your machine with one command, with demo accounts and 32 SaaS pricings already loaded. Use it to evaluate SPHERE. To run SPHERE for other people, follow [Deploy your own instance](./02-deploy-your-own-instance.mdx) instead.
+
+:::danger Not for a network
+The demo stack ships with default passwords and secrets. Keep it on your own machine.
+:::
+
+## Requirements
+
+- [Docker](https://docs.docker.com/get-docker/) with Docker Compose 2.30 or later.
+- Free ports 80, 5173, 6379, 8080 and 27017.
+
+## Start it
+
+```bash
+git clone https://github.com/SCORELabUS/SPHERE.git
+cd SPHERE/docker/testing
+docker compose up -d
+```
+
+Open [http://localhost](http://localhost). The first start takes a few minutes: it builds the images from the source code and loads the demo data.
+
+## Demo accounts
+
+All accounts use the password `faked`. You can sign in with the username or the email.
+
+| Username | Email | Role in `demo-org` |
+| --- | --- | --- |
+| `sphere` | `sphere@sphere.com` | Owner |
+| `testuser` | `test_user@test.com` | Admin |
+| `faked` | `faked@acme.com` | Member |
+
+The `demo-org` organization holds 32 SaaS pricings with 164 versions from the SPHERE dataset.
+
+## What to try
+
+- **Analytics.** Open a pricing with several versions, such as Slack, and go to its **Analytics** tab.
+- **Versions.** Edit a pricing, save it as a new version and compare it with the previous ones in **Versions**.
+- **Organizations and permissions.** Group pricings in collections, then sign in with each account to see what each role can do.
+- **REST API.** Create an API key (avatar menu → **API Keys**) and call `http://localhost/api/v1`, documented in the [API reference](../sphere-api.mdx).
+- **MCP server.** Connect your own assistant to `http://localhost/api/v1/orbit/mcp` with an API key. It calls no language model.
+
+## What the demo stack leaves out
+
+| Feature | In the demo stack |
+| --- | --- |
+| HARVEY, ORBIT's chat and A-MINT | Off. Add them with an OpenAI key or your own model: see [AI assistants](./03-ai-assistants.mdx). |
+| Google and University of Seville sign-in | Off: they need credentials registered for a real address. |
+| Emails | Not sent. Links that would be emailed are printed in the API log. |
+
+To read a link that would have been emailed, such as the verification of a new account:
+
+```bash
+docker compose logs server | grep "Email verification"
+```
+
+## Stop or reset it
+
+```bash
+docker compose down       # stop, keeping the data
+docker compose down -v    # stop and delete the data; the next start loads the demo again
+```
