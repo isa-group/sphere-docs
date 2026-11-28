@@ -18,7 +18,7 @@ SPHERE works without any language model. Three features use one, and each instan
 
 ORBIT's MCP server, at `/api/v1/orbit/mcp`, calls no model, so it works in every instance: assistants such as Claude or ChatGPT connect to it with an API key or OAuth (see the [SPHERE ORBIT plugin](https://github.com/SCORELabUS/sphere-orbit-plugin)).
 
-The AI services (HARVEY, A-MINT, two analysis engines and a pricing MCP server) come from the [Pricing Intelligence repository](https://github.com/SCORELabUS/Pricing-Intelligence-Interpretation-Process). SPHERE pins their images by version and digest; they run on `amd64` only (on Apple Silicon, Docker emulates them).
+The AI services (HARVEY, A-MINT, two analysis engines and a pricing MCP server) come from [PIIP](https://github.com/SCORELabUS/Pricing-Intelligence-Interpretation-Process) (Pricing Intelligence Interpretation Process), released under the MIT License. Each SPHERE release pins their images by version and digest (SPHERE 2.14.0 uses PIIP 1.3.0); they run on `amd64` only (on Apple Silicon, Docker emulates them).
 
 ## With OpenAI
 

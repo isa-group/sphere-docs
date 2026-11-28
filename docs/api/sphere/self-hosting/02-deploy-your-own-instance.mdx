@@ -72,7 +72,7 @@ Then set the optional parts you need:
 
 - **Email**: `BREVO_API_KEY` and `BREVO_SENDER_EMAIL`, a sender address verified in Brevo.
 - **Google sign-in**: `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET`, from a Google Cloud OAuth client whose authorized redirect URI is `<SPHERE_URL>/api/v1/users/auth/sso/google/callback`.
-- **Version**: `SPHERE_VERSION` picks the release of the SPHERE images. It defaults to `latest`; pin a release such as `2.13.0` so updates happen only when you choose. The releases are listed on [GitHub](https://github.com/SCORELabUS/SPHERE/releases).
+- **Version**: the kit runs the SPHERE release it comes with, so it only changes when you update it. `SPHERE_VERSION` picks another release, such as `2.14.0`; the releases are listed on [GitHub](https://github.com/SCORELabUS/SPHERE/releases).
 
 Every variable is described in the [configuration reference](./04-configuration-reference.mdx).
 
@@ -119,10 +119,10 @@ The same command with `role: "ADMIN"` added to the `$set` makes the account a pl
 
 ## Update
 
-Set the new `SPHERE_VERSION` in `.env` (or keep `latest`), then:
+Update the kit to the new release, which also brings its nginx routes and AI service versions, then pull the images:
 
 ```bash
-git pull                 # newer Compose file, nginx routes and AI service versions
+git fetch --tags && git checkout vX.Y.Z   # the release to run
 docker compose pull
 docker compose up -d
 ```
